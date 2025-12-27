@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../../../core/theme/app_theme.dart';
+import '../../data/datasources/category_local_datasource.dart';
+import '../../data/repositories/category_repository_impl.dart';
 import 'category_item_widget.dart';
 
 class CategoriesSectionWidget extends StatelessWidget {
@@ -7,28 +9,33 @@ class CategoriesSectionWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final categories = [
-      {'icon': 'assets/icons/cardiology.svg', 'label': 'Cardiologist'},
-      {'icon': 'assets/icons/kidney.svg', 'label': 'Kidney'},
-      {'icon': 'assets/icons/liver.svg', 'label': 'Liver'},
-      {'icon': 'assets/icons/ophthalmology.svg', 'label': 'ENT'},
-    ];
+    final categoryService = CategoryService(
+      localDataSource: CategoryLocalDataSourceImpl(),
+    );
+    final categories = categoryService.getCategories();
 
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: AppTheme.spacing20),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: categories.map((category) {
-          return Expanded(
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: AppTheme.spacing4),
-              child: CategoryItemWidget(
-                iconPath: category['icon']!,
-                label: category['label']!,
+      child: SizedBox(
+        height: 100,
+        child: ListView.builder(
+          scrollDirection: Axis.horizontal,
+          itemCount: categories.length,
+          itemBuilder: (context, index) {
+            final category = categories[index];
+            return Padding(
+              padding: EdgeInsets.only(
+                right: index < categories.length - 1 ? AppTheme.spacing12 : 0,
               ),
-            ),
-          );
-        }).toList(),
+              child: CategoryItemWidget(
+                // iconPath: 'assets/icons/${category.icon}',
+                iconPath: 'assets/icons/gynecology.png',
+                label: category.title,
+                onTap: () {},
+              ),
+            );
+          },
+        ),
       ),
     );
   }

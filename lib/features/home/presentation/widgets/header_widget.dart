@@ -29,11 +29,12 @@ class HeaderWidget extends StatelessWidget {
             padding: const EdgeInsets.all(AppTheme.spacing12),
             decoration: BoxDecoration(
               color: Colors.white,
-              borderRadius: BorderRadius.circular(AppTheme.radiusMedium),
+              // borderRadius: BorderRadius.circular(AppTheme.radiusMedium),
+              shape: BoxShape.circle,
               boxShadow: AppTheme.cardShadow,
             ),
             child: const Icon(
-              Icons.notifications_none,
+              Icons.notifications_none_rounded,
               color: AppTheme.textPrimary,
               size: 24,
             ),

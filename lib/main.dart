@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'core/routing/presentation/pages/route_config_page.dart';
+import 'core/routing/presentation/routes/app_routes.dart';
 import 'core/theme/app_theme.dart';
-import 'features/home/presentation/pages/home_page.dart';
 
 void main() {
   runApp(const MyApp());
@@ -11,11 +13,13 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Doctor Booking',
+    return GetMaterialApp(
       debugShowCheckedModeBanner: false,
       theme: AppTheme.lightTheme,
-      home: const HomePage(),
+      initialRoute: AppRoutes.initial,
+      getPages: RouteConfigPage.getPages(),
+      defaultTransition: Transition.cupertino,
+      transitionDuration: const Duration(milliseconds: 300),
     );
   }
 }

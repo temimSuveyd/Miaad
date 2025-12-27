@@ -2,14 +2,16 @@ import 'package:flutter/material.dart';
 
 class AppTheme {
   // Design tokens - Colors
-  static const Color primaryColor = Color(0xFFC2527F);
+  static const Color primaryColor = Color(0xFF507DCE);
   static const Color accentColor = Color(0xFF5FCDC4);
   static const Color backgroundColor = Color(0xFFF8F9FA);
   static const Color cardBackground = Color(0xFFFFFFFF);
   static const Color textPrimary = Color(0xFF1A1A1A);
-  static const Color textSecondary = Color(0xFF6B6B6B);
-  static const Color dividerColor = Color(0xFFE5E5E5);
-  
+  static const Color textSecondary = Color(0xBE6B6B6B);
+  static const Color dividerColor = Color(0xD0E5E5E5);
+  static const Color errorColor = Color(0xD0FF0000);
+
+
   // Design tokens - Spacing
   static const double spacing4 = 4.0;
   static const double spacing8 = 8.0;
@@ -18,18 +20,18 @@ class AppTheme {
   static const double spacing20 = 20.0;
   static const double spacing24 = 24.0;
   static const double spacing32 = 32.0;
-  
+
   // Design tokens - Border radius
   static const double radiusSmall = 8.0;
   static const double radiusMedium = 12.0;
   static const double radiusLarge = 16.0;
-  static const double radiusXLarge = 20.0;
-  
+  static const double radiusXLarge = 25.0;
+
   // Design tokens - Shadows
   static List<BoxShadow> cardShadow = [
     BoxShadow(
-      color: Colors.black.withOpacity(0.08),
-      blurRadius: 12,
+      color: const Color.fromARGB(255, 139, 139, 139).withOpacity(0.03),
+      blurRadius: 5,
       offset: const Offset(0, 4),
     ),
   ];

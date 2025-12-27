@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:iconsax/iconsax.dart';
 import '../theme/app_theme.dart';
 
 class CustomBottomNavigationBar extends StatelessWidget {
@@ -32,29 +33,30 @@ class CustomBottomNavigationBar extends StatelessWidget {
           ),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               _buildNavItem(
-                icon: Icons.home,
+                icon: Iconsax.home,
                 index: 0,
                 isActive: currentIndex == 0,
               ),
               _buildNavItem(
-                icon: Icons.calendar_today_outlined,
+                icon: Iconsax.calendar,
                 index: 1,
                 isActive: currentIndex == 1,
               ),
               _buildNavItem(
-                icon: Icons.message_outlined,
+                icon: Iconsax.message,
                 index: 2,
                 isActive: currentIndex == 2,
               ),
               _buildNavItem(
-                icon: Icons.favorite_border,
+                icon: Iconsax.save_2,
                 index: 3,
                 isActive: currentIndex == 3,
               ),
               _buildNavItem(
-                icon: Icons.person_outline,
+                icon: Iconsax.profile_2user,
                 index: 4,
                 isActive: currentIndex == 4,
               ),
@@ -72,16 +74,39 @@ class CustomBottomNavigationBar extends StatelessWidget {
   }) {
     return GestureDetector(
       onTap: () => onTap(index),
-      child: Container(
-        padding: const EdgeInsets.all(AppTheme.spacing12),
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 300),
+        curve: Curves.easeInOut,
+        height: 50,
         decoration: BoxDecoration(
-          color: isActive ? AppTheme.primaryColor : Colors.transparent,
-          borderRadius: BorderRadius.circular(AppTheme.radiusMedium),
+          border: Border(
+            top: BorderSide(
+              color: isActive
+                  ? AppTheme.primaryColor
+                  : AppTheme.backgroundColor,
+              width: 2,
+            ),
+          ),
         ),
-        child: Icon(
-          icon,
-          color: isActive ? Colors.white : AppTheme.textSecondary,
-          size: 24,
+        child: AnimatedScale(
+          scale: isActive ? 1.1 : 1.0,
+          duration: const Duration(milliseconds: 300),
+          curve: Curves.easeInOut,
+          child: TweenAnimationBuilder<Color?>(
+            tween: ColorTween(
+              begin: AppTheme.textSecondary,
+              end: isActive ? AppTheme.primaryColor : AppTheme.textSecondary,
+            ),
+            duration: const Duration(milliseconds: 300),
+            curve: Curves.easeInOut,
+            builder: (context, color, child) {
+              return Icon(
+                icon,
+                color: color,
+                size: 26,
+              );
+            },
+          ),
         ),
       ),
     );

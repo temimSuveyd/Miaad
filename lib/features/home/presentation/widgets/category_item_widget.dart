@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
+import 'package:iconsax/iconsax.dart';
 // import 'package:flutter_svg/flutter_svg.dart';
 import '../../../../core/theme/app_theme.dart';
 
@@ -24,7 +26,7 @@ class CategoryItemWidget extends StatelessWidget {
             padding: const EdgeInsets.all(AppTheme.spacing16),
             decoration: BoxDecoration(
               color: Colors.white,
-              borderRadius: BorderRadius.circular(AppTheme.radiusMedium),
+              shape: BoxShape.circle,
               boxShadow: AppTheme.cardShadow,
             ),
             // child: SvgPicture.asset(
@@ -32,17 +34,18 @@ class CategoryItemWidget extends StatelessWidget {
             //   width: 32,
             //   height: 32,
             //   colorFilter: const ColorFilter.mode(
-            //     AppTheme.primaryColor,
+            //     AppTheme.textPrimary,
             //     BlendMode.srcIn,
             //   ),
             // ),
+            child: Icon(Iconsax.heart_add),
           ),
           const SizedBox(height: AppTheme.spacing8),
           Text(
             label,
-            style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                  fontSize: 11,
-                ),
+            style: Theme.of(
+              context,
+            ).textTheme.labelSmall?.copyWith(fontSize: 11),
             textAlign: TextAlign.center,
             maxLines: 1,
             overflow: TextOverflow.ellipsis,

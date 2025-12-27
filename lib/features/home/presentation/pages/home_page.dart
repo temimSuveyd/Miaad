@@ -6,22 +6,10 @@ import '../widgets/search_bar_widget.dart';
 import '../widgets/categories_section_widget.dart';
 import '../widgets/upcoming_schedule_card_widget.dart';
 import '../widgets/popular_doctors_section_widget.dart';
+import '../widgets/schedule_shimmer_widget.dart';
 
-class HomePage extends StatefulWidget {
+class HomePage extends StatelessWidget {
   const HomePage({super.key});
-
-  @override
-  State<HomePage> createState() => _HomePageState();
-}
-
-class _HomePageState extends State<HomePage> {
-  int _currentIndex = 0;
-
-  void _onNavigationTap(int index) {
-    setState(() {
-      _currentIndex = index;
-    });
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -39,7 +27,9 @@ class _HomePageState extends State<HomePage> {
               const CategoriesSectionWidget(),
               const SizedBox(height: AppTheme.spacing32),
               Padding(
-                padding: const EdgeInsets.symmetric(horizontal: AppTheme.spacing20),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: AppTheme.spacing20,
+                ),
                 child: Row(
                   children: [
                     Text(
@@ -53,31 +43,58 @@ class _HomePageState extends State<HomePage> {
                         vertical: AppTheme.spacing4,
                       ),
                       decoration: BoxDecoration(
-                        color: AppTheme.textSecondary.withOpacity(0.1),
-                        borderRadius: BorderRadius.circular(AppTheme.radiusSmall),
+                        color: AppTheme.textSecondary.withValues(alpha: 0.1),
+                        borderRadius: BorderRadius.circular(
+                          AppTheme.radiusSmall,
+                        ),
                       ),
                       child: Text(
                         '3',
                         style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                              fontWeight: FontWeight.w600,
-                            ),
+                          fontWeight: FontWeight.w600,
+                        ),
                       ),
                     ),
                   ],
                 ),
               ),
               const SizedBox(height: AppTheme.spacing16),
-              const UpcomingScheduleCardWidget(),
+              (0 != 0)
+                  ? const ScheduleShimmerWidget()
+                  : const UpcomingScheduleCardWidget(),
               const SizedBox(height: AppTheme.spacing32),
-              const PopularDoctorsSectionWidget(),
+              (0 != 0)
+                  ? Padding(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: AppTheme.spacing20,
+                      ),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(
+                            'الأطباء المشهورون',
+                            style: Theme.of(context).textTheme.headlineMedium,
+                          ),
+                          Text(
+                            'عرض الكل',
+                            style: Theme.of(context).textTheme.bodyMedium
+                                ?.copyWith(
+                                  color: AppTheme.primaryColor,
+                                  fontWeight: FontWeight.w500,
+                                ),
+                          ),
+                        ],
+                      ),
+                    )
+                  : const SizedBox.shrink(),
+              if (0 != 0) const SizedBox(height: AppTheme.spacing16),
+              (0 != 0)
+                  ? const DoctorsShimmerWidget()
+                  : const PopularDoctorsSectionWidget(),
               const SizedBox(height: AppTheme.spacing20),
             ],
           ),
         ),
-      ),
-      bottomNavigationBar: CustomBottomNavigationBar(
-        currentIndex: _currentIndex,
-        onTap: _onNavigationTap,
       ),
     );
   }

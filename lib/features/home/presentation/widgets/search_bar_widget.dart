@@ -14,12 +14,11 @@ class SearchBarWidget extends StatelessWidget {
             child: Container(
               padding: const EdgeInsets.symmetric(
                 horizontal: AppTheme.spacing16,
-                vertical: AppTheme.spacing12,
+                vertical: AppTheme.spacing8,
               ),
               decoration: BoxDecoration(
                 color: Colors.white,
-                borderRadius: BorderRadius.circular(AppTheme.radiusMedium),
-                boxShadow: AppTheme.cardShadow,
+                borderRadius: BorderRadius.circular(AppTheme.radiusXLarge),
               ),
               child: Row(
                 children: [
@@ -28,27 +27,24 @@ class SearchBarWidget extends StatelessWidget {
                     color: AppTheme.textSecondary,
                     size: 20,
                   ),
-                  const SizedBox(width: AppTheme.spacing12),
-                  Text(
-                    'Search',
-                    style: Theme.of(context).textTheme.bodyMedium,
+                  const SizedBox(width: AppTheme.spacing8),
+                  Text('Search', style: Theme.of(context).textTheme.bodyMedium),
+                  Spacer(),
+                  Container(
+                    padding: const EdgeInsets.all(AppTheme.spacing8),
+                    decoration: BoxDecoration(
+                      color: AppTheme.primaryColor,
+                      shape: BoxShape.circle,
+                      boxShadow: AppTheme.cardShadow,
+                    ),
+                    child: const Icon(
+                      Icons.tune,
+                      color: Colors.white,
+                      size: 20,
+                    ),
                   ),
                 ],
               ),
-            ),
-          ),
-          const SizedBox(width: AppTheme.spacing12),
-          Container(
-            padding: const EdgeInsets.all(AppTheme.spacing16),
-            decoration: BoxDecoration(
-              color: AppTheme.primaryColor,
-              borderRadius: BorderRadius.circular(AppTheme.radiusMedium),
-              boxShadow: AppTheme.cardShadow,
-            ),
-            child: const Icon(
-              Icons.tune,
-              color: Colors.white,
-              size: 20,
             ),
           ),
         ],
