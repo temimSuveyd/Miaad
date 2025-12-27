@@ -3,7 +3,7 @@ import 'package:doctorbooking/features/navigation/navigation_page.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../../../../features/home/presentation/pages/home_page.dart';
-import '../../../../features/doctor_detail/presentation/pages/doctor_detail_page.dart';
+import '../../../../features/home/presentation/pages/doctor_detail_page.dart';
 
 /// Route configuration for the application
 class RouteConfigPage {

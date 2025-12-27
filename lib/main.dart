@@ -1,10 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'core/config/supabase_config.dart';
+import 'core/services/service_locator.dart';
 import 'core/routing/presentation/pages/route_config_page.dart';
 import 'core/routing/presentation/routes/app_routes.dart';
 import 'core/theme/app_theme.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await SupabaseConfig.initialize();
+  await initServiceLocator();
   runApp(const MyApp());
 }
 

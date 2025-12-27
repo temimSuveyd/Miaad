@@ -4,7 +4,7 @@ import 'package:doctorbooking/features/home/data/models/doctor_model.dart';
 import 'package:flutter/material.dart';
 import 'package:iconsax/iconsax.dart';
 import '../../../../core/theme/app_theme.dart';
-import '../widgets/doctor_card_widget.dart';
+import '../widgets/home/doctor_card_widget.dart';
 
 class RecommendationDoctorPage extends StatefulWidget {
   const RecommendationDoctorPage({super.key});

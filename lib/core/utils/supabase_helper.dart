@@ -1,9 +1,10 @@
 import 'package:supabase_flutter/supabase_flutter.dart';
+import '../config/supabase_config.dart';
 import '../error/exceptions.dart' hide AuthException;
 
 // مساعد Supabase - معالجة الأخطاء والعمليات الشائعة
 class SupabaseHelper {
-  static final SupabaseClient client = Supabase.instance.client;
+  static SupabaseClient get client => SupabaseConfig.client;
 
   // معالجة أخطاء Supabase
   static Exception handleError(Object error) {
