@@ -1,4 +1,4 @@
-import 'package:doctorbooking/features/home/presentation/cubit/appointment_cubit/appointments_cubit.dart';
+import 'package:doctorbooking/features/home/presentation/cubit/book_appointment_cubit/book_appointment_cubit.dart';
 import 'package:doctorbooking/features/home/presentation/cubit/my_appointments_cubit/my_appointments_cubit.dart';
 import 'package:get_it/get_it.dart';
 import '../../features/home/data/datasources/appointments_datasources.dart';

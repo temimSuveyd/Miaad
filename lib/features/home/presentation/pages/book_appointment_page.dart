@@ -1,7 +1,7 @@
 import 'package:doctorbooking/core/services/service_locator.dart';
 import 'package:doctorbooking/core/theme/app_theme.dart';
 import 'package:doctorbooking/core/widgets/custom_app_bar.dart';
-import 'package:doctorbooking/features/home/presentation/cubit/appointment_cubit/appointments_cubit.dart';
+import 'package:doctorbooking/features/home/presentation/cubit/book_appointment_cubit/book_appointment_cubit.dart';
 import 'package:doctorbooking/features/home/presentation/widgets/appointment/appointment_date_table.dart';
 import 'package:doctorbooking/features/home/presentation/widgets/appointment/doctor_booking_bottom_bar.dart';
 import 'package:doctorbooking/features/home/presentation/widgets/appointment/time_slot_grid.dart';
