@@ -5,16 +5,15 @@ import '../../../../../core/theme/app_theme.dart';
 // شريط الحجز السفلي
 class DoctorBookingBottomBar extends StatelessWidget {
   final VoidCallback onBookPressed;
-  final VoidCallback onMessagePressed;
   final bool canBook;
   final bool isLoading;
+  final String title;
 
   const DoctorBookingBottomBar({
     super.key,
     required this.onBookPressed,
-    required this.onMessagePressed,
     required this.canBook,
-    required this.isLoading,
+    required this.isLoading, required this.title,
   });
 
   @override
@@ -27,37 +26,11 @@ class DoctorBookingBottomBar extends StatelessWidget {
           BoxShadow(
             color: Colors.black.withValues(alpha: 0.05),
             blurRadius: 10,
-            offset: const Offset(0, -2),
+            offset: const Offset(0, -1),
           ),
         ],
       ),
-      child: SafeArea(
-        child: Row(
-          children: [
-            _buildMessageButton(),
-            const SizedBox(width: AppTheme.spacing12),
-            Expanded(child: _buildBookButton(context)),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildMessageButton() {
-    return Container(
-      padding: const EdgeInsets.all(AppTheme.spacing4),
-      decoration: BoxDecoration(
-        border: Border.all(color: AppTheme.primaryColor),
-        borderRadius: BorderRadius.circular(AppTheme.radiusMedium),
-      ),
-      child: IconButton(
-        onPressed: onMessagePressed,
-        icon: const Icon(
-          Iconsax.message,
-          color: AppTheme.primaryColor,
-          size: 24,
-        ),
-      ),
+      child: Row(children: [Expanded(child: _buildBookButton(context))]),
     );
   }
 
@@ -72,7 +45,7 @@ class DoctorBookingBottomBar extends StatelessWidget {
             alpha: 0.3,
           ),
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(AppTheme.radiusMedium),
+            borderRadius: BorderRadius.circular(AppTheme.radiusXLarge),
           ),
           elevation: 0,
         ),
@@ -86,7 +59,7 @@ class DoctorBookingBottomBar extends StatelessWidget {
                 ),
               )
             : Text(
-                'Book Now',
+                title,
                 style: Theme.of(context).textTheme.titleMedium!.copyWith(
                   color: Colors.white,
                   fontWeight: FontWeight.w600,

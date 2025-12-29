@@ -1,41 +1,27 @@
 import 'package:flutter/material.dart';
 import '../../../../../core/theme/app_theme.dart';
+import '../../../data/models/doctor_model.dart';
 
 class DoctorStatsWidget extends StatelessWidget {
-  final int experienceYears;
-  final int patientsCount;
-  final double reviewsCount;
+  final DoctorModel doctor;
 
-  const DoctorStatsWidget({
-    super.key,
-    required this.experienceYears,
-    required this.patientsCount,
-    required this.reviewsCount,
-  });
+  const DoctorStatsWidget({super.key, required this.doctor});
 
   @override
   Widget build(BuildContext context) {
     return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceAround,
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
         _buildStatItem(
-          value: '${experienceYears}years',
-          label: 'Experience',
-        ),
-        _buildDivider(),
-        _buildStatItem(
-          value: patientsCount.toString(),
-          label: 'Patients',
-        ),
-        _buildDivider(),
-        _buildStatItem(
-          value: reviewsCount >= 1000
-              ? '${(reviewsCount / 1000).toStringAsFixed(1)}k'
-              : reviewsCount.toStringAsFixed(1),
-          label: 'Reviews',
+          value: doctor.rating.toStringAsFixed(1),
+          label: 'التقييم',
           icon: Icons.star,
           iconColor: const Color(0xFFFFB800),
         ),
+        _buildDivider(),
+        _buildStatItem(value: '2.5k+', label: 'المرضى'),
+        _buildDivider(),
+        _buildStatItem(value: '10+ سنوات', label: 'الخبرة'),
       ],
     );
   }
@@ -68,20 +54,13 @@ class DoctorStatsWidget extends StatelessWidget {
         const SizedBox(height: AppTheme.spacing4),
         Text(
           label,
-          style: const TextStyle(
-            fontSize: 12,
-            color: AppTheme.textSecondary,
-          ),
+          style: const TextStyle(fontSize: 12, color: AppTheme.textSecondary),
         ),
       ],
     );
   }
 
   Widget _buildDivider() {
-    return Container(
-      height: 40,
-      width: 1,
-      color: AppTheme.dividerColor,
-    );
+    return Container(height: 40, width: 1, color: AppTheme.dividerColor);
   }
 }

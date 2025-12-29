@@ -51,7 +51,7 @@ class BookingConfirmationDialog extends StatelessWidget {
             onConfirm();
           },
           style: ElevatedButton.styleFrom(
-            backgroundColor: AppTheme.primaryColor,
+            backgroundColor: AppTheme.primaryColor2,
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(AppTheme.radiusMedium),
             ),

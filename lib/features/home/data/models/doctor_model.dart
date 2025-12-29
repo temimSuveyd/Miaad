@@ -1,6 +1,7 @@
-import 'package:flutter/material.dart';
+import 'package:equatable/equatable.dart';
 
-class DoctorModel {
+// نموذج الطبيب - يستخدم في طبقة Data والـ UI
+class DoctorModel extends Equatable {
   final int id;
   final String name;
   final String specialty;
@@ -8,6 +9,7 @@ class DoctorModel {
   final int reviews;
   final String price;
   final String imageUrl;
+
   const DoctorModel({
     required this.id,
     required this.name,
@@ -19,28 +21,17 @@ class DoctorModel {
   });
 
   @override
-  bool operator ==(Object other) {
-    if (identical(this, other)) return true;
-    return other is DoctorModel &&
-        other.id == id &&
-        other.name == name &&
-        other.specialty == specialty &&
-        other.rating == rating &&
-        other.reviews == reviews &&
-        other.price == price &&
-        other.imageUrl == imageUrl;
-  }
+  List<Object?> get props => [
+    id,
+    name,
+    specialty,
+    rating,
+    reviews,
+    price,
+    imageUrl,
+  ];
 
-  @override
-  int get hashCode =>
-      id.hashCode ^
-      name.hashCode ^
-      specialty.hashCode ^
-      rating.hashCode ^
-      reviews.hashCode ^
-      price.hashCode ^
-      imageUrl.hashCode;
-
+  // تحويل من JSON إلى DoctorModel
   factory DoctorModel.fromJson(Map<String, dynamic> json) {
     return DoctorModel(
       id: json['id'] as int,
@@ -53,6 +44,7 @@ class DoctorModel {
     );
   }
 
+  // تحويل من DoctorModel إلى JSON
   Map<String, dynamic> toJson() {
     return {
       'id': id,
@@ -65,18 +57,7 @@ class DoctorModel {
     };
   }
 
-  factory DoctorModel.fromDoctor(DoctorModel doctor) {
-    return DoctorModel(
-      id: doctor.id,
-      name: doctor.name,
-      specialty: doctor.specialty,
-      rating: doctor.rating,
-      reviews: doctor.reviews,
-      price: doctor.price,
-      imageUrl: doctor.imageUrl,
-    );
-  }
-
+  // نسخ الكائن مع تعديل بعض الخصائص
   DoctorModel copyWith({
     int? id,
     String? name,
@@ -85,7 +66,6 @@ class DoctorModel {
     int? reviews,
     String? price,
     String? imageUrl,
-    Color? backgroundColor,
   }) {
     return DoctorModel(
       id: id ?? this.id,

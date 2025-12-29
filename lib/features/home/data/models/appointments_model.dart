@@ -52,7 +52,7 @@ class AppointmentsModel extends Equatable {
   ];
 
   // Factory constructor from JSON
-  factory AppointmentsModel.fromJson(Map<String, dynamic> json) {
+  factory AppointmentsModel.fromJson(dynamic json) {
     return AppointmentsModel(
       id: json['id'] as String,
       userId: json['user_id'] as String,
@@ -100,9 +100,9 @@ class AppointmentsModel extends Equatable {
     String? notes,
     DateTime? createdAt,
     DateTime? updatedAt,
-    String ? doctorName ,
-    String ? userName ,
-    String ? hospitalName,
+    String? doctorName,
+    String? userName,
+    String? hospitalName,
   }) {
     return AppointmentsModel(
       id: id ?? this.id,
@@ -116,9 +116,9 @@ class AppointmentsModel extends Equatable {
       notes: notes ?? this.notes,
       createdAt: createdAt ?? this.createdAt,
       updatedAt: updatedAt ?? this.updatedAt,
-      doctorName: doctorName?? this.doctorName,
+      doctorName: doctorName ?? this.doctorName,
       hospitalName: hospitalName ?? this.hospitalName,
-      userName: userName?? this.userName,
+      userName: userName ?? this.userName,
     );
   }
 

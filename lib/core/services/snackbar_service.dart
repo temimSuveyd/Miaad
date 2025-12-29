@@ -102,7 +102,7 @@ class SnackbarService {
   static Color _getColorForType(ContentType contentType) {
     switch (contentType) {
       case ContentType.success:
-        return AppTheme.primaryColor;
+        return AppTheme.primaryColor2;
       case ContentType.failure:
         return const Color(0xFFF44336);
       case ContentType.warning:
@@ -110,7 +110,7 @@ class SnackbarService {
       case ContentType.help:
         return AppTheme.accentColor;
       default:
-        return AppTheme.primaryColor;
+        return AppTheme.primaryColor2;
     }
   }
 

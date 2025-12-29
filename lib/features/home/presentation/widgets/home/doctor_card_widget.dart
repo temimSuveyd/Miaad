@@ -14,7 +14,8 @@ class DoctorCardWidget extends StatelessWidget {
     this.isFavorite = false,
     this.onFavoriteTap,
     this.onTap,
-    required this.showFavorite, required this.doctorModel,
+    required this.showFavorite,
+    required this.doctorModel,
   });
 
   @override
@@ -25,7 +26,7 @@ class DoctorCardWidget extends StatelessWidget {
         onTap: onTap,
         child: Container(
           margin: const EdgeInsets.only(bottom: AppTheme.spacing12),
-          padding: const EdgeInsets.all(AppTheme.spacing12),
+          padding: const EdgeInsets.all(AppTheme.spacing8),
           decoration: BoxDecoration(
             color: Colors.white,
             borderRadius: BorderRadius.circular(AppTheme.radiusLarge),
@@ -43,7 +44,7 @@ class DoctorCardWidget extends StatelessWidget {
                 child: ClipRRect(
                   borderRadius: BorderRadius.circular(AppTheme.radiusMedium),
                   child: Image.network(
-                   doctorModel.imageUrl,
+                    doctorModel.imageUrl,
                     fit: BoxFit.cover,
                     errorBuilder: (context, error, stackTrace) {
                       return Container(
@@ -62,30 +63,35 @@ class DoctorCardWidget extends StatelessWidget {
                     Row(
                       children: [
                         Text(
-                         doctorModel. name,
-                          style: Theme.of(context).textTheme.bodyLarge
-                              ?.copyWith(fontWeight: FontWeight.w600),
+                          doctorModel.name,
+                          style: Theme.of(context).textTheme.titleSmall
+                              ?.copyWith(
+                                fontWeight: FontWeight.w600,
+                                color: AppTheme.textPrimary,
+                              ),
                         ),
-                        Spacer(),
-                        if (showFavorite)
-                          GestureDetector(
-                            onTap: onFavoriteTap,
-                            child: Icon(
-                              isFavorite
-                                  ? Icons.favorite
-                                  : Icons.favorite_border,
-                              color: isFavorite
-                                  ? AppTheme.primaryColor
-                                  : AppTheme.textSecondary,
-                              size: 20,
-                            ),
-                          ),
+                        // Spacer(),
+                        // if (showFavorite)
+                        //   GestureDetector(
+                        //     onTap: onFavoriteTap,
+                        //     child: Icon(
+                        //       isFavorite
+                        //           ? Icons.favorite
+                        //           : Icons.favorite_border,
+                        //       color: isFavorite
+                        //           ? AppTheme.primaryColor
+                        //           : AppTheme.textSecondary,
+                        //       size: 20,
+                        //     ),
+                        //   ),
                       ],
                     ),
                     const SizedBox(height: AppTheme.spacing4),
                     Text(
-                    doctorModel.  specialty,
-                      style: Theme.of(context).textTheme.bodyMedium,
+                      doctorModel.specialty,
+                      style: Theme.of(context).textTheme.bodySmall!.copyWith(
+                        color: AppTheme.textSecondary,
+                      ),
                     ),
                     const SizedBox(height: AppTheme.spacing8),
                     Row(
@@ -103,11 +109,12 @@ class DoctorCardWidget extends StatelessWidget {
                         ),
                         Spacer(),
                         Text(
-                         doctorModel.price,
-                          style: Theme.of(context).textTheme.bodySmall
+                          doctorModel.price,
+                          style: Theme.of(context).textTheme.labelSmall
                               ?.copyWith(
-                                color: AppTheme.primaryColor,
+                                color: AppTheme.primaryColor2,
                                 fontWeight: FontWeight.w600,
+                                fontSize: 10,
                               ),
                         ),
                       ],

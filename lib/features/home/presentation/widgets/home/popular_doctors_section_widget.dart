@@ -13,51 +13,55 @@ class PopularDoctorsSectionWidget extends StatelessWidget {
     final List<Map<String, dynamic>> _doctors = [
       {
         'id': 0,
-        'name': 'Dr. Randy Wigham',
-        'specialty': 'General | RSUD Gatot Subroto',
+        'name': 'د. راندي ويغهام',
+        'specialty': 'عام | مستشفى جاتوت سوبروتو',
         'rating': 4.8,
         'reviews': 4279,
-        'price': '\$25.00/hr',
+        'price': '25.00 ريال/س',
+
         'imageUrl': 'https://via.placeholder.com/150',
       },
       {
         'id': 0,
 
-        'name': 'Dr. Jack Suilivan',
-        'specialty': 'General | RSUD Gatot Subroto',
+        'name': 'د. جاك سوليفان',
+        'specialty': 'عام | مستشفى جاتوت سوبروتو',
         'rating': 4.8,
         'reviews': 4279,
-        'price': '\$22.00/hr',
+        'price': '25.00 ريال/س',
+
         'imageUrl': 'https://via.placeholder.com/150',
       },
       {
         'id': 0,
 
-        'name': 'Dr. Randy Wigham',
-        'specialty': 'General | RSUD Gatot Subroto',
+        'name': 'د. راندي ويغهام',
+        'specialty': 'عام | مستشفى جاتوت سوبروتو',
         'rating': 4.8,
         'reviews': 4279,
-        'price': '\$25.00/hr',
+        'price': '25.00 ريال/س',
+
         'imageUrl': 'https://via.placeholder.com/150',
       },
       {
         'id': 0,
 
-        'name': 'Dr. Randy Wigham',
-        'specialty': 'General | RSUD Gatot Subroto',
+        'name': 'د. راندي ويغهام',
+        'specialty': 'عام | مستشفى جاتوت سوبروتو',
         'rating': 4.8,
         'reviews': 4279,
-        'price': '\$28.00/hr',
+        'price': '25.00 ريال/س',
+
         'imageUrl': 'https://via.placeholder.com/150',
       },
       {
         'id': 0,
 
-        'name': 'Dr. Randy Wigham',
-        'specialty': 'General | RSUD Gatot Subroto',
+        'name': 'د. راندي ويغهام',
+        'specialty': 'عام | مستشفى جاتوت سوبروتو',
         'rating': 4.8,
         'reviews': 4279,
-        'price': '\$25.00/hr',
+        'price': '25.00 ريال/س',
         'imageUrl': 'https://via.placeholder.com/150',
       },
     ];
@@ -73,12 +77,12 @@ class PopularDoctorsSectionWidget extends StatelessWidget {
               children: [
                 Text(
                   'الأطباء المشهورون',
-                  style: Theme.of(context).textTheme.headlineMedium,
+                  style: Theme.of(context).textTheme.titleMedium,
                 ),
                 Text(
                   'عرض الكل',
-                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                    color: AppTheme.primaryColor,
+                  style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                    color: AppTheme.primaryColor2,
                     fontWeight: FontWeight.w500,
                   ),
                 ),

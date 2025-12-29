@@ -1,5 +1,3 @@
-import 'package:get/route_manager.dart';
-
 /// Application route names
 class AppRoutes {
   static const String navigationPage = '/navigationPage';
@@ -12,6 +10,8 @@ class AppRoutes {
   static const String home = '/home';
   static const String doctorDetail = '/doctor-detail';
   static const String appointment = '/appointment';
+  static const String bookApptintment = '/bookingApptintment';
+
   static const String myDoctors = '/my-doctors';
   static const String profile = '/profile';
 

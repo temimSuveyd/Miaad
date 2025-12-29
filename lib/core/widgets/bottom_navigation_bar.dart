@@ -28,35 +28,35 @@ class CustomBottomNavigationBar extends StatelessWidget {
       child: SafeArea(
         child: Padding(
           padding: const EdgeInsets.symmetric(
-            horizontal: AppTheme.spacing16,
+            horizontal: AppTheme.spacing32,
             vertical: AppTheme.spacing8,
           ),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            crossAxisAlignment: CrossAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               _buildNavItem(
                 icon: Iconsax.home,
+                selectedIcon: Iconsax.home_15,
                 index: 0,
                 isActive: currentIndex == 0,
               ),
               _buildNavItem(
+                selectedIcon: Iconsax.calendar5,
                 icon: Iconsax.calendar,
                 index: 1,
                 isActive: currentIndex == 1,
               ),
+
               _buildNavItem(
-                icon: Iconsax.message,
-                index: 2,
-                isActive: currentIndex == 2,
-              ),
-              _buildNavItem(
-                icon: Iconsax.save_2,
+                icon: Icons.favorite_border_rounded,
+                selectedIcon: Icons.favorite,
                 index: 3,
                 isActive: currentIndex == 3,
               ),
               _buildNavItem(
-                icon: Iconsax.profile_2user,
+                icon: Iconsax.profile_circle,
+                selectedIcon: Iconsax.profile_circle5,
                 index: 4,
                 isActive: currentIndex == 4,
               ),
@@ -69,44 +69,35 @@ class CustomBottomNavigationBar extends StatelessWidget {
 
   Widget _buildNavItem({
     required IconData icon,
+    required IconData selectedIcon,
     required int index,
     required bool isActive,
   }) {
     return GestureDetector(
       onTap: () => onTap(index),
       child: AnimatedContainer(
-        duration: const Duration(milliseconds: 300),
+        alignment: Alignment.topCenter,
+        duration: const Duration(milliseconds: 200),
         curve: Curves.easeInOut,
         height: 50,
+        width: 50,
+        padding: EdgeInsets.only(top: 10),
         decoration: BoxDecoration(
-          border: Border(
-            top: BorderSide(
-              color: isActive
-                  ? AppTheme.primaryColor
-                  : AppTheme.backgroundColor,
-              width: 2,
-            ),
-          ),
+          color: isActive ? AppTheme.dividerColor : Colors.transparent,
+          shape: BoxShape.circle,
         ),
-        child: AnimatedScale(
-          scale: isActive ? 1.1 : 1.0,
-          duration: const Duration(milliseconds: 300),
-          curve: Curves.easeInOut,
-          child: TweenAnimationBuilder<Color?>(
-            tween: ColorTween(
-              begin: AppTheme.textSecondary,
-              end: isActive ? AppTheme.primaryColor : AppTheme.textSecondary,
-            ),
-            duration: const Duration(milliseconds: 300),
-            curve: Curves.easeInOut,
-            builder: (context, color, child) {
-              return Icon(
-                icon,
-                color: color,
-                size: 26,
-              );
-            },
+        child: TweenAnimationBuilder<Color?>(
+          tween: ColorTween(
+            begin: AppTheme.textSecondary,
+            end: isActive
+                ? AppTheme.textPrimary
+                : AppTheme.textSecondary.withOpacity(0.8),
           ),
+          duration: const Duration(milliseconds: 100),
+          curve: Curves.easeInOut,
+          builder: (context, color, child) {
+            return Icon(isActive ? selectedIcon : icon, color: color, size: 24);
+          },
         ),
       ),
     );

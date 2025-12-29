@@ -1,9 +1,8 @@
-import 'dart:developer';
-
 import 'package:dartz/dartz.dart';
 import '../../../../core/error/exceptions.dart';
 import '../../../../core/error/failures.dart';
 import '../datasources/appointments_datasources.dart';
+
 import '../models/appointments_model.dart';
 
 // مستودع المواعيد - إدارة العمليات مع معالجة الأخطاء
@@ -18,9 +17,9 @@ class AppointmentsRepository {
   ) async {
     try {
       final result = await datasource.createAppointment(appointment);
+
       return Right(result);
     } on DatabaseException catch (e) {
-      log(e.message);
       return Left(DatabaseFailure(e.message));
     } on NetworkException catch (e) {
       return Left(NetworkFailure(e.message));
@@ -64,6 +63,31 @@ class AppointmentsRepository {
       return Left(ServerFailure(e.message));
     } catch (e) {
       return Left(ServerFailure('خطأ غير متوقع: $e'));
+    }
+  }
+
+  // الحصول على مواعيد المستخدم بشكل real-time
+  Stream<Either<Failure, List<AppointmentsModel>>> getUserAppointmentsStream(
+    String userId,
+  ) {
+    try {
+      return datasource
+          .getUserAppointmentsStream(userId)
+          .map(
+            (appointments) =>
+                Right<Failure, List<AppointmentsModel>>(appointments),
+          )
+          .handleError((error) {
+            return Left<Failure, List<AppointmentsModel>>(
+              ServerFailure('خطأ في الاتصال: $error'),
+            );
+          });
+    } catch (e) {
+      return Stream.value(
+        Left<Failure, List<AppointmentsModel>>(
+          ServerFailure('خطأ في الاتصال: $e'),
+        ),
+      );
     }
   }
 

@@ -1,8 +1,9 @@
+import 'package:doctorbooking/features/home/presentation/cubit/appointment_cubit/appointments_cubit.dart';
+import 'package:doctorbooking/features/home/presentation/cubit/appointment_cubit/appointments_state.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../../../core/services/snackbar_service.dart';
-import '../../cubit/appointment_cubit/appointments_cubit.dart';
-import '../../cubit/appointment_cubit/appointments_state.dart';
+
 
 // مستمع حالة المواعيد
 class AppointmentsStateListener extends StatelessWidget {
@@ -17,7 +18,7 @@ class AppointmentsStateListener extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocListener<AppointmentsCubit, AppointmentsState>(
+    return BlocListener<BookAppointmentCubit, AppointmentsState>(
       listener: (context, state) {
         _handleState(context, state);
       },

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:iconsax/iconsax.dart';
 import '../../../../../core/theme/app_theme.dart';
 
 class SearchBarWidget extends StatelessWidget {
@@ -7,47 +8,34 @@ class SearchBarWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: AppTheme.spacing20),
-      child: Row(
-        children: [
-          Expanded(
-            child: Container(
-              padding: const EdgeInsets.symmetric(
-                horizontal: AppTheme.spacing16,
-                vertical: AppTheme.spacing8,
-              ),
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(AppTheme.radiusXLarge),
-              ),
-              child: Row(
-                children: [
-                  const Icon(
-                    Icons.search,
-                    color: AppTheme.textSecondary,
-                    size: 20,
-                  ),
-                  const SizedBox(width: AppTheme.spacing8),
-                  Text('Search', style: Theme.of(context).textTheme.bodyMedium),
-                  Spacer(),
-                  Container(
-                    padding: const EdgeInsets.all(AppTheme.spacing8),
-                    decoration: BoxDecoration(
-                      color: AppTheme.primaryColor,
-                      shape: BoxShape.circle,
-                      boxShadow: AppTheme.cardShadow,
-                    ),
-                    child: const Icon(
-                      Icons.tune,
-                      color: Colors.white,
-                      size: 20,
-                    ),
-                  ),
-                ],
+      padding: const EdgeInsets.symmetric(horizontal: AppTheme.spacing16),
+      child: Container(
+        padding: const EdgeInsets.symmetric(
+          horizontal: AppTheme.spacing16,
+          vertical: AppTheme.spacing12,
+        ),
+        decoration: BoxDecoration(
+          color: const Color(0xFFF0F0F0),
+          borderRadius: BorderRadius.circular(AppTheme.radiusSmall),
+        ),
+        child: Row(
+          children: [
+            Icon(
+              Iconsax.search_normal,
+              color: AppTheme.textSecondary,
+              size: 20,
+            ),
+            const SizedBox(width: AppTheme.spacing12),
+            Expanded(
+              child: Text(
+                'ابحث عن طبيب...',
+                style: AppTheme.bodyMedium.copyWith(
+                  color: AppTheme.textSecondary,
+                ),
               ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

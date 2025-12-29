@@ -1,5 +1,5 @@
+import 'package:doctorbooking/features/home/data/models/appointments_model.dart';
 import 'package:equatable/equatable.dart';
-import '../../../data/models/appointments_model.dart';
 
 // حالات الصفحة الرئيسية
 abstract class HomeState extends Equatable {

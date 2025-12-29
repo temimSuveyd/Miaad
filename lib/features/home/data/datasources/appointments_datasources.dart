@@ -1,3 +1,6 @@
+import 'dart:async';
+import 'dart:developer';
+
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../../../core/utils/supabase_helper.dart';
 import '../models/appointments_model.dart';
@@ -37,10 +40,11 @@ abstract class AppointmentsDatasource {
   );
 }
 
-// تطبيق مصدر البيانات
 class AppointmentsDatasourceImpl implements AppointmentsDatasource {
   final SupabaseClient client = SupabaseHelper.client;
+
   static const String tableName = 'appointments';
+  static const String viewTable = 'appointment_view';
 
   @override
   Future<AppointmentsModel> createAppointment(
@@ -52,7 +56,6 @@ class AppointmentsDatasourceImpl implements AppointmentsDatasource {
           .insert(appointment.toJson())
           .select()
           .single();
-
       return AppointmentsModel.fromJson(response);
     });
   }
@@ -61,7 +64,7 @@ class AppointmentsDatasourceImpl implements AppointmentsDatasource {
   Future<AppointmentsModel> getAppointmentById(String id) async {
     return await SupabaseHelper.executeQuery(() async {
       final response = await client
-          .from(tableName)
+          .from(viewTable)
           .select()
           .eq('id', id)
           .single();
@@ -74,7 +77,7 @@ class AppointmentsDatasourceImpl implements AppointmentsDatasource {
   Future<List<AppointmentsModel>> getUserAppointments(String userId) async {
     return await SupabaseHelper.executeQuery(() async {
       final response = await client
-          .from(tableName)
+          .from(viewTable)
           .select()
           .eq('user_id', userId)
           .order('date', ascending: true);
@@ -87,14 +90,78 @@ class AppointmentsDatasourceImpl implements AppointmentsDatasource {
 
   @override
   Stream<List<AppointmentsModel>> getUserAppointmentsStream(String userId) {
-    return client
-        .from(tableName)
-        .stream(primaryKey: ['id'])
-        .eq('user_id', userId)
-        .order('date', ascending: true)
-        .map((data) {
-          return data.map((json) => AppointmentsModel.fromJson(json)).toList();
+    // Broadcast controller kullan - birden fazla listener için
+    final controller = StreamController<List<AppointmentsModel>>.broadcast();
+
+    log('🔵 Setting up real-time stream for user: $userId');
+
+    // İlk veriyi yükle
+    _loadInitialData(userId, controller);
+
+    // Real-time dinle - VIEW değil TABLE'ı dinlemeliyiz
+    final channel = client
+        .channel('appointments_$userId')
+        .onPostgresChanges(
+          event: PostgresChangeEvent.all,
+          schema: 'public',
+          table: tableName, // VIEW değil TABLE
+          filter: PostgresChangeFilter(
+            type: PostgresChangeFilterType.eq,
+            column: 'user_id',
+            value: userId,
+          ),
+          callback: (payload) {
+            log(
+              '🟢 Real-time event received: ${payload.eventType} for record: ${payload.newRecord?['id']}',
+            );
+            log('🔄 Reloading appointments from view...');
+            _loadInitialData(userId, controller);
+          },
+        )
+        .subscribe((status, error) {
+          log('📡 Channel subscription status: $status');
+          if (error != null) {
+            log('❌ Channel subscription error: $error');
+          }
         });
+
+    // Cleanup
+    controller.onCancel = () {
+      log('🔴 Cancelling stream subscription');
+      client.removeChannel(channel);
+    };
+
+    return controller.stream;
+  }
+
+  Future<void> _loadInitialData(
+    String userId,
+    StreamController<List<AppointmentsModel>> controller,
+  ) async {
+    try {
+      log('Loading appointments from view for user: $userId');
+
+      final data = await client
+          .from(viewTable)
+          .select()
+          .eq('user_id', userId)
+          .order('date', ascending: true);
+
+      final appointments = (data as List)
+          .map((json) => AppointmentsModel.fromJson(json))
+          .toList();
+
+      log('Loaded ${appointments.length} appointments');
+
+      if (!controller.isClosed) {
+        controller.add(appointments);
+      }
+    } catch (e) {
+      log('Error loading appointments: $e');
+      if (!controller.isClosed) {
+        controller.addError(e);
+      }
+    }
   }
 
   @override
@@ -140,17 +207,28 @@ class AppointmentsDatasourceImpl implements AppointmentsDatasource {
     String cancelledBy,
   ) async {
     return await SupabaseHelper.executeQuery(() async {
-      final response = await client
+      log('Cancelling appointment: $id');
+
+      // appointments tablosunu güncelle
+      await client
           .from(tableName)
           .update({
             'status': 'cancelled',
             'cancelled_by': cancelledBy,
             'updated_at': DateTime.now().toIso8601String(),
           })
-          .eq('id', id)
+          .eq('id', id);
+
+      log('Appointment cancelled in database, fetching updated data from view');
+
+      // Güncellenmiş veriyi view'dan çek
+      final response = await client
+          .from(viewTable)
           .select()
+          .eq('id', id) // ✅ Doğru kolon adı
           .single();
 
+      log('Updated appointment fetched: ${response['status']}');
       return AppointmentsModel.fromJson(response);
     });
   }

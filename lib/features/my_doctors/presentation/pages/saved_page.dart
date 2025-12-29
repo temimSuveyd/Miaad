@@ -12,7 +12,7 @@ class SavedPage extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(Icons.bookmark, size: 80, color: AppTheme.primaryColor),
+            Icon(Icons.bookmark, size: 80, color: AppTheme.primaryColor2),
             const SizedBox(height: 16),
             Text('Saved', style: Theme.of(context).textTheme.headlineMedium),
           ],
