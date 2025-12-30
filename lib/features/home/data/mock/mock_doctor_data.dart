@@ -16,7 +16,7 @@ class MockDoctorData {
 
   // نموذج الطبيب
   static const DoctorModel doctor = DoctorModel(
-    id: 1,
+    id: doctorId,
     name: 'Dr. Randy Wigham',
     specialty: 'General Practitioner',
     rating: 4.8,

@@ -2,7 +2,7 @@ import 'package:equatable/equatable.dart';
 
 // نموذج الطبيب - يستخدم في طبقة Data والـ UI
 class DoctorModel extends Equatable {
-  final int id;
+  final String id;
   final String name;
   final String specialty;
   final double rating;
@@ -34,7 +34,7 @@ class DoctorModel extends Equatable {
   // تحويل من JSON إلى DoctorModel
   factory DoctorModel.fromJson(Map<String, dynamic> json) {
     return DoctorModel(
-      id: json['id'] as int,
+      id: json['id'] as String,
       name: json['name'] as String,
       specialty: json['specialty'] as String,
       rating: (json['rating'] as num).toDouble(),
@@ -59,7 +59,7 @@ class DoctorModel extends Equatable {
 
   // نسخ الكائن مع تعديل بعض الخصائص
   DoctorModel copyWith({
-    int? id,
+    String? id,
     String? name,
     String? specialty,
     double? rating,

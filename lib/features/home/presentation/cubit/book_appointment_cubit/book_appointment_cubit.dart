@@ -1,6 +1,9 @@
-import 'package:doctorbooking/features/home/data/mock/mock_appointments_data.dart';
+import 'package:doctorbooking/core/routing/presentation/routes/app_routes.dart';
+import 'package:doctorbooking/core/services/snackbar_service.dart';
 import 'package:doctorbooking/features/home/data/mock/mock_doctor_data.dart';
+import 'package:doctorbooking/features/home/data/models/doctor_model.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:get/get.dart';
 import '../../../data/models/appointments_model.dart';
 import '../../../data/repositories/appointments_repositories.dart';
 import 'book_appointment_state.dart';
@@ -9,12 +12,17 @@ import 'book_appointment_state.dart';
 class BookAppointmentCubit extends Cubit<BookAppointmentState> {
   final AppointmentsRepository repository;
   final String userId = MockDoctorData.userId;
+  late DoctorModel doctorModel;
 
   DateTime? _selectedDate;
   String? _selectedTime;
 
   BookAppointmentCubit({required this.repository})
-    : super(AppointmentsInitial());
+    : super(BookAppointmentInitial());
+
+  void initData() {
+    doctorModel = Get.arguments['doctor_model'];
+  }
 
   // تحديد التاريخ والوقت
   void selectDateTime({DateTime? date, String? time}) {
@@ -32,19 +40,19 @@ class BookAppointmentCubit extends Cubit<BookAppointmentState> {
   // إنشاء موعد جديد
   Future<void> createAppointment({required String doctorId}) async {
     if (_selectedDate == null || _selectedTime == null) {
-      emit(const AppointmentsError('الرجاء تحديد التاريخ والوقت'));
+      emit(const BookAppointmentError('الرجاء تحديد التاريخ والوقت'));
       return;
     }
 
-    emit(AppointmentsLoading());
+    emit(BookAppointmentLoading());
 
-    // إنشاء موعد مع بيانات مؤقتة
+    // // إنشاء موعد مع بيانات مؤقتة
     final appointment = AppointmentsModel(
-      doctorName: 'Rimes Suveyd',
+      doctorName: doctorModel.name,
       hospitalName: 'El Razi Hastanesi',
       userName: 'Temim Suved',
       userId: userId,
-      doctorId: doctorId,
+      doctorId: doctorModel.id.toString(),
       date: _selectedDate!,
       time: _selectedTime!,
       status: AppointmentStatus.upcoming,
@@ -53,13 +61,18 @@ class BookAppointmentCubit extends Cubit<BookAppointmentState> {
       updatedAt: DateTime.now(),
     );
     final result = await repository.createAppointment(appointment);
-    result.fold((failure) => emit(AppointmentsError(failure.message)), (
+    result.fold((failure) => emit(BookAppointmentError(failure.message)), (
       createdAppointment,
     ) {
       emit(AppointmentCreated(createdAppointment));
       // إعادة تعيين التاريخ والوقت
       _selectedDate = null;
       _selectedTime = null;
+      SnackbarService.showSuccess(
+        title: 'Success',
+        message: 'Randevü başarıyla olüştürüldü',
+      );
+      Get.toNamed(AppRoutes.home);
     });
   }
 

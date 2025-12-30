@@ -1,5 +1,5 @@
+import 'package:doctorbooking/features/home/data/models/appointments_model.dart';
 import 'package:equatable/equatable.dart';
-import '../../../data/models/appointments_model.dart';
 
 // حالات المواعيد
 abstract class BookAppointmentState extends Equatable {
@@ -10,10 +10,10 @@ abstract class BookAppointmentState extends Equatable {
 }
 
 // الحالة الأولية
-class AppointmentsInitial extends BookAppointmentState {}
+class BookAppointmentInitial extends BookAppointmentState {}
 
 // جاري التحميل
-class AppointmentsLoading extends BookAppointmentState {}
+class BookAppointmentLoading extends BookAppointmentState {}
 
 // نجح إنشاء الموعد
 class AppointmentCreated extends BookAppointmentState {
@@ -26,10 +26,10 @@ class AppointmentCreated extends BookAppointmentState {
 }
 
 // فشل العملية
-class AppointmentsError extends BookAppointmentState {
+class BookAppointmentError extends BookAppointmentState {
   final String message;
 
-  const AppointmentsError(this.message);
+  const BookAppointmentError(this.message);
 
   @override
   List<Object?> get props => [message];

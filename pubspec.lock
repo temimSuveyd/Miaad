@@ -698,6 +698,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.4.0"
+  uni_size:
+    dependency: "direct main"
+    description:
+      name: uni_size
+      sha256: "16bf9dce6769c7f2b855f2a027925e60e74c82faa2c858bcbb8624344cbae504"
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.1.7"
   url_launcher:
     dependency: transitive
     description:

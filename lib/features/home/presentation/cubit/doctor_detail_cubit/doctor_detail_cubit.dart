@@ -20,7 +20,7 @@ class DoctorDetailCubit extends Cubit<DoctorDetailState> {
 
   void goToBookAppointmentPage({required DoctorModel doctorModel}) {
     Get.toNamed(
-      AppRoutes.appointment,
+      AppRoutes.bookApptintment,
       arguments: {'doctor_model': doctorModel},
     );
   }

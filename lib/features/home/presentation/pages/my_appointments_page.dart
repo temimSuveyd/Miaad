@@ -31,7 +31,6 @@ class MyAppointmentsPage extends StatelessWidget {
                 // عرض رسالة عند نجاح الإلغاء
                 if (state is MyAppointmentCancelled) {
                   SnackbarService.showSuccess(
-                    context: context,
                     title: 'نجح',
                     message: 'تم إلغاء الموعد بنجاح',
                   );

@@ -2,6 +2,20 @@ import '../../data/models/appointments_model.dart';
 
 // بيانات مؤقتة للمواعيد
 class MockAppointmentsData {
+  // أوقات العمل المتاحة للحجز
+  static final List<String> availableTimeSlots = [
+    '08:00',
+    '09:00',
+    '10:00',
+    '11:00',
+    '12:00',
+    '01:00',
+    '02:00',
+    '03:00',
+    '04:00',
+    '05:00',
+  ];
+
   // مواعيد قادمة
   static final List<AppointmentsModel> upcomingAppointments = [
     AppointmentsModel(

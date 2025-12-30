@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:awesome_snackbar_content/awesome_snackbar_content.dart';
+import 'package:get/get.dart';
 import '../theme/app_theme.dart';
 
 enum MessageType { success, failure, warning, help }
@@ -102,27 +103,26 @@ class SnackbarService {
   static Color _getColorForType(ContentType contentType) {
     switch (contentType) {
       case ContentType.success:
-        return AppTheme.primaryColor2;
+        return AppTheme.primaryColor;
       case ContentType.failure:
-        return const Color(0xFFF44336);
+        return AppTheme.errorColor;
       case ContentType.warning:
         return const Color(0xFFFF9800);
       case ContentType.help:
         return AppTheme.accentColor;
       default:
-        return AppTheme.primaryColor2;
+        return AppTheme.primaryColor;
     }
   }
 
   // Convenience methods for common message types
   static void showSuccess({
-    required BuildContext context,
     required String title,
     required String message,
     bool useMaterialBanner = false,
   }) {
     showMessage(
-      context: context,
+      context: Get.context!,
       title: title,
       message: message,
       messageType: MessageType.success,

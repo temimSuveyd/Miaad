@@ -53,6 +53,7 @@ class _DoctorDetailPageContent extends StatelessWidget {
         }
 
         if (state is DoctorDetailLoaded) {
+          final cubit = context.read<DoctorDetailCubit>();
           return Scaffold(
             backgroundColor: AppTheme.backgroundColor,
             appBar: CustomAppBar(title: state.doctor.name, showleading: true),
@@ -60,10 +61,8 @@ class _DoctorDetailPageContent extends StatelessWidget {
             bottomNavigationBar: DoctorBookingBottomBar(
               canBook: true,
               isLoading: false,
-              onBookPressed: () => Get.toNamed(
-                AppRoutes.bookApptintment,
-                arguments: state.doctor,
-              ),
+              onBookPressed: () =>
+                  cubit.goToBookAppointmentPage(doctorModel: state.doctor),
               title: 'حجز موعد',
             ),
           );

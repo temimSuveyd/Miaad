@@ -20,17 +20,26 @@ class AppointmentDateTable extends StatelessWidget {
             final BookAppointmentCubit cubit = context
                 .read<BookAppointmentCubit>();
 
+            // الحصول على التاريخ المحدد من الحالة
+            DateTime? selectedDay;
+            DateTime focusedDay = DateTime.now();
+
+            if (state is AppointmentDateTimeSelected &&
+                state.selectedDate != null) {
+              selectedDay = state.selectedDate;
+              focusedDay = state.selectedDate!;
+            }
+
             return Container(
               decoration: BoxDecoration(
                 boxShadow: [
                   BoxShadow(
                     offset: Offset(0, 0),
-                    color: AppTheme.textSecondary.withOpacity(0.2),
+                    color: AppTheme.textSecondary.withValues(alpha: 0.2),
                     blurRadius: 20,
                     spreadRadius: -4,
                   ),
                 ],
-                // border: Border.all(color: AppTheme.primaryColor),
                 borderRadius: BorderRadius.circular(AppTheme.radiusMedium),
               ),
               child: Container(
@@ -40,14 +49,56 @@ class AppointmentDateTable extends StatelessWidget {
                   color: AppTheme.cardBackground,
                 ),
                 child: TableCalendar(
-                  headerVisible: true,
+                  // locale: 'ar',
+                  firstDay: DateTime.now(),
+                  lastDay: DateTime.now().add(Duration(days: 90)),
+                  focusedDay: focusedDay,
+                  selectedDayPredicate: (day) {
+                    return isSameDay(selectedDay, day);
+                  },
+                  onDaySelected: (selectedDay, focusedDay) {
+                    // تحديث التاريخ في الـ Cubit فقط
+                    cubit.selectDateTime(date: selectedDay);
+                  },
+                  calendarFormat: CalendarFormat.month,
+                  startingDayOfWeek: StartingDayOfWeek.saturday,
                   rowHeight: 35,
                   daysOfWeekHeight: 40,
-                  focusedDay: DateTime(2025, 2, 10),
-                  firstDay: DateTime(2025, 10, 10),
-                  lastDay: DateTime(2025, 10, 20),
-                  onDaySelected: (selectedDay, focusedDay) {
-                    cubit.selectDateTime();
+                  headerStyle: HeaderStyle(
+                    formatButtonVisible: false,
+                    titleCentered: true,
+                    titleTextStyle: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w600,
+                      color: AppTheme.textPrimary,
+                    ),
+                  ),
+                  calendarStyle: CalendarStyle(
+                    todayDecoration: BoxDecoration(
+                      color: AppTheme.primaryColor.withValues(alpha: 0.3),
+                      shape: BoxShape.circle,
+                    ),
+                    selectedDecoration: BoxDecoration(
+                      color: AppTheme.primaryColor,
+                      shape: BoxShape.circle,
+                    ),
+                    selectedTextStyle: TextStyle(
+                      color: Colors.white,
+                      fontWeight: FontWeight.bold,
+                    ),
+                    todayTextStyle: TextStyle(
+                      color: AppTheme.primaryColor,
+                      fontWeight: FontWeight.bold,
+                    ),
+                    defaultTextStyle: TextStyle(color: AppTheme.textPrimary),
+                    weekendTextStyle: TextStyle(color: AppTheme.textPrimary),
+                    outsideTextStyle: TextStyle(color: AppTheme.textSecondary),
+                  ),
+                  enabledDayPredicate: (day) {
+                    // تعطيل الأيام السابقة
+                    return day.isAfter(
+                      DateTime.now().subtract(Duration(days: 1)),
+                    );
                   },
                 ),
               ),

@@ -8,12 +8,15 @@ class DoctorBookingBottomBar extends StatelessWidget {
   final bool canBook;
   final bool isLoading;
   final String title;
+  final Color? color;
 
   const DoctorBookingBottomBar({
     super.key,
     required this.onBookPressed,
     required this.canBook,
-    required this.isLoading, required this.title,
+    required this.isLoading,
+    required this.title,
+    this.color,
   });
 
   @override
@@ -40,7 +43,7 @@ class DoctorBookingBottomBar extends StatelessWidget {
       child: ElevatedButton(
         onPressed: canBook && !isLoading ? onBookPressed : null,
         style: ElevatedButton.styleFrom(
-          backgroundColor: AppTheme.primaryColor,
+          backgroundColor: color ?? AppTheme.primaryColor,
           disabledBackgroundColor: AppTheme.textSecondary.withValues(
             alpha: 0.3,
           ),
