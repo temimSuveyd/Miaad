@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:iconsax/iconsax.dart';
+import 'package:uni_size/uni_size.dart';
 import '../theme/app_theme.dart';
 
 class CustomBottomNavigationBar extends StatelessWidget {
@@ -19,17 +20,17 @@ class CustomBottomNavigationBar extends StatelessWidget {
         color: Colors.white,
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.05),
-            blurRadius: 10,
-            offset: const Offset(0, -2),
+            color: Colors.black.withValues(alpha: 0.05),
+            blurRadius: 10.dp,
+            offset: Offset(0, -2.dp),
           ),
         ],
       ),
       child: SafeArea(
         child: Padding(
-          padding: const EdgeInsets.symmetric(
-            horizontal: AppTheme.spacing32,
-            vertical: AppTheme.spacing8,
+          padding: EdgeInsets.symmetric(
+            horizontal: AppTheme.spacing32.dp,
+            vertical: AppTheme.spacing8.dp,
           ),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -79,9 +80,9 @@ class CustomBottomNavigationBar extends StatelessWidget {
         alignment: Alignment.topCenter,
         duration: const Duration(milliseconds: 200),
         curve: Curves.easeInOut,
-        height: 50,
-        width: 50,
-        padding: EdgeInsets.only(top: 10),
+        height: 50.dp,
+        width: 50.dp,
+        padding: EdgeInsets.only(top: 10.dp),
         decoration: BoxDecoration(
           color: isActive ? AppTheme.dividerColor : Colors.transparent,
           shape: BoxShape.circle,
@@ -91,12 +92,16 @@ class CustomBottomNavigationBar extends StatelessWidget {
             begin: AppTheme.textSecondary,
             end: isActive
                 ? AppTheme.textPrimary
-                : AppTheme.textSecondary.withOpacity(0.8),
+                : AppTheme.textSecondary.withValues(alpha: 0.8),
           ),
           duration: const Duration(milliseconds: 100),
           curve: Curves.easeInOut,
           builder: (context, color, child) {
-            return Icon(isActive ? selectedIcon : icon, color: color, size: 24);
+            return Icon(
+              isActive ? selectedIcon : icon,
+              color: color,
+              size: 24.dp,
+            );
           },
         ),
       ),

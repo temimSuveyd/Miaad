@@ -1,5 +1,6 @@
 import 'package:doctorbooking/features/home/data/models/doctor_model.dart';
 import 'package:flutter/material.dart';
+import 'package:uni_size/uni_size.dart';
 import '../../../../../core/theme/app_theme.dart';
 
 class DoctorCardWidget extends StatelessWidget {
@@ -25,37 +26,37 @@ class DoctorCardWidget extends StatelessWidget {
       child: GestureDetector(
         onTap: onTap,
         child: Container(
-          margin: const EdgeInsets.only(bottom: AppTheme.spacing12),
-          padding: const EdgeInsets.all(AppTheme.spacing8),
+          margin: EdgeInsets.only(bottom: AppTheme.spacing12.dp),
+          padding: EdgeInsets.all(AppTheme.spacing8.dp),
           decoration: BoxDecoration(
             color: Colors.white,
-            borderRadius: BorderRadius.circular(AppTheme.radiusLarge),
+            borderRadius: BorderRadius.circular(AppTheme.radiusLarge.dp),
             boxShadow: AppTheme.cardShadow,
           ),
           child: Row(
             children: [
               Container(
-                width: 80,
-                height: 80,
+                width: 80.dp,
+                height: 80.dp,
                 decoration: BoxDecoration(
                   color: AppTheme.dividerColor,
-                  borderRadius: BorderRadius.circular(AppTheme.radiusMedium),
+                  borderRadius: BorderRadius.circular(AppTheme.radiusMedium.dp),
                 ),
                 child: ClipRRect(
-                  borderRadius: BorderRadius.circular(AppTheme.radiusMedium),
+                  borderRadius: BorderRadius.circular(AppTheme.radiusMedium.dp),
                   child: Image.network(
                     doctorModel.imageUrl,
                     fit: BoxFit.cover,
                     errorBuilder: (context, error, stackTrace) {
                       return Container(
                         color: AppTheme.dividerColor,
-                        child: const Icon(Icons.person, size: 40),
+                        child: Icon(Icons.person, size: 40.dp),
                       );
                     },
                   ),
                 ),
               ),
-              const SizedBox(width: AppTheme.spacing12),
+              SizedBox(width: AppTheme.spacing12.dp),
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -70,38 +71,20 @@ class DoctorCardWidget extends StatelessWidget {
                                 color: AppTheme.textPrimary,
                               ),
                         ),
-                        // Spacer(),
-                        // if (showFavorite)
-                        //   GestureDetector(
-                        //     onTap: onFavoriteTap,
-                        //     child: Icon(
-                        //       isFavorite
-                        //           ? Icons.favorite
-                        //           : Icons.favorite_border,
-                        //       color: isFavorite
-                        //           ? AppTheme.primaryColor
-                        //           : AppTheme.textSecondary,
-                        //       size: 20,
-                        //     ),
-                        //   ),
                       ],
                     ),
-                    const SizedBox(height: AppTheme.spacing4),
+                    SizedBox(height: AppTheme.spacing4.dp),
                     Text(
                       doctorModel.specialty,
                       style: Theme.of(context).textTheme.bodySmall!.copyWith(
                         color: AppTheme.textSecondary,
                       ),
                     ),
-                    const SizedBox(height: AppTheme.spacing8),
+                    SizedBox(height: AppTheme.spacing8.dp),
                     Row(
                       children: [
-                        const Icon(
-                          Icons.star,
-                          color: Color(0xFFFFB800),
-                          size: 16,
-                        ),
-                        const SizedBox(width: AppTheme.spacing4),
+                        Icon(Icons.star, color: Color(0xFFFFB800), size: 16.dp),
+                        SizedBox(width: AppTheme.spacing4.dp),
                         Text(
                           '${doctorModel.rating}',
                           style: Theme.of(context).textTheme.labelSmall
@@ -112,9 +95,9 @@ class DoctorCardWidget extends StatelessWidget {
                           doctorModel.price,
                           style: Theme.of(context).textTheme.labelSmall
                               ?.copyWith(
-                                color: AppTheme.primaryColor2,
+                                color: AppTheme.primaryColor,
                                 fontWeight: FontWeight.w600,
-                                fontSize: 10,
+                                fontSize: 10.sp,
                               ),
                         ),
                       ],

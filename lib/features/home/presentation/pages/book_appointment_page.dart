@@ -1,11 +1,13 @@
 import 'package:doctorbooking/core/services/service_locator.dart';
 import 'package:doctorbooking/core/theme/app_theme.dart';
+import 'package:doctorbooking/core/utils/date_formatter.dart';
 import 'package:doctorbooking/core/widgets/custom_app_bar.dart';
 import 'package:doctorbooking/features/home/presentation/cubit/book_appointment_cubit/book_appointment_cubit.dart';
 import 'package:doctorbooking/features/home/presentation/cubit/book_appointment_cubit/book_appointment_state.dart';
 import 'package:doctorbooking/features/home/presentation/widgets/appointment/appointment_date_table.dart';
 import 'package:doctorbooking/features/home/presentation/widgets/appointment/doctor_booking_bottom_bar.dart';
 import 'package:doctorbooking/features/home/presentation/widgets/appointment/time_slot_grid.dart';
+import 'package:doctorbooking/features/home/presentation/widgets/dialogs/appointment_confirmation_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -60,15 +62,29 @@ class BookAppointmentPage extends StatelessWidget {
                     canBook: true,
                     isLoading: false,
                   );
-                } else {
+                }
+                if (state is AppointmentDateTimeSelected) {
+                  final selectedDate = DateFormatter.formatShort(
+                    state.selectedDate!,
+                  );
+
                   return DoctorBookingBottomBar(
                     title: 'تأكيد',
-                    onBookPressed: () => cubit.createAppointment(
-                      doctorId: cubit.doctorModel.id.toString(),
+                    onBookPressed: () => AppointmentConfirmationDialog.show(
+                      context: context,
+                      doctorName: cubit.doctorModel.name,
+                      specialty: cubit.doctorModel.specialty,
+                      date: selectedDate,
+                      time: state.selectedTime!,
+                      onConfirm: () => cubit.createAppointment(
+                        doctorId: cubit.doctorModel.id.toString(),
+                      ),
                     ),
                     canBook: true,
                     isLoading: false,
                   );
+                } else {
+                  return SizedBox();
                 }
               },
             ),

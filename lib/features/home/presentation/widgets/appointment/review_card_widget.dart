@@ -11,65 +11,74 @@ class ReviewCardWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      margin: const EdgeInsets.only(bottom: AppTheme.spacing20),
+      margin: const EdgeInsets.only(bottom: AppTheme.spacing16),
+      padding: const EdgeInsets.all(AppTheme.spacing16),
+      decoration: BoxDecoration(
+        color: AppTheme.cardBackground,
+        borderRadius: BorderRadius.circular(AppTheme.radiusMedium),
+      ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
             children: [
               CircleAvatar(
-                radius: 26,
+                radius: 24,
                 backgroundImage: reviewModel.user.imageUrl != null
                     ? NetworkImage(reviewModel.user.imageUrl!)
                     : null,
-                backgroundColor: Colors.grey[300],
+                backgroundColor: AppTheme.accentColor.withOpacity(0.2),
                 child: reviewModel.user.imageUrl == null
                     ? Text(
                         reviewModel.user.name[0].toUpperCase(),
-                        style: const TextStyle(
-                          fontSize: 20,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.white,
+                        style: TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.w600,
+                          color: AppTheme.accentColor,
                         ),
                       )
                     : null,
               ),
-              const SizedBox(width: 10),
+              const SizedBox(width: AppTheme.spacing12),
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
                       reviewModel.user.name,
-                      style: Theme.of(context).textTheme.titleSmall,
+                      style: AppTheme.bodyLarge.copyWith(
+                        fontWeight: FontWeight.w600,
+                        fontSize: 15,
+                      ),
                     ),
                     const SizedBox(height: AppTheme.spacing4),
                     Row(
                       children: [
                         Text(
                           reviewModel.rating.toStringAsFixed(1),
-                          style: Theme.of(context).textTheme.labelSmall,
+                          style: AppTheme.caption.copyWith(
+                            fontWeight: FontWeight.w600,
+                            color: AppTheme.textPrimary,
+                          ),
                         ),
-                        const SizedBox(width: 5),
+                        const SizedBox(width: AppTheme.spacing4),
                         Row(
                           children: List.generate(5, (index) {
                             return Icon(
                               Iconsax.star1,
-                              size: 16,
+                              size: 14,
                               color: index < reviewModel.rating.round()
                                   ? const Color(0xFFFFB800)
-                                  : Colors.grey[300],
+                                  : AppTheme.dividerColor,
                             );
                           }),
                         ),
+                        const SizedBox(width: AppTheme.spacing8),
+                        Text(
+                          DateFormat('dd MMM yyyy').format(reviewModel.date),
+                          style: AppTheme.caption,
+                        ),
                       ],
-                    ),
-                    const SizedBox(height: AppTheme.spacing4),
-                    Text(
-                      DateFormat('dd MMM yyyy').format(reviewModel.date),
-                      style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                        color: AppTheme.textSecondary,
-                      ),
                     ),
                   ],
                 ),
@@ -79,11 +88,7 @@ class ReviewCardWidget extends StatelessWidget {
           const SizedBox(height: AppTheme.spacing12),
           Text(
             reviewModel.comment,
-            style: const TextStyle(
-              fontSize: 12,
-              color: AppTheme.textSecondary,
-              height: 1.5,
-            ),
+            style: AppTheme.bodyMedium.copyWith(height: 1.6, fontSize: 13),
             maxLines: 3,
             overflow: TextOverflow.ellipsis,
           ),

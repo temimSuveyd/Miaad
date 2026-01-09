@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:uni_size/uni_size.dart';
 import '../../../../../core/theme/app_theme.dart';
 
 class CategoryItem {
@@ -27,6 +28,7 @@ class CategoriesSectionWidget extends StatelessWidget {
         Icons.health_and_safety_outlined,
         AppTheme.categoryPurple,
       ),
+
       CategoryItem(
         'الأعصاب',
         Icons.psychology_alt_outlined,
@@ -45,43 +47,40 @@ class CategoriesSectionWidget extends StatelessWidget {
       ),
     ];
 
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: AppTheme.spacing16),
-      child: Column(
-        children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text('التخصصات', style: AppTheme.sectionTitle),
-              TextButton(
-                onPressed: () {},
-                child: Text(
-                  'عرض الكل',
-                  style: AppTheme.bodyMedium.copyWith(
-                    color: AppTheme.textSecondary,
-                  ),
+    return Column(
+      children: [
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Text('التخصصات', style: AppTheme.sectionTitle),
+            TextButton(
+              onPressed: () {},
+              child: Text(
+                'عرض الكل',
+                style: AppTheme.bodyMedium.copyWith(
+                  color: AppTheme.textSecondary,
                 ),
               ),
-            ],
-          ),
-          const SizedBox(height: AppTheme.spacing12),
-          GridView.builder(
-            shrinkWrap: true,
-            physics: const NeverScrollableScrollPhysics(),
-            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: 4,
-              crossAxisSpacing: AppTheme.spacing4,
-              mainAxisSpacing: AppTheme.spacing4,
-              childAspectRatio: 0.75,
             ),
-            itemCount: categories.length,
-            itemBuilder: (context, index) {
-              final category = categories[index];
-              return CategoryCard(category: category);
-            },
+          ],
+        ),
+        SizedBox(height: AppTheme.spacing12.dp),
+        GridView.builder(
+          shrinkWrap: true,
+          physics: const NeverScrollableScrollPhysics(),
+          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+            crossAxisCount: 4,
+            crossAxisSpacing: AppTheme.spacing4.dp,
+            mainAxisSpacing: AppTheme.spacing4.dp,
+            childAspectRatio: 0.75,
           ),
-        ],
-      ),
+          itemCount: categories.length,
+          itemBuilder: (context, index) {
+            final category = categories[index];
+            return CategoryCard(category: category);
+          },
+        ),
+      ],
     );
   }
 }
@@ -99,29 +98,29 @@ class CategoryCard extends StatelessWidget {
         Stack(
           children: [
             Container(
-              width: 70,
-              height: 70,
+              width: 70.dp,
+              height: 70.dp,
               decoration: BoxDecoration(
                 color: category.color,
-                borderRadius: BorderRadius.circular(AppTheme.radiusSmall),
+                borderRadius: BorderRadius.circular(AppTheme.radiusSmall.dp),
               ),
-              child: Icon(category.icon, color: Colors.white, size: 32),
+              child: Icon(category.icon, color: Colors.white, size: 32.dp),
             ),
             Positioned(
-              top: -25,
-              left: -25,
+              top: -25.dp,
+              left: -25.dp,
               child: Container(
-                width: 60,
-                height: 60,
+                width: 60.dp,
+                height: 60.dp,
                 decoration: BoxDecoration(
-                  color: AppTheme.backgroundColor.withOpacity(0.5),
-                  borderRadius: BorderRadius.circular(100),
+                  color: AppTheme.backgroundColor.withValues(alpha: 0.5),
+                  borderRadius: BorderRadius.circular(100.dp),
                 ),
               ),
             ),
           ],
         ),
-        const SizedBox(height: AppTheme.spacing8),
+        SizedBox(height: AppTheme.spacing8.dp),
         Text(
           category.name,
           style: AppTheme.caption.copyWith(

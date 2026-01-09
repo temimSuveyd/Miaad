@@ -20,12 +20,12 @@ class AppointmentsTabBarWidget extends StatelessWidget {
             // color: AppTheme.primaryColor,
             // borderRadius: BorderRadius.circular(AppTheme.radiusMedium - 2),
             border: Border(
-              bottom: BorderSide(color: AppTheme.primaryColor2, width: 2),
+              bottom: BorderSide(color: AppTheme.primaryColor, width: 2),
             ),
           ),
           indicatorSize: TabBarIndicatorSize.tab,
           dividerColor: Colors.transparent,
-          labelColor: AppTheme.primaryColor2,
+          labelColor: AppTheme.primaryColor,
           unselectedLabelColor: AppTheme.textSecondary,
           labelStyle: const TextStyle(
             fontSize: 14,

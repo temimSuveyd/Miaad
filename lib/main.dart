@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
+import 'package:uni_size/uni_size.dart';
 import 'core/config/supabase_config.dart';
 import 'core/services/service_locator.dart';
 import 'core/routing/presentation/pages/route_config_page.dart';
@@ -13,6 +14,8 @@ void main() async {
 
   await initServiceLocator();
   SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky);
+
+
   runApp(const MyApp());
 }
 
@@ -21,17 +24,22 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return GetMaterialApp(
-      debugShowCheckedModeBanner: false,
-      theme: AppTheme.lightTheme,
-      locale: const Locale('ar', 'SA'),
-      builder: (context, child) {
-        return Directionality(textDirection: TextDirection.rtl, child: child!);
-      },
-      initialRoute: AppRoutes.initial,
-      getPages: RouteConfigPage.getPages(),
-      defaultTransition: Transition.cupertino,
-      transitionDuration: const Duration(milliseconds: 300),
+    return UniSizeWidget(
+      designHeight:888 ,
+      designWidth: 442,
+      builder: (context, orientation, screenType) => 
+   GetMaterialApp(
+        debugShowCheckedModeBanner: false,
+        theme: AppTheme.lightTheme,
+        locale: const Locale('ar', 'SA'),
+        builder: (context, child) {
+          return Directionality(textDirection: TextDirection.rtl, child: child!);
+        },
+        initialRoute: AppRoutes.initial,
+        getPages: RouteConfigPage.getPages(),
+        defaultTransition: Transition.cupertino,
+        transitionDuration: const Duration(milliseconds: 300),
+      ),
     );
   }
 }

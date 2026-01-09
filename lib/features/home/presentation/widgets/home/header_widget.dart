@@ -47,7 +47,7 @@ class HeaderWidget extends StatelessWidget {
                   ),
                   child: const Icon(
                     Icons.calendar_today_rounded,
-                    color: AppTheme.primaryColor2,
+                    color: AppTheme.primaryColor,
                     size: 24,
                   ),
                 ),

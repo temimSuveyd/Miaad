@@ -58,7 +58,6 @@ class HomeCubit extends Cubit<HomeState> {
                 emit(HomeError(failure.message));
               },
               (appointments) {
-                log("Realtime appointments: $appointments");
                 final upcomingAppointments = _filterUpcomingAppointments(
                   appointments,
                 );

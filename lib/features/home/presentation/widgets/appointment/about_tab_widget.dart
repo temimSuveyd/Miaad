@@ -8,19 +8,18 @@ class AboutTabWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SingleChildScrollView(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          _buildSection(title: 'نبذة عني', content: doctorInfoModel.aboutText),
-          const SizedBox(height: AppTheme.spacing24),
-          _buildSection(
-            title: 'أوقات العمل',
-            content: doctorInfoModel.workingTime,
-          ),
-          const SizedBox(height: AppTheme.spacing24),
-        ],
-      ),
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        _buildSection(title: 'نبذة عني', content: doctorInfoModel.aboutText),
+        const SizedBox(height: AppTheme.spacing20),
+        Container(height: 1, color: AppTheme.dividerColor),
+        const SizedBox(height: AppTheme.spacing20),
+        _buildSection(
+          title: 'أوقات العمل',
+          content: doctorInfoModel.workingTime,
+        ),
+      ],
     );
   }
 
@@ -28,18 +27,11 @@ class AboutTabWidget extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
-          title,
-          style: const TextStyle(
-            fontSize: 18,
-            fontWeight: FontWeight.w600,
-            color: AppTheme.textPrimary,
-          ),
-        ),
-        const SizedBox(height: AppTheme.spacing8),
+        Text(title, style: AppTheme.sectionTitle.copyWith(fontSize: 16)),
+        const SizedBox(height: AppTheme.spacing12),
         Text(
           content,
-          style: const TextStyle(fontSize: 12, color: AppTheme.textSecondary),
+          style: AppTheme.bodyMedium.copyWith(height: 1.6, fontSize: 13),
         ),
       ],
     );

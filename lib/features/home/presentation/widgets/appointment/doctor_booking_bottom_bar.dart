@@ -24,7 +24,7 @@ class DoctorBookingBottomBar extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(AppTheme.spacing16),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: AppTheme.backgroundColor,
         boxShadow: [
           BoxShadow(
             color: Colors.black.withValues(alpha: 0.05),

@@ -82,7 +82,7 @@ class PopularDoctorsSectionWidget extends StatelessWidget {
                 Text(
                   'عرض الكل',
                   style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                    color: AppTheme.primaryColor2,
+                    color: AppTheme.primaryColor,
                     fontWeight: FontWeight.w500,
                   ),
                 ),

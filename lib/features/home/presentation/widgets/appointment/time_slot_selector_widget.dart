@@ -49,7 +49,7 @@ class TimeSlotSelectorWidget extends StatelessWidget {
                   color: isSelected ? Colors.white : Colors.white,
                   border: Border.all(
                     color: isSelected
-                        ? AppTheme.primaryColor2
+                        ? AppTheme.primaryColor
                         : AppTheme.dividerColor,
                     width: isSelected ? 1.5 : 0.5,
                   ),
@@ -61,7 +61,7 @@ class TimeSlotSelectorWidget extends StatelessWidget {
                     fontSize: 14,
                     fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
                     color: isSelected
-                        ? AppTheme.primaryColor2
+                        ? AppTheme.primaryColor
                         : AppTheme.textPrimary,
                   ),
                 ),

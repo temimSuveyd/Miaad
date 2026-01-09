@@ -39,7 +39,7 @@ class DateSelectorWidget extends StatelessWidget {
                 color: AppTheme.cardBackground,
                 border: Border.all(
                   color: isSelected
-                      ? AppTheme.primaryColor2
+                      ? AppTheme.primaryColor
                       : AppTheme.dividerColor,
                   width: isSelected ? 2 : 0,
                 ),
@@ -52,7 +52,7 @@ class DateSelectorWidget extends StatelessWidget {
                     _getDayName(date.weekday),
                     style: Theme.of(context).textTheme.labelSmall?.copyWith(
                       color: isSelected
-                          ? AppTheme.primaryColor2
+                          ? AppTheme.primaryColor
                           : AppTheme.textSecondary,
                     ),
                   ),
@@ -61,7 +61,7 @@ class DateSelectorWidget extends StatelessWidget {
                     date.day.toString(),
                     style: Theme.of(context).textTheme.titleSmall?.copyWith(
                       color: isSelected
-                          ? AppTheme.primaryColor2
+                          ? AppTheme.primaryColor
                           : AppTheme.textSecondary,
                     ),
                   ),

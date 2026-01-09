@@ -1,11 +1,16 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 class AppTheme {
   // Design tokens - Colors
-  static const Color primaryColor2 = Color(0xFF014737); // Teal
   static const Color primaryColor = Color(0xFF1C2A3A); // Teal
   static const Color accentColor = Color(0xFF4D9B91);
-  static const Color backgroundColor = Color(0xFFFFFFFF); // Light gray
+  static const Color backgroundColor = Color.fromARGB(
+    255,
+    244,
+    244,
+    244,
+  ); // Light gray
   static const Color cardBackground = Color(0xFFFFFFFF);
   static const Color textPrimary = Color(0xFC2B3038); // Dark gray
   static const Color textSecondary = Color(0xFF757575); // Medium gray
@@ -40,9 +45,10 @@ class AppTheme {
   // Design tokens - Shadows
   static List<BoxShadow> cardShadow = [
     BoxShadow(
-      color: const Color.fromARGB(255, 139, 139, 139).withValues(alpha: 0.5),
-      blurRadius: 5,
-      offset: const Offset(0, 4),
+      color: const Color.fromARGB(255, 139, 139, 139).withValues(alpha: 0.2),
+      // blurRadius: 2,
+      spreadRadius: 3,
+      offset: const Offset(0, -2),
     ),
   ];
 
@@ -85,25 +91,28 @@ class AppTheme {
 
   static ThemeData get lightTheme {
     return ThemeData(
-      primaryColor: primaryColor2,
+      primaryColor: primaryColor,
       scaffoldBackgroundColor: backgroundColor,
       visualDensity: VisualDensity.adaptivePlatformDensity,
+      fontFamily: GoogleFonts.changa().fontFamily,
       appBarTheme: const AppBarTheme(
         backgroundColor: backgroundColor,
         foregroundColor: textPrimary,
         elevation: 0,
       ),
-      textTheme: const TextTheme(
-        headlineLarge: heading1,
-        headlineMedium: heading2,
-        titleLarge: sectionTitle,
-        bodyLarge: bodyLarge,
-        bodyMedium: bodyMedium,
-        labelSmall: caption,
+      textTheme: GoogleFonts.changaTextTheme(
+        const TextTheme(
+          headlineLarge: heading1,
+          headlineMedium: heading2,
+          titleLarge: sectionTitle,
+          bodyLarge: bodyLarge,
+          bodyMedium: bodyMedium,
+          labelSmall: caption,
+        ),
       ),
       colorScheme: ColorScheme.fromSeed(
-        seedColor: primaryColor2,
-        primary: primaryColor2,
+        seedColor: primaryColor,
+        primary: primaryColor,
         secondary: accentColor,
         surface: cardBackground,
       ),
@@ -113,7 +122,7 @@ class AppTheme {
   static ThemeData get darkTheme {
     return ThemeData(
       brightness: Brightness.dark,
-      primaryColor: primaryColor2,
+      primaryColor: primaryColor,
       visualDensity: VisualDensity.adaptivePlatformDensity,
     );
   }

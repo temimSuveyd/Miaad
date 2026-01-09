@@ -1,5 +1,6 @@
 import 'package:doctorbooking/core/theme/app_theme.dart';
 import 'package:flutter/material.dart';
+import 'package:uni_size/uni_size.dart';
 
 class CustomTextField extends StatelessWidget {
   const CustomTextField({
@@ -21,18 +22,22 @@ class CustomTextField extends StatelessWidget {
           contentPadding: EdgeInsets.zero,
           fillColor: AppTheme.dividerColor,
           filled: true,
-          prefixIcon: Icon(prefixIcon, color: AppTheme.textSecondary, size: 20),
+          prefixIcon: Icon(
+            prefixIcon,
+            color: AppTheme.textSecondary,
+            size: 20.dp,
+          ),
           enabledBorder: OutlineInputBorder(
             borderSide: BorderSide.none,
-            borderRadius: BorderRadius.circular(AppTheme.radiusMedium),
+            borderRadius: BorderRadius.circular(AppTheme.radiusMedium.dp),
           ),
           errorBorder: OutlineInputBorder(
             borderSide: BorderSide(color: AppTheme.errorColor),
-            borderRadius: BorderRadius.circular(AppTheme.radiusMedium),
+            borderRadius: BorderRadius.circular(AppTheme.radiusMedium.dp),
           ),
           focusedBorder: OutlineInputBorder(
-            borderSide: BorderSide(color: AppTheme.primaryColor2),
-            borderRadius: BorderRadius.circular(AppTheme.radiusMedium),
+            borderSide: BorderSide(color: AppTheme.primaryColor),
+            borderRadius: BorderRadius.circular(AppTheme.radiusMedium.dp),
           ),
         ),
       ),

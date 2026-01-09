@@ -53,7 +53,7 @@ class AppointmentCardWidget extends StatelessWidget {
                   width: 70,
                   height: 70,
                   decoration: BoxDecoration(
-                    color: AppTheme.primaryColor2.withValues(alpha: 0.1),
+                    color: AppTheme.primaryColor.withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(AppTheme.radiusMedium),
                     image: const DecorationImage(
                       image: NetworkImage(
@@ -147,8 +147,8 @@ class AppointmentCardWidget extends StatelessWidget {
                 _showCancelDialog(context);
               },
               style: OutlinedButton.styleFrom(
-                foregroundColor: AppTheme.primaryColor2,
-                side: const BorderSide(color: AppTheme.primaryColor2),
+                foregroundColor: AppTheme.primaryColor,
+                side: const BorderSide(color: AppTheme.primaryColor),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(AppTheme.radiusXLarge),
                 ),
@@ -172,7 +172,7 @@ class AppointmentCardWidget extends StatelessWidget {
                 );
               },
               style: ElevatedButton.styleFrom(
-                backgroundColor: AppTheme.primaryColor2,
+                backgroundColor: AppTheme.primaryColor,
                 foregroundColor: Colors.white,
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(AppTheme.radiusXLarge),
@@ -325,7 +325,7 @@ class AppointmentCardWidget extends StatelessWidget {
             ListTile(
               leading: const Icon(
                 Icons.info_outline,
-                color: AppTheme.primaryColor2,
+                color: AppTheme.primaryColor,
               ),
               title: const Text('View Details'),
               onTap: () {
@@ -341,7 +341,7 @@ class AppointmentCardWidget extends StatelessWidget {
             ListTile(
               leading: const Icon(
                 Icons.receipt_outlined,
-                color: AppTheme.primaryColor2,
+                color: AppTheme.primaryColor,
               ),
               title: const Text('View Receipt'),
               onTap: () {
@@ -358,7 +358,7 @@ class AppointmentCardWidget extends StatelessWidget {
               ListTile(
                 leading: const Icon(
                   Icons.rate_review_outlined,
-                  color: AppTheme.primaryColor2,
+                  color: AppTheme.primaryColor,
                 ),
                 title: const Text('Write Review'),
                 onTap: () {

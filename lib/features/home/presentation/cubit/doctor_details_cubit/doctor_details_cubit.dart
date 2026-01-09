@@ -3,7 +3,7 @@ import 'package:doctorbooking/features/home/data/models/doctor_info_model.dart';
 import 'package:doctorbooking/features/home/data/models/doctor_model.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get/get.dart';
-import 'doctor_detail_state.dart';
+import 'doctor_details_state.dart';
 
 // Cubit لإدارة حالة صفحة تفاصيل الطبيب
 class DoctorDetailCubit extends Cubit<DoctorDetailState> {

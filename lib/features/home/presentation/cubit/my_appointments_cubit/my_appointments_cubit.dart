@@ -13,62 +13,68 @@ class MyAppointmentsCubit extends Cubit<MyAppointmentsState> {
   MyAppointmentsCubit({required this.repository})
     : super(const MyAppointmentsInitial());
 
-  // الاشتراك في مواعيد المستخدم
+  // الاشتراك في مواعيد المستخدم - Subscribe to user appointments in real-time
   void subscribeToUserAppointments() {
+    // إصدار حالة التحميل - Emit loading state
     emit(const MyAppointmentsLoading());
 
+    // إلغاء الاشتراك السابق إن وجد - Cancel previous subscription if exists
     _appointmentsSubscription?.cancel();
-    _appointmentsSubscription = repository
-        .getUserAppointmentsStream(userId)
-        .listen((result) {
-          result.fold((failure) => emit(MyAppointmentsError(failure.message)), (
-            appointments,
-          ) {
-            final upcoming = <AppointmentsModel>[];
-            final completed = <AppointmentsModel>[];
-            final cancelled = <AppointmentsModel>[];
-            // ترتيب المواعيد القادمة حسب التاريخ
-            upcoming.sort((a, b) => a.date.compareTo(b.date));
-            completed.sort((a, b) => b.date.compareTo(a.date));
-            cancelled.sort((a, b) => b.date.compareTo(a.date));
 
-            emit(
-              MyAppointmentsLoaded(
-                upcomingAppointments: upcoming,
-                completedAppointments: completed,
-                cancelledAppointments: cancelled,
-              ),
-            );
-          });
-        });
-  }
-
-  // تحميل المواعيد مرة واحدة
-  Future<void> loadUserAppointments() async {
-    emit(const MyAppointmentsLoading());
-
-    final result = await repository.getUserAppointments(userId);
-
-    result.fold((failure) => emit(MyAppointmentsError(failure.message)), (
-      appointments,
+    // الاشتراك في stream المواعيد - Subscribe to appointments stream
+    _appointmentsSubscription = repository.getUserAppointmentsStream(userId).listen((
+      result,
     ) {
-      final upcoming = <AppointmentsModel>[];
-      final completed = <AppointmentsModel>[];
-      final cancelled = <AppointmentsModel>[];
+      result.fold(
+        // في حالة الخطأ - On error
+        (failure) => emit(MyAppointmentsError(failure.message)),
+        // في حالة النجاح - On success
+        (appointments) {
+          // تصنيف المواعيد حسب الحالة - Categorize appointments by status
+          final upcoming = <AppointmentsModel>[];
+          final completed = <AppointmentsModel>[];
+          final cancelled = <AppointmentsModel>[];
 
-      // ترتيب المواعيد القادمة حسب التاريخ
-      upcoming.sort((a, b) => a.date.compareTo(b.date));
-      completed.sort((a, b) => b.date.compareTo(a.date));
-      cancelled.sort((a, b) => b.date.compareTo(a.date));
+          // فرز المواعيد حسب الحالة - Sort appointments by status
+          for (final appointment in appointments) {
+            switch (appointment.status) {
+              case AppointmentStatus.upcoming:
+              case AppointmentStatus.rescheduled:
+                upcoming.add(appointment);
+                break;
+              case AppointmentStatus.completed:
+                completed.add(appointment);
+                break;
+              case AppointmentStatus.cancelled:
+                cancelled.add(appointment);
+                break;
+            }
+          }
 
-      emit(
-        MyAppointmentsLoaded(
-          upcomingAppointments: upcoming,
-          completedAppointments: completed,
-          cancelledAppointments: cancelled,
-        ),
+          // ترتيب المواعيد القادمة حسب التاريخ (الأقرب أولاً) - Sort upcoming by date (nearest first)
+          upcoming.sort((a, b) => a.date.compareTo(b.date));
+
+          // ترتيب المواعيد المكتملة والملغاة حسب التاريخ (الأحدث أولاً) - Sort completed/cancelled by date (newest first)
+          completed.sort((a, b) => b.date.compareTo(a.date));
+          cancelled.sort((a, b) => b.date.compareTo(a.date));
+
+          // إصدار حالة التحميل الناجح - Emit loaded state
+          emit(
+            MyAppointmentsLoaded(
+              upcomingAppointments: upcoming,
+              completedAppointments: completed,
+              cancelledAppointments: cancelled,
+            ),
+          );
+        },
       );
     });
+  }
+
+  // تحميل مواعيد المستخدم (نفس الوظيفة مثل subscribeToUserAppointments)
+  // Load user appointments (same functionality as subscribeToUserAppointments)
+  void loadUserAppointments() {
+    subscribeToUserAppointments();
   }
 
   // إلغاء موعد

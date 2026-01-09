@@ -84,7 +84,7 @@ class MyAppointmentsPage extends StatelessWidget {
                                 .subscribeToUserAppointments();
                           },
                           style: ElevatedButton.styleFrom(
-                            backgroundColor: AppTheme.primaryColor2,
+                            backgroundColor: AppTheme.primaryColor,
                           ),
                           child: const Text('Retry'),
                         ),

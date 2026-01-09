@@ -9,20 +9,30 @@ class DoctorStatsWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        _buildStatItem(
-          value: doctor.rating.toStringAsFixed(1),
-          label: 'التقييم',
-          icon: Icons.star,
-          iconColor: const Color(0xFFFFB800),
-        ),
-        _buildDivider(),
-        _buildStatItem(value: '2.5k+', label: 'المرضى'),
-        _buildDivider(),
-        _buildStatItem(value: '10+ سنوات', label: 'الخبرة'),
-      ],
+    return Container(
+      padding: const EdgeInsets.symmetric(
+        horizontal: AppTheme.spacing20,
+        vertical: AppTheme.spacing16,
+      ),
+      decoration: BoxDecoration(
+        color: AppTheme.cardBackground,
+        borderRadius: BorderRadius.circular(AppTheme.radiusMedium),
+      ),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          _buildStatItem(
+            value: doctor.rating.toStringAsFixed(1),
+            label: 'التقييم',
+            icon: Icons.star,
+            iconColor: const Color(0xFFFFB800),
+          ),
+          _buildDivider(),
+          _buildStatItem(value: '2.5k+', label: 'المرضى'),
+          _buildDivider(),
+          _buildStatItem(value: '10+ سنوات', label: 'الخبرة'),
+        ],
+      ),
     );
   }
 
@@ -32,31 +42,26 @@ class DoctorStatsWidget extends StatelessWidget {
     IconData? icon,
     Color? iconColor,
   }) {
-    return Column(
-      children: [
-        Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            if (icon != null) ...[
-              Icon(icon, size: 16, color: iconColor),
-              const SizedBox(width: 4),
-            ],
-            Text(
-              value,
-              style: const TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.w600,
-                color: AppTheme.textPrimary,
+    return Expanded(
+      child: Column(
+        children: [
+          Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              if (icon != null) ...[
+                Icon(icon, size: 16, color: iconColor),
+                const SizedBox(width: AppTheme.spacing4),
+              ],
+              Text(
+                value,
+                style: AppTheme.bodyLarge.copyWith(fontWeight: FontWeight.w600),
               ),
-            ),
-          ],
-        ),
-        const SizedBox(height: AppTheme.spacing4),
-        Text(
-          label,
-          style: const TextStyle(fontSize: 12, color: AppTheme.textSecondary),
-        ),
-      ],
+            ],
+          ),
+          const SizedBox(height: AppTheme.spacing4),
+          Text(label, style: AppTheme.caption),
+        ],
+      ),
     );
   }
 

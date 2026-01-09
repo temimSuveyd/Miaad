@@ -14,61 +14,72 @@ class DoctorProfileHeaderWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Row(
-      children: [
-        Container(
-          width: 110,
-          height: 140,
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(AppTheme.radiusMedium),
-          ),
-          child: ClipRRect(
-            borderRadius: BorderRadius.circular(AppTheme.radiusMedium),
-            child: Image.network(
-              doctor.imageUrl,
-              fit: BoxFit.cover,
-              errorBuilder: (context, error, stackTrace) {
-                return Container(
-                  color: Colors.grey[200],
-                  child: const Icon(Icons.person, size: 40),
-                );
-              },
+    return Container(
+      padding: const EdgeInsets.all(AppTheme.spacing16),
+      decoration: BoxDecoration(
+        color: AppTheme.cardBackground,
+        borderRadius: BorderRadius.circular(AppTheme.radiusMedium),
+      ),
+      child: Row(
+        children: [
+          Container(
+            width: 100,
+            height: 130,
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(AppTheme.radiusSmall),
+            ),
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(AppTheme.radiusSmall),
+              child: Image.network(
+                doctor.imageUrl,
+                fit: BoxFit.cover,
+                errorBuilder: (context, error, stackTrace) {
+                  return Container(
+                    color: AppTheme.accentColor.withOpacity(0.1),
+                    child: Icon(
+                      Icons.person,
+                      size: 40,
+                      color: AppTheme.accentColor,
+                    ),
+                  );
+                },
+              ),
             ),
           ),
-        ),
-        const SizedBox(width: AppTheme.spacing12),
-        Expanded(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                doctor.name,
-                style: const TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.w600,
-                  color: AppTheme.textPrimary,
+          const SizedBox(width: AppTheme.spacing16),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  doctor.name,
+                  style: AppTheme.heading2.copyWith(fontSize: 18),
                 ),
-              ),
-              const SizedBox(height: AppTheme.spacing4),
-              Text(
-                doctor.specialty,
-                style: const TextStyle(
-                  fontSize: 13,
-                  color: AppTheme.textSecondary,
+                const SizedBox(height: AppTheme.spacing8),
+                Text(doctor.specialty, style: AppTheme.bodyMedium),
+                const SizedBox(height: AppTheme.spacing12),
+                Container(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: AppTheme.spacing12,
+                    vertical: AppTheme.spacing8,
+                  ),
+                  decoration: BoxDecoration(
+                    color: AppTheme.accentColor.withOpacity(0.1),
+                    borderRadius: BorderRadius.circular(AppTheme.radiusSmall),
+                  ),
+                  child: Text(
+                    doctor.price,
+                    style: AppTheme.bodyMedium.copyWith(
+                      fontWeight: FontWeight.w600,
+                      color: AppTheme.accentColor,
+                    ),
+                  ),
                 ),
-              ),
-              const SizedBox(height: AppTheme.spacing8),
-              Text(
-                doctor.price,
-                style: Theme.of(context).textTheme.labelMedium?.copyWith(
-                  fontWeight: FontWeight.w600,
-                  color: AppTheme.primaryColor2,
-                ),
-              ),
-            ],
+              ],
+            ),
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 }

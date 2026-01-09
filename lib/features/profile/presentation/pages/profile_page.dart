@@ -12,7 +12,7 @@ class ProfilePage extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(Icons.person, size: 80, color: AppTheme.primaryColor2),
+            Icon(Icons.person, size: 80, color: AppTheme.primaryColor),
             const SizedBox(height: 16),
             Text('Profile', style: Theme.of(context).textTheme.headlineMedium),
           ],
