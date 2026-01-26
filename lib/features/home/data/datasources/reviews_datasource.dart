@@ -1,5 +1,5 @@
 import 'dart:async';
-
+import 'dart:developer';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../../../core/utils/supabase_helper.dart';
 import '../models/review_model.dart';
@@ -48,7 +48,7 @@ class ReviewsDatasourceImpl implements ReviewsDatasource {
           .insert(review.toJson())
           .select()
           .single();
-      return ReviewModel.fromJson(response);
+      return ReviewModel.fromJson(json: response,isViewTaple: false );
     });
   }
 
@@ -61,7 +61,7 @@ class ReviewsDatasourceImpl implements ReviewsDatasource {
           .eq('review_id', id)
           .single();
 
-      return ReviewModel.fromJson(response);
+      return ReviewModel.fromJson(json: response,isViewTaple: true);
     });
   }
 
@@ -75,7 +75,7 @@ class ReviewsDatasourceImpl implements ReviewsDatasource {
           .order('review_created_at', ascending: false);
 
       return (response as List)
-          .map((json) => ReviewModel.fromJson(json))
+          .map((json) => ReviewModel.fromJson(json: json,isViewTaple: true))
           .toList();
     });
   }
@@ -125,10 +125,9 @@ class ReviewsDatasourceImpl implements ReviewsDatasource {
           .select()
           .eq('doctor_id', doctorId)
           .order('review_created_at', ascending: false);
-
       // تحويل البيانات إلى نماذج - Convert data to models
       final reviews = (data as List)
-          .map((json) => ReviewModel.fromJson(json))
+          .map((json) => ReviewModel.fromJson(json: json,isViewTaple: true))
           .toList();
 
       // إضافة البيانات إلى الـ stream - Add data to stream
@@ -153,22 +152,23 @@ class ReviewsDatasourceImpl implements ReviewsDatasource {
           .order('review_created_at', ascending: false);
 
       return (response as List)
-          .map((json) => ReviewModel.fromJson(json))
+          .map((json) => ReviewModel.fromJson(json: json,isViewTaple: true))
           .toList();
     });
   }
 
   @override
   Future<ReviewModel> updateReview(ReviewModel review) async {
+    log(review.toString());
     return await SupabaseHelper.executeQuery(() async {
       final response = await client
           .from(tableName)
           .update(review.toJson())
-          .eq('id', review.id!)
+          .eq('id', review.reviewId!)
           .select()
           .single();
 
-      return ReviewModel.fromJson(response);
+      return ReviewModel.fromJson(json: response,isViewTaple: false);
     });
   }
 

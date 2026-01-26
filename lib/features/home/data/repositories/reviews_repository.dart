@@ -3,12 +3,18 @@ import '../../../../core/error/exceptions.dart';
 import '../../../../core/error/failures.dart';
 import '../datasources/reviews_datasource.dart';
 import '../models/review_model.dart';
+import '../models/appointments_model.dart';
+import '../repositories/appointments_repositories.dart';
 
 // مستودع التقييمات - إدارة العمليات مع معالجة الأخطاء
 class ReviewsRepository {
   final ReviewsDatasource datasource;
+  final AppointmentsRepository appointmentsRepository;
 
-  ReviewsRepository({required this.datasource});
+  ReviewsRepository({
+    required this.datasource,
+    required this.appointmentsRepository,
+  });
 
   // إنشاء تقييم جديد
   Future<Either<Failure, ReviewModel>> createReview(ReviewModel review) async {
@@ -138,6 +144,50 @@ class ReviewsRepository {
     try {
       final result = await datasource.hasUserReviewedDoctor(userId, doctorId);
       return Right(result);
+    } on DatabaseException catch (e) {
+      return Left(DatabaseFailure(e.message));
+    } on NetworkException catch (e) {
+      return Left(NetworkFailure(e.message));
+    } on ServerException catch (e) {
+      return Left(ServerFailure(e.message));
+    } catch (e) {
+      return Left(ServerFailure('خطأ غير متوقع: $e'));
+    }
+  }
+
+  // التحقق من وجود موعد مكتمل للمستخدم مع الطبيب
+  Future<Either<Failure, bool>> hasCompletedAppointmentWithDoctor(
+    String userId,
+    String doctorId,
+  ) async {
+    try {
+      final appointmentsResult = await appointmentsRepository
+          .getUserAppointments(userId);
+
+      return appointmentsResult.fold((failure) => Left(failure), (
+        appointments,
+      ) {
+        print('🔍 Checking appointments for user: $userId, doctor: $doctorId');
+        print('📋 Total appointments found: ${appointments.length}');
+
+        for (var appointment in appointments) {
+          print(
+            '📅 Appointment: doctorId=${appointment.doctorId}, status=${appointment.status}, date=${appointment.date}',
+          );
+        }
+
+        // البحث عن موعد مكتمل مع هذا الطبيب
+        final hasCompletedAppointment = appointments.any(
+          (appointment) =>
+              appointment.doctorId == doctorId &&
+              appointment.status == AppointmentStatus.completed,
+        );
+
+        print(
+          '✅ Has completed appointment with doctor: $hasCompletedAppointment',
+        );
+        return Right(hasCompletedAppointment);
+      });
     } on DatabaseException catch (e) {
       return Left(DatabaseFailure(e.message));
     } on NetworkException catch (e) {

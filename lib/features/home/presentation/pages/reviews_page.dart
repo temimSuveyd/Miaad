@@ -16,17 +16,7 @@ import '../widgets/reviews/reviews_list_widget.dart';
 import '../widgets/reviews/reviews_shimmer_widget.dart';
 
 /// Reviews page for displaying and managing doctor reviews
-///
-/// Navigate to this page using:
-/// ```dart
-/// Get.toNamed(
-///   AppRoutes.reviews,
-///   arguments: {
-///     'doctorId': 'doctor_id_here',
-///     'doctorName': 'Doctor Name',
-///   },
-/// );
-/// ```
+
 class ReviewsPage extends StatelessWidget {
   const ReviewsPage({super.key});
 
@@ -133,7 +123,14 @@ class ReviewsPage extends StatelessWidget {
 
         // Reviews List or Empty State
         if (state.reviews.isEmpty)
-          const SliverToBoxAdapter(child: ReviewsEmptyWidget())
+          SliverToBoxAdapter(
+            child: ReviewsEmptyWidget(
+              canAddReview: state.canAddReview && state.hasCompletedAppointment,
+              onAddReview: (state.canAddReview && state.hasCompletedAppointment)
+                  ? () => _showAddReviewDialog(context, doctorId)
+                  : null,
+            ),
+          )
         else
           ReviewsListWidget(
             reviews: state.reviews,
@@ -176,7 +173,7 @@ class ReviewsPage extends StatelessWidget {
         onSubmit: (rating, comment) {
           Navigator.pop(dialogContext);
           context.read<ReviewsCubit>().updateReview(
-            reviewId: review.id!,
+            reviewId: review.reviewId!,
             rating: rating,
             comment: comment,
           );

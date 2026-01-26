@@ -1,112 +1,101 @@
-import 'package:doctorbooking/core/routing/presentation/routes/app_routes.dart';
-import 'package:doctorbooking/features/home/data/models/doctor_model.dart';
+import 'package:doctorbooking/features/home/presentation/cubit/doctors_cubit/doctors_cubit.dart';
+import 'package:doctorbooking/features/home/presentation/cubit/doctors_cubit/doctors_state.dart';
 import 'package:flutter/material.dart';
-import 'package:get/route_manager.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../../../core/theme/app_theme.dart';
+import '../../../../../core/services/service_locator.dart';
+import '../../../../../core/widgets/error_state_widget.dart';
 import 'doctor_card_widget.dart';
+import 'doctor_card_shimmer.dart';
 
 class PopularDoctorsSectionWidget extends StatelessWidget {
   const PopularDoctorsSectionWidget({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final List<Map<String, dynamic>> _doctors = [
-      {
-        'id': 0,
-        'name': 'د. راندي ويغهام',
-        'specialty': 'عام | مستشفى جاتوت سوبروتو',
-        'rating': 4.8,
-        'reviews': 4279,
-        'price': '25.00 ريال/س',
-
-        'imageUrl': 'https://via.placeholder.com/150',
-      },
-      {
-        'id': 0,
-
-        'name': 'د. جاك سوليفان',
-        'specialty': 'عام | مستشفى جاتوت سوبروتو',
-        'rating': 4.8,
-        'reviews': 4279,
-        'price': '25.00 ريال/س',
-
-        'imageUrl': 'https://via.placeholder.com/150',
-      },
-      {
-        'id': 0,
-
-        'name': 'د. راندي ويغهام',
-        'specialty': 'عام | مستشفى جاتوت سوبروتو',
-        'rating': 4.8,
-        'reviews': 4279,
-        'price': '25.00 ريال/س',
-
-        'imageUrl': 'https://via.placeholder.com/150',
-      },
-      {
-        'id': 0,
-
-        'name': 'د. راندي ويغهام',
-        'specialty': 'عام | مستشفى جاتوت سوبروتو',
-        'rating': 4.8,
-        'reviews': 4279,
-        'price': '25.00 ريال/س',
-
-        'imageUrl': 'https://via.placeholder.com/150',
-      },
-      {
-        'id': 0,
-
-        'name': 'د. راندي ويغهام',
-        'specialty': 'عام | مستشفى جاتوت سوبروتو',
-        'rating': 4.8,
-        'reviews': 4279,
-        'price': '25.00 ريال/س',
-        'imageUrl': 'https://via.placeholder.com/150',
-      },
-    ];
-
-    return Column(
-      children: [
-        Directionality(
-          textDirection: TextDirection.rtl,
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: AppTheme.spacing20),
+    return BlocProvider(
+      create: (context) => sl<DoctorsCubit>()..loadDoctors(),
+      child: Column(
+        children: [
+          Directionality(
+            textDirection: TextDirection.rtl,
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text(
-                  'الأطباء المشهورون',
-                  style: Theme.of(context).textTheme.titleMedium,
-                ),
-                Text(
-                  'عرض الكل',
-                  style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                    color: AppTheme.primaryColor,
-                    fontWeight: FontWeight.w500,
+                Text('الأطباء المشهورون', style: AppTheme.sectionTitle),
+                TextButton(
+                  onPressed: () {},
+                  child: Text(
+                    'عرض الكل',
+                    style: AppTheme.bodyMedium.copyWith(
+                      color: AppTheme.textSecondary,
+                    ),
                   ),
                 ),
               ],
             ),
           ),
-        ),
-        const SizedBox(height: AppTheme.spacing16),
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: AppTheme.spacing20),
-          child: Column(
-            children: _doctors.map((doctor) {
-              return DoctorCardWidget(
-                doctorModel: DoctorModel.fromJson(doctor),
-                showFavorite: true,
-                isFavorite: false,
-                onTap: () {
-                  Get.toNamed(AppRoutes.doctorDetail);
-                },
-              );
-            }).toList(),
+          const SizedBox(height: AppTheme.spacing16),
+          BlocBuilder<DoctorsCubit, DoctorsState>(
+            builder: (context, state) {
+              if (state is DoctorsLoading) {
+                return const DoctorCardsShimmerList(itemCount: 3);
+              }
+
+              if (state is DoctorsError) {
+                return Container(
+                  margin: const EdgeInsets.symmetric(
+                    vertical: AppTheme.spacing16,
+                  ),
+                  child: ErrorStateWidget(
+                    title: 'خطأ في تحميل الأطباء',
+                    message: state.message,
+                    icon: Icons.local_hospital_rounded,
+                    onRetry: () {
+                      context.read<DoctorsCubit>().loadDoctors();
+                    },
+                    retryButtonText: 'إعادة التحميل',
+                  ),
+                );
+              }
+
+              if (state is DoctorsLoaded) {
+                final doctors = state.popularDoctors;
+
+                if (doctors.isEmpty) {
+                  return Container(
+                    margin: const EdgeInsets.symmetric(
+                      vertical: AppTheme.spacing16,
+                    ),
+                    child: const EmptyStateWidget(
+                      title: 'لا توجد أطباء',
+                      message: 'لا توجد أطباء متاحون في الوقت الحالي',
+                      icon: Icons.medical_services_rounded,
+                    ),
+                  );
+                }
+
+                return Column(
+                  children: doctors.map((doctor) {
+                    return DoctorCardWidget(
+                      doctorModel: doctor,
+                      showFavorite: true,
+                      isFavorite: false,
+                      onTap: () {
+                        context.read<DoctorsCubit>().goToDoctorDetailsPage(
+                          doctorModel: doctor,
+                        );
+                      },
+                    );
+                  }).toList(),
+                );
+              }
+
+              return const SizedBox.shrink();
+            },
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 }

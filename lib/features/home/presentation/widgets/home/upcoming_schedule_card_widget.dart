@@ -60,7 +60,7 @@ class _UpcomingScheduleCardWidgetState
 
           // إذا كان هناك أكثر من موعد، استخدم CardSwiper
           return SizedBox(
-            height: 230.dp,
+            height: 180.dp,
             child: CardSwiper(
               padding: EdgeInsetsGeometry.symmetric(vertical: 20),
               controller: controller,
@@ -68,10 +68,10 @@ class _UpcomingScheduleCardWidgetState
               numberOfCardsDisplayed: upcomingAppointments.length > 3
                   ? 3
                   : upcomingAppointments.length,
-              backCardOffset: const Offset(0, 25),
+              backCardOffset: const Offset(0, 35),
               duration: const Duration(milliseconds: 100),
-              maxAngle: 10,
-              threshold: 20,
+              maxAngle: 20,
+              threshold: 10,
               scale: 0.7,
               isLoop: true,
               allowedSwipeDirection: const AllowedSwipeDirection.symmetric(
@@ -206,7 +206,7 @@ class _UpcomingScheduleCardWidgetState
                 ),
                 const SizedBox(width: AppTheme.spacing8),
                 Text(
-                  appointment.time,
+                  DateFormatter.formatTimeString(appointment.time),
                   style: const TextStyle(
                     fontSize: 13,
                     color: Colors.white,

@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import '../../../../../core/theme/app_theme.dart';
+import '../../../../../core/widgets/dialogs/base_dialog.dart';
 
+// دايلوج إضافة تقييم مخصص
 class AddReviewDialog extends StatefulWidget {
   final String doctorId;
   final double? initialRating;
@@ -30,7 +32,7 @@ class _AddReviewDialogState extends State<AddReviewDialog> {
   @override
   void initState() {
     super.initState();
-    _rating = widget.initialRating ?? 5.0;
+    _rating = widget.initialRating ?? 5;
     _commentController = TextEditingController(
       text: widget.initialComment ?? '',
     );
@@ -44,26 +46,27 @@ class _AddReviewDialogState extends State<AddReviewDialog> {
 
   @override
   Widget build(BuildContext context) {
-    return AlertDialog(
-      title: Text(
-        widget.isEditing ? 'Değerlendirmeyi Düzenle' : 'Değerlendirme Yap',
-        style: AppTheme.heading2,
-      ),
+    return BaseDialog(
+      icon: DialogIcon(icon: Icons.rate_review, color: AppTheme.primaryColor),
+      title: widget.isEditing ? 'تعديل التقييم' : 'إضافة تقييم',
+      subtitle: 'شاركنا تجربتك مع الطبيب',
       content: Form(
         key: _formKey,
         child: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Puan seçimi
+            // اختيار النقاط
             Text(
-              'Puanınız',
+              'تقييمك',
               style: AppTheme.bodyMedium.copyWith(
                 fontWeight: FontWeight.w600,
                 color: AppTheme.textPrimary,
               ),
             ),
             const SizedBox(height: AppTheme.spacing8),
+
+            // النجوم التفاعلية
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: List.generate(5, (index) {
@@ -86,6 +89,8 @@ class _AddReviewDialogState extends State<AddReviewDialog> {
               }),
             ),
             const SizedBox(height: AppTheme.spacing8),
+
+            // نص التقييم
             Center(
               child: Text(
                 _getRatingText(_rating),
@@ -97,9 +102,9 @@ class _AddReviewDialogState extends State<AddReviewDialog> {
             ),
             const SizedBox(height: AppTheme.spacing20),
 
-            // Yorum alanı
+            // حقل التعليق
             Text(
-              'Yorumunuz',
+              'تعليقك',
               style: AppTheme.bodyMedium.copyWith(
                 fontWeight: FontWeight.w600,
                 color: AppTheme.textPrimary,
@@ -111,7 +116,7 @@ class _AddReviewDialogState extends State<AddReviewDialog> {
               maxLines: 4,
               maxLength: 500,
               decoration: InputDecoration(
-                hintText: 'Doktor hakkındaki deneyiminizi paylaşın...',
+                hintText: 'شاركنا تجربتك مع الطبيب...',
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(AppTheme.radiusSmall),
                 ),
@@ -122,10 +127,10 @@ class _AddReviewDialogState extends State<AddReviewDialog> {
               ),
               validator: (value) {
                 if (value == null || value.trim().isEmpty) {
-                  return 'Lütfen bir yorum yazın';
+                  return 'يرجى كتابة تعليق';
                 }
                 if (value.trim().length < 10) {
-                  return 'Yorum en az 10 karakter olmalıdır';
+                  return 'التعليق يجب أن يكون 10 أحرف على الأقل';
                 }
                 return null;
               },
@@ -134,15 +139,21 @@ class _AddReviewDialogState extends State<AddReviewDialog> {
         ),
       ),
       actions: [
+        // زر الإلغاء
         TextButton(
           onPressed: _isSubmitting ? null : () => Navigator.pop(context),
-          child: const Text('İptal'),
+          child: Text('إلغاء', style: TextStyle(color: AppTheme.textSecondary)),
         ),
+
+        // زر الإرسال
         ElevatedButton(
           onPressed: _isSubmitting ? null : _submitReview,
           style: ElevatedButton.styleFrom(
             backgroundColor: AppTheme.primaryColor,
             foregroundColor: Colors.white,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(AppTheme.radiusSmall),
+            ),
           ),
           child: _isSubmitting
               ? const SizedBox(
@@ -153,27 +164,21 @@ class _AddReviewDialogState extends State<AddReviewDialog> {
                     valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
                   ),
                 )
-              : Text(widget.isEditing ? 'Güncelle' : 'Gönder'),
+              : Text(widget.isEditing ? 'تحديث' : 'إرسال'),
         ),
       ],
     );
   }
 
   String _getRatingText(double rating) {
-    switch (rating.toInt()) {
-      case 1:
-        return 'Çok Kötü';
-      case 2:
-        return 'Kötü';
-      case 3:
-        return 'Orta';
-      case 4:
-        return 'İyi';
-      case 5:
-        return 'Mükemmel';
-      default:
-        return 'Mükemmel';
-    }
+    return switch (rating.toInt()) {
+      1 => 'سيء جداً',
+      2 => 'سيء',
+      3 => 'متوسط',
+      4 => 'جيد',
+      5 => 'ممتاز',
+      _ => 'ممتاز',
+    };
   }
 
   void _submitReview() async {
@@ -185,7 +190,9 @@ class _AddReviewDialogState extends State<AddReviewDialog> {
 
     try {
       widget.onSubmit(_rating, _commentController.text.trim());
-      Navigator.pop(context);
+      if (mounted) {
+        Navigator.pop(context);
+      }
     } catch (e) {
       setState(() {
         _isSubmitting = false;
@@ -194,7 +201,7 @@ class _AddReviewDialogState extends State<AddReviewDialog> {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Hata: $e'),
+            content: Text('خطأ: $e'),
             backgroundColor: AppTheme.errorColor,
           ),
         );

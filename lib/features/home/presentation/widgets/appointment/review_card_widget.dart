@@ -1,8 +1,8 @@
 import 'package:doctorbooking/features/home/data/models/review_model.dart';
 import 'package:flutter/material.dart';
 import 'package:iconsax/iconsax.dart';
-import 'package:intl/intl.dart';
 import '../../../../../core/theme/app_theme.dart';
+import '../../../../../core/utils/date_formatter.dart';
 
 class ReviewCardWidget extends StatelessWidget {
   const ReviewCardWidget({super.key, required this.reviewModel});
@@ -24,13 +24,13 @@ class ReviewCardWidget extends StatelessWidget {
             children: [
               CircleAvatar(
                 radius: 24,
-                backgroundImage: reviewModel.user.imageUrl != null
-                    ? NetworkImage(reviewModel.user.imageUrl!)
+                backgroundImage: reviewModel.userImageUrl != null
+                    ? NetworkImage(reviewModel.userImageUrl!)
                     : null,
-                backgroundColor: AppTheme.accentColor.withOpacity(0.2),
-                child: reviewModel.user.imageUrl == null
+                backgroundColor: AppTheme.accentColor.withValues(alpha: 0.2),
+                child: reviewModel.userImageUrl == null
                     ? Text(
-                        reviewModel.user.name[0].toUpperCase(),
+                        (reviewModel.userName ?? 'U')[0].toUpperCase(),
                         style: TextStyle(
                           fontSize: 18,
                           fontWeight: FontWeight.w600,
@@ -45,7 +45,7 @@ class ReviewCardWidget extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      reviewModel.user.name,
+                      reviewModel.userName ?? 'Anonim Kullanıcı',
                       style: AppTheme.bodyLarge.copyWith(
                         fontWeight: FontWeight.w600,
                         fontSize: 15,
@@ -75,7 +75,7 @@ class ReviewCardWidget extends StatelessWidget {
                         ),
                         const SizedBox(width: AppTheme.spacing8),
                         Text(
-                          DateFormat('dd MMM yyyy').format(reviewModel.date),
+                          DateFormatter.formatShort(reviewModel.reviewCreatedAt),
                           style: AppTheme.caption,
                         ),
                       ],

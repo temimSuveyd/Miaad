@@ -72,7 +72,7 @@ class BookAppointmentCubit extends Cubit<BookAppointmentState> {
         title: 'Success',
         message: 'Randevü başarıyla olüştürüldü',
       );
-      Get.toNamed(AppRoutes.home);
+      Get.toNamed(AppRoutes.navigationPage);
     });
   }
 

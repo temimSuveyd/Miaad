@@ -136,4 +136,19 @@ class DateFormatter {
       return formatShort(date);
     }
   }
+
+  static String formatAppointmentDate(DateTime dateTime) {
+    return formatWithDay(dateTime);
+  }
+
+  // Format time string to remove seconds (HH:mm:ss -> HH:mm)
+  static String formatTimeString(String timeString) {
+    if (timeString.contains(':')) {
+      final parts = timeString.split(':');
+      if (parts.length >= 2) {
+        return '${parts[0]}:${parts[1]}';
+      }
+    }
+    return timeString;
+  }
 }

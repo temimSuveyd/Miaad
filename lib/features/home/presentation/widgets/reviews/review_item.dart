@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:iconsax/iconsax.dart';
 import '../../../../../core/theme/app_theme.dart';
 import '../../../../../core/utils/date_formatter.dart';
 import '../../../data/mock/mock_doctor_data.dart';
 import '../../../data/models/review_model.dart';
 
+// ويدجت عنصر التقييم
 class ReviewItem extends StatelessWidget {
   final ReviewModel review;
   final Function(ReviewModel)? onEdit;
@@ -18,9 +20,9 @@ class ReviewItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Use mock user id for testing
+    // استخدام معرف المستخدم المؤقت للاختبار
     final currentUserId = MockDoctorData.userId;
-    final isOwner = currentUserId == review.userId;
+    final isOwner = review.isOwnedBy(currentUserId);
 
     return Container(
       padding: const EdgeInsets.all(AppTheme.spacing16),
@@ -32,19 +34,19 @@ class ReviewItem extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Üst kısım - Kullanıcı bilgileri ve yıldızlar
+          // الجزء العلوي - معلومات المستخدم والنجوم
           Row(
             children: [
-              // Kullanıcı avatarı
+              // صورة المستخدم
               CircleAvatar(
                 radius: 20,
-                backgroundColor: AppTheme.primaryColor.withOpacity(0.1),
-                backgroundImage: review.userImageUrl != null
-                    ? NetworkImage(review.userImageUrl!)
+                backgroundColor: AppTheme.primaryColor.withValues(alpha: 0.1),
+                backgroundImage: review.displayImageUrl.isNotEmpty
+                    ? NetworkImage(review.displayImageUrl)
                     : null,
-                child: review.userImageUrl == null
+                child: review.displayImageUrl.isEmpty
                     ? Text(
-                        (review.userName ?? 'U').substring(0, 1).toUpperCase(),
+                        review.displayName.substring(0, 1).toUpperCase(),
                         style: AppTheme.bodyMedium.copyWith(
                           color: AppTheme.primaryColor,
                           fontWeight: FontWeight.bold,
@@ -54,13 +56,13 @@ class ReviewItem extends StatelessWidget {
               ),
               const SizedBox(width: AppTheme.spacing12),
 
-              // Kullanıcı adı ve tarih
+              // اسم المستخدم والتاريخ
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      review.userName ?? 'Anonim Kullanıcı',
+                      review.displayName,
                       style: AppTheme.bodyMedium.copyWith(
                         fontWeight: FontWeight.w600,
                         color: AppTheme.textPrimary,
@@ -68,14 +70,14 @@ class ReviewItem extends StatelessWidget {
                     ),
                     const SizedBox(height: 2),
                     Text(
-                      DateFormatter.formatReviewDate(review.createdAt),
+                      DateFormatter.getRelativeTime(review.reviewCreatedAt),
                       style: AppTheme.caption,
                     ),
                   ],
                 ),
               ),
 
-              // Yıldızlar
+              // النجوم
               Row(
                 children: List.generate(5, (index) {
                   return Icon(
@@ -90,10 +92,11 @@ class ReviewItem extends StatelessWidget {
                 }),
               ),
 
-              // Menü butonu (sadece kendi yorumu için)
+              // زر القائمة (فقط للتقييم الخاص بالمستخدم)
               if (isOwner) ...[
                 const SizedBox(width: AppTheme.spacing8),
                 PopupMenuButton<String>(
+                  color: AppTheme.cardBackground,
                   icon: Icon(
                     Icons.more_vert,
                     color: AppTheme.textSecondary,
@@ -103,7 +106,7 @@ class ReviewItem extends StatelessWidget {
                     if (value == 'edit') {
                       onEdit?.call(review);
                     } else if (value == 'delete') {
-                      onDelete?.call(review.id!);
+                      onDelete?.call(review.reviewId!);
                     }
                   },
                   itemBuilder: (context) => [
@@ -111,9 +114,9 @@ class ReviewItem extends StatelessWidget {
                       value: 'edit',
                       child: Row(
                         children: [
-                          Icon(Icons.edit, size: 18),
+                          Icon(Iconsax.edit, size: 18),
                           SizedBox(width: 8),
-                          Text('Düzenle'),
+                          Text('تعديل'),
                         ],
                       ),
                     ),
@@ -122,13 +125,13 @@ class ReviewItem extends StatelessWidget {
                       child: Row(
                         children: [
                           Icon(
-                            Icons.delete,
+                            Icons.delete_outline_outlined,
                             size: 18,
                             color: AppTheme.errorColor,
                           ),
                           const SizedBox(width: 8),
                           Text(
-                            'Sil',
+                            'حذف',
                             style: TextStyle(color: AppTheme.errorColor),
                           ),
                         ],
@@ -142,7 +145,7 @@ class ReviewItem extends StatelessWidget {
 
           const SizedBox(height: AppTheme.spacing12),
 
-          // Yorum metni
+          // نص التعليق
           Text(
             review.comment,
             style: AppTheme.bodyMedium.copyWith(

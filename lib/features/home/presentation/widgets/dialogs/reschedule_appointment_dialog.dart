@@ -39,21 +39,21 @@ class _RescheduleAppointmentDialogState
   String? selectedTime;
 
   final List<String> timeSlots = [
-    '09:00 ص',
-    '10:00 ص',
-    '11:00 ص',
-    '12:00 م',
-    '02:00 م',
-    '03:00 م',
-    '04:00 م',
-    '05:00 م',
+    '09:00',
+    '10:00',
+    '11:00',
+    '12:00',
+    '02:00',
+    '03:00',
+    '04:00',
+    '05:00',
   ];
 
   @override
   void initState() {
     super.initState();
     selectedDate = widget.appointment.date;
-    selectedTime = widget.appointment.time;
+    selectedTime = DateFormatter.formatTimeString(widget.appointment.time);
   }
 
   @override
@@ -143,7 +143,9 @@ class _RescheduleAppointmentDialogState
                       ),
                       const SizedBox(width: AppTheme.spacing8),
                       Text(
-                        DateFormatter.formatAppointmentDate(widget.appointment.date),
+                        DateFormatter.formatAppointmentDate(
+                          widget.appointment.date,
+                        ),
                         style: AppTheme.bodyMedium.copyWith(
                           fontWeight: FontWeight.w600,
                         ),
@@ -156,7 +158,7 @@ class _RescheduleAppointmentDialogState
                       ),
                       const SizedBox(width: AppTheme.spacing8),
                       Text(
-                        widget.appointment.time,
+                        DateFormatter.formatTimeString(widget.appointment.time),
                         style: AppTheme.bodyMedium.copyWith(
                           fontWeight: FontWeight.w600,
                         ),
@@ -379,6 +381,6 @@ class _RescheduleAppointmentDialogState
   bool _canConfirm() {
     if (selectedDate == null || selectedTime == null) return false;
     return selectedDate != widget.appointment.date ||
-        selectedTime != widget.appointment.time;
+        selectedTime != DateFormatter.formatTimeString(widget.appointment.time);
   }
 }

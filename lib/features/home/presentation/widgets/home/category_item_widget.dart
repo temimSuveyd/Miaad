@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/svg.dart';
 import 'package:iconsax/iconsax.dart';
 // import 'package:flutter_svg/flutter_svg.dart';
 import '../../../../../core/theme/app_theme.dart';

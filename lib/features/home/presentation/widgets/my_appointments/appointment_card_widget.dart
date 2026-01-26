@@ -1,5 +1,5 @@
-import 'package:doctorbooking/core/services/service_locator.dart';
 import 'package:doctorbooking/features/home/presentation/cubit/my_appointments_cubit/my_appointments_cubit.dart';
+import 'package:doctorbooking/features/home/presentation/widgets/dialogs/reschedule_appointment_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get/get.dart';
@@ -109,8 +109,7 @@ class AppointmentCardWidget extends StatelessWidget {
                               ),
                             ),
                             Text(
-                              appointment.time,
-
+                              DateFormatter.formatTimeString(appointment.time),
                               style: TextStyle(
                                 fontSize: 12,
                                 color: AppTheme.textSecondary.withValues(
@@ -163,13 +162,7 @@ class AppointmentCardWidget extends StatelessWidget {
           Expanded(
             child: ElevatedButton(
               onPressed: () {
-                // منطق إعادة الجدولة
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(
-                    content: Text('Reschedule feature coming soon'),
-                    duration: Duration(seconds: 2),
-                  ),
-                );
+                _showRescheduleDialog(context);
               },
               style: ElevatedButton.styleFrom(
                 backgroundColor: AppTheme.primaryColor,
@@ -222,6 +215,21 @@ class AppointmentCardWidget extends StatelessWidget {
     );
   }
 
+  // عرض حوار إعادة جدولة الموعد
+  void _showRescheduleDialog(BuildContext context) {
+    RescheduleAppointmentDialog.show(
+      context: context,
+      appointment: appointment,
+      onReschedule: (DateTime newDate, String newTime) {
+        context.read<MyAppointmentsCubit>().rescheduleAppointment(
+          appointment.id!,
+          newDate,
+          newTime,
+        );
+      },
+    );
+  }
+
   // بناء نص الحالة للمواعيد المكتملة والملغاة
   Widget _buildStatusText() {
     return Row(
@@ -265,7 +273,7 @@ class AppointmentCardWidget extends StatelessWidget {
                 ),
                 const SizedBox(width: AppTheme.spacing4),
                 Text(
-                  appointment.time,
+                  DateFormatter.formatTimeString(appointment.time),
                   style: TextStyle(
                     fontSize: 12,
                     color: AppTheme.textSecondary.withValues(alpha: 0.9),
@@ -369,6 +377,18 @@ class AppointmentCardWidget extends StatelessWidget {
                       duration: Duration(seconds: 2),
                     ),
                   );
+                },
+              ),
+            if (isCompleted || isCancelled)
+              ListTile(
+                leading: const Icon(
+                  Icons.schedule,
+                  color: AppTheme.primaryColor,
+                ),
+                title: const Text('Book Again'),
+                onTap: () {
+                  Navigator.pop(context);
+                  _showRescheduleDialog(context);
                 },
               ),
             const SizedBox(height: AppTheme.spacing20),

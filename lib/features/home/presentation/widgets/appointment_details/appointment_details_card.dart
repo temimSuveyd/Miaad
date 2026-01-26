@@ -37,7 +37,7 @@ class AppointmentDetailsCard extends StatelessWidget {
           _DetailRow(
             icon: Icons.access_time_outlined,
             label: 'الوقت',
-            value: appointment.time,
+            value: DateFormatter.formatTimeString(appointment.time),
           ),
           const SizedBox(height: AppTheme.spacing16),
           _DetailRow(
@@ -49,7 +49,7 @@ class AppointmentDetailsCard extends StatelessWidget {
           _DetailRow(
             icon: Icons.confirmation_number_outlined,
             label: 'رقم الموعد',
-            value: appointment.shortId,
+            value: appointment.id!,
           ),
         ],
       ),

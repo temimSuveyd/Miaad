@@ -66,7 +66,7 @@ class AppointmentConfirmationDialog extends StatelessWidget {
           borderRadius: BorderRadius.circular(AppTheme.radiusLarge),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.1),
+              color: Colors.black.withValues(alpha: 0.1),
               blurRadius: 20,
               offset: const Offset(0, 10),
             ),
@@ -80,7 +80,7 @@ class AppointmentConfirmationDialog extends StatelessWidget {
               width: 80,
               height: 80,
               decoration: BoxDecoration(
-                color: AppTheme.primaryColor.withOpacity(0.1),
+                color: AppTheme.primaryColor.withValues(alpha: 0.1),
                 shape: BoxShape.circle,
               ),
               child: const Icon(
@@ -127,7 +127,7 @@ class AppointmentConfirmationDialog extends StatelessWidget {
                         width: 60,
                         height: 60,
                         decoration: BoxDecoration(
-                          color: AppTheme.primaryColor.withOpacity(0.1),
+                          color: AppTheme.primaryColor.withValues(alpha: 0.1),
                           borderRadius: BorderRadius.circular(
                             AppTheme.radiusMedium,
                           ),
@@ -288,7 +288,7 @@ class AppointmentConfirmationDialog extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(AppTheme.spacing12),
       decoration: BoxDecoration(
-        color: AppTheme.primaryColor.withOpacity(0.05),
+        color: AppTheme.primaryColor.withValues(alpha: 0.05),
         borderRadius: BorderRadius.circular(AppTheme.radiusSmall),
       ),
       child: Column(

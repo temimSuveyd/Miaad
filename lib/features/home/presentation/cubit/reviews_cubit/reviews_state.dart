@@ -26,6 +26,7 @@ class ReviewsLoaded extends ReviewsState {
   final int totalReviews;
   final Map<String, int> ratingDistribution;
   final bool canAddReview;
+  final bool hasCompletedAppointment; // Yeni field
 
   const ReviewsLoaded({
     required this.reviews,
@@ -33,6 +34,7 @@ class ReviewsLoaded extends ReviewsState {
     required this.totalReviews,
     required this.ratingDistribution,
     required this.canAddReview,
+    this.hasCompletedAppointment = false, // Default false
   });
 
   @override
@@ -42,6 +44,7 @@ class ReviewsLoaded extends ReviewsState {
     totalReviews,
     ratingDistribution,
     canAddReview,
+    hasCompletedAppointment,
   ];
 
   ReviewsLoaded copyWith({
@@ -50,6 +53,7 @@ class ReviewsLoaded extends ReviewsState {
     int? totalReviews,
     Map<String, int>? ratingDistribution,
     bool? canAddReview,
+    bool? hasCompletedAppointment,
   }) {
     return ReviewsLoaded(
       reviews: reviews ?? this.reviews,
@@ -57,6 +61,8 @@ class ReviewsLoaded extends ReviewsState {
       totalReviews: totalReviews ?? this.totalReviews,
       ratingDistribution: ratingDistribution ?? this.ratingDistribution,
       canAddReview: canAddReview ?? this.canAddReview,
+      hasCompletedAppointment:
+          hasCompletedAppointment ?? this.hasCompletedAppointment,
     );
   }
 }

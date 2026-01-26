@@ -1,4 +1,5 @@
 import 'package:equatable/equatable.dart';
+import 'package:flutter/material.dart';
 
 class AppointmentsModel extends Equatable {
   final String? id;
@@ -78,7 +79,7 @@ class AppointmentsModel extends Equatable {
       'doctor_id': doctorId,
       'date': date.toIso8601String().split('T')[0], // Format: YYYY-MM-DD
       'time': time,
-      'status': _statusToString(status),
+      'status': _statusToString(AppointmentStatus.completed),
       'rescheduled_by': rescheduledBy,
       'cancelled_by': cancelledBy,
       'notes': notes,
@@ -155,6 +156,46 @@ class AppointmentsModel extends Equatable {
   @override
   String toString() {
     return 'AppointmentsModel(id: $id, userId: $userId, doctorId: $doctorId, date: $date, time: $time, status: $status, rescheduledBy: $rescheduledBy, cancelledBy: $cancelledBy, notes: $notes, createdAt: $createdAt, updatedAt: $updatedAt , userNaem: $userName , doctorName: $doctorName , hospitalName: $hospitalName)';
+  }
+
+  // Status helper methods for UI
+  Color getStatusColor() {
+    switch (status) {
+      case AppointmentStatus.upcoming:
+        return const Color(0xFF2196F3); // Blue
+      case AppointmentStatus.completed:
+        return const Color(0xFF4CAF50); // Green
+      case AppointmentStatus.cancelled:
+        return const Color(0xFFF44336); // Red
+      case AppointmentStatus.rescheduled:
+        return const Color(0xFFFF9800); // Orange
+    }
+  }
+
+  IconData getStatusIcon() {
+    switch (status) {
+      case AppointmentStatus.upcoming:
+        return Icons.schedule;
+      case AppointmentStatus.completed:
+        return Icons.check_circle;
+      case AppointmentStatus.cancelled:
+        return Icons.cancel;
+      case AppointmentStatus.rescheduled:
+        return Icons.update;
+    }
+  }
+
+  String getStatusText() {
+    switch (status) {
+      case AppointmentStatus.upcoming:
+        return 'Yaklaşan';
+      case AppointmentStatus.completed:
+        return 'Tamamlandı';
+      case AppointmentStatus.cancelled:
+        return 'İptal Edildi';
+      case AppointmentStatus.rescheduled:
+        return 'Ertelendi';
+    }
   }
 }
 

@@ -35,7 +35,7 @@ class DoctorProfileHeaderWidget extends StatelessWidget {
                 fit: BoxFit.cover,
                 errorBuilder: (context, error, stackTrace) {
                   return Container(
-                    color: AppTheme.accentColor.withOpacity(0.1),
+                    color: AppTheme.accentColor.withValues(alpha: 0.1),
                     child: Icon(
                       Icons.person,
                       size: 40,
@@ -64,7 +64,7 @@ class DoctorProfileHeaderWidget extends StatelessWidget {
                     vertical: AppTheme.spacing8,
                   ),
                   decoration: BoxDecoration(
-                    color: AppTheme.accentColor.withOpacity(0.1),
+                    color: AppTheme.accentColor.withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(AppTheme.radiusSmall),
                   ),
                   child: Text(

@@ -1,6 +1,7 @@
 import 'package:doctorbooking/core/widgets/bottom_navigation_bar.dart';
 import 'package:doctorbooking/features/home/presentation/pages/home_page.dart';
 import 'package:doctorbooking/features/home/presentation/pages/my_appointments_page.dart';
+import 'package:doctorbooking/features/search/presentation/pages/search_page.dart';
 import 'package:doctorbooking/features/my_doctors/presentation/pages/saved_page.dart';
 import 'package:doctorbooking/features/navigation/navigation_cubit.dart';
 import 'package:doctorbooking/features/profile/presentation/pages/profile_page.dart';
@@ -14,7 +15,7 @@ class NavigationPage extends StatelessWidget {
   static final List<Widget> _pages = [
     const HomePage(),
     const MyAppointmentsPage(),
-    const SizedBox(),
+    const SearchPage(),
     const SavedPage(),
     const ProfilePage(),
   ];

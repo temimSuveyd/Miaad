@@ -4,14 +4,13 @@ import 'review_model.dart';
 // نموذج معلومات الطبيب التفصيلية
 class DoctorInfoModel extends Equatable {
   final String aboutText;
-  final String workingTime;
+  final Map workingTime;
   final String strNumber;
   final String practicePlace;
   final String practiceYears;
   final String location;
   final double latitude;
   final double longitude;
-  final List<ReviewModel> reviews;
 
   const DoctorInfoModel({
     required this.aboutText,
@@ -22,7 +21,6 @@ class DoctorInfoModel extends Equatable {
     required this.location,
     required this.latitude,
     required this.longitude,
-    required this.reviews,
   });
 
   @override
@@ -35,23 +33,19 @@ class DoctorInfoModel extends Equatable {
     location,
     latitude,
     longitude,
-    reviews,
   ];
 
   // تحويل من JSON إلى DoctorInfoModel
   factory DoctorInfoModel.fromJson(Map<String, dynamic> json) {
     return DoctorInfoModel(
       aboutText: json['aboutText'] as String,
-      workingTime: json['workingTime'] as String,
+      workingTime: json['workingTime'] as Map,
       strNumber: json['strNumber'] as String,
       practicePlace: json['practicePlace'] as String,
       practiceYears: json['practiceYears'] as String,
       location: json['location'] as String,
       latitude: (json['latitude'] as num).toDouble(),
       longitude: (json['longitude'] as num).toDouble(),
-      reviews: (json['reviews'] as List<dynamic>)
-          .map((review) => ReviewModel.fromJson(review as Map<String, dynamic>))
-          .toList(),
     );
   }
 
@@ -66,14 +60,13 @@ class DoctorInfoModel extends Equatable {
       'location': location,
       'latitude': latitude,
       'longitude': longitude,
-      'reviews': reviews.map((review) => review.toJson()).toList(),
     };
   }
 
   // نسخ الكائن مع تعديل بعض الخصائص
   DoctorInfoModel copyWith({
     String? aboutText,
-    String? workingTime,
+    Map? workingTime,
     String? strNumber,
     String? practicePlace,
     String? practiceYears,
@@ -91,7 +84,6 @@ class DoctorInfoModel extends Equatable {
       location: location ?? this.location,
       latitude: latitude ?? this.latitude,
       longitude: longitude ?? this.longitude,
-      reviews: reviews ?? this.reviews,
     );
   }
 }

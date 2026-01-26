@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../../../core/theme/app_theme.dart';
+import '../widgets/profile_header.dart';
+import '../widgets/profile_menu_list.dart';
 
 class ProfilePage extends StatelessWidget {
   const ProfilePage({super.key});
@@ -8,13 +10,33 @@ class ProfilePage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppTheme.backgroundColor,
-      body: Center(
+      appBar: AppBar(
+        backgroundColor: AppTheme.backgroundColor,
+        elevation: 0,
+        centerTitle: true,
+        title: const Text(
+          'Profile',
+          style: TextStyle(
+            fontSize: 18,
+            fontWeight: FontWeight.w600,
+            color: AppTheme.textPrimary,
+          ),
+        ),
+      ),
+      body: const SingleChildScrollView(
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(Icons.person, size: 80, color: AppTheme.primaryColor),
-            const SizedBox(height: 16),
-            Text('Profile', style: Theme.of(context).textTheme.headlineMedium),
+            SizedBox(height: AppTheme.spacing20),
+
+            // Profile Header with avatar, name, phone
+            ProfileHeader(),
+
+            SizedBox(height: AppTheme.spacing32),
+
+            // Menu List
+            ProfileMenuList(),
+
+            SizedBox(height: AppTheme.spacing32),
           ],
         ),
       ),

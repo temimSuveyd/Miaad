@@ -5,7 +5,7 @@ import '../../../data/models/review_model.dart';
 import '../../../data/repositories/reviews_repository.dart';
 import 'reviews_state.dart';
 
-// Cubit لإدارة حالة التقييمات
+// كيوبت إدارة حالة التقييمات
 class ReviewsCubit extends Cubit<ReviewsState> {
   final ReviewsRepository repository;
   StreamSubscription? _reviewsSubscription;
@@ -13,7 +13,7 @@ class ReviewsCubit extends Cubit<ReviewsState> {
   ReviewsCubit({required this.repository}) : super(const ReviewsInitial());
 
   String? _currentDoctorId;
-  // Use mock user id for testing
+  // استخدام معرف المستخدم المؤقت للاختبار
   final String _currentUserId = MockDoctorData.userId;
 
   // تحميل تقييمات الطبيب مع الاستماع للتحديثات المباشرة
@@ -27,44 +27,82 @@ class ReviewsCubit extends Cubit<ReviewsState> {
       await _reviewsSubscription?.cancel();
 
       // الاستماع للتحديثات المباشرة
-      _reviewsSubscription = repository.getDoctorReviewsStream(doctorId).listen(
-        (result) async {
-          result.fold((failure) => emit(ReviewsError(failure.message)), (
-            reviews,
-          ) async {
-            // الحصول على إحصائيات التقييمات
-            final statsResult = await repository.getDoctorReviewStats(doctorId);
+      _reviewsSubscription = repository.getDoctorReviewsStream(doctorId).listen((
+        result,
+      ) async {
+        result.fold((failure) => emit(ReviewsError(failure.message)), (
+          reviews,
+        ) async {
+          // الحصول على إحصائيات التقييمات
+          final statsResult = await repository.getDoctorReviewStats(doctorId);
 
-            statsResult.fold((failure) => emit(ReviewsError(failure.message)), (
-              stats,
-            ) async {
-              // التحقق من إمكانية إضافة تقييم
-              bool canAddReview = false;
+          statsResult.fold((failure) => emit(ReviewsError(failure.message)), (
+            stats,
+          ) async {
+            // التحقق من إمكانية إضافة تقييم
+            bool canAddReview = false;
+
+            // أولاً: التحقق من وجود موعد مكتمل
+            final hasCompletedAppointmentResult = await repository
+                .hasCompletedAppointmentWithDoctor(_currentUserId, doctorId);
+
+            bool hasCompletedAppointment = false;
+            hasCompletedAppointmentResult.fold(
+              (failure) {
+                print(
+                  '❌ Error checking completed appointment: ${failure.message}',
+                );
+                hasCompletedAppointment = false;
+              },
+              (hasCompleted) {
+                print('✅ Has completed appointment: $hasCompleted');
+                print('👤 Current user ID: $_currentUserId');
+                print('👨‍⚕️ Doctor ID: $doctorId');
+                hasCompletedAppointment = hasCompleted;
+              },
+            );
+
+            // 🚨 TEMPORARY: Force hasCompletedAppointment to true for testing
+            hasCompletedAppointment = true;
+            print('🧪 TESTING: Forced hasCompletedAppointment = true');
+
+            // ثانياً: التحقق من عدم وجود تقييم سابق
+            if (hasCompletedAppointment) {
               final hasReviewedResult = await repository.hasUserReviewedDoctor(
                 _currentUserId,
                 doctorId,
               );
 
               hasReviewedResult.fold(
-                (failure) => canAddReview = false,
-                (hasReviewed) => canAddReview = !hasReviewed,
+                (failure) {
+                  print('❌ Error checking existing review: ${failure.message}');
+                  canAddReview = false;
+                },
+                (hasReviewed) {
+                  print('📝 Has existing review: $hasReviewed');
+                  canAddReview = !hasReviewed;
+                  print('✨ Can add review: $canAddReview');
+                },
               );
+            } else {
+              print('⚠️ No completed appointment found - cannot add review');
+            }
 
-              emit(
-                ReviewsLoaded(
-                  reviews: reviews,
-                  averageRating: stats['averageRating'] ?? 0.0,
-                  totalReviews: stats['totalReviews'] ?? 0,
-                  ratingDistribution: Map<String, int>.from(
-                    stats['ratingDistribution'] ?? {},
-                  ),
-                  canAddReview: canAddReview,
+            emit(
+              ReviewsLoaded(
+                reviews: reviews,
+                averageRating: stats['averageRating'] ?? 0.0,
+                totalReviews: stats['totalReviews'] ?? 0,
+                ratingDistribution: Map<String, int>.from(
+                  stats['ratingDistribution'] ?? {},
                 ),
-              );
-            });
+                canAddReview: canAddReview,
+                hasCompletedAppointment: hasCompletedAppointment,
+              ),
+            );
           });
-        },
-      );
+        });
+      });
     } catch (e) {
       emit(ReviewsError('خطأ في تحميل التقييمات: $e'));
     }
@@ -79,12 +117,33 @@ class ReviewsCubit extends Cubit<ReviewsState> {
     try {
       emit(const ReviewsAdding());
 
+      // التحقق من وجود موعد مكتمل أولاً
+      final hasCompletedAppointmentResult = await repository
+          .hasCompletedAppointmentWithDoctor(_currentUserId, doctorId);
+
+      final hasCompletedAppointment = hasCompletedAppointmentResult.fold(
+        (failure) => false,
+        (hasCompleted) => hasCompleted,
+      );
+
+      if (!hasCompletedAppointment) {
+        emit(
+          const ReviewsError(
+            'يجب أن يكون لديك موعد مكتمل مع هذا الطبيب لتتمكن من إضافة تقييم',
+          ),
+        );
+        return;
+      }
+
       final review = ReviewModel(
+        reviewCreatedAt: DateTime.now(),
         userId: _currentUserId,
         doctorId: doctorId,
+        userFullName: MockDoctorData.userName,
+        userEmail: MockDoctorData.userEmail,
+        userPhone: MockDoctorData.userPhone,
         rating: rating,
         comment: comment,
-        createdAt: DateTime.now(),
       );
 
       final result = await repository.createReview(review);
@@ -94,9 +153,7 @@ class ReviewsCubit extends Cubit<ReviewsState> {
       ) {
         emit(ReviewAdded(createdReview));
         // إعادة تحميل التقييمات لتحديث القائمة
-        if (_currentDoctorId != null) {
-          loadDoctorReviews(_currentDoctorId!);
-        }
+        loadDoctorReviews(doctorId);
       });
     } catch (e) {
       emit(ReviewsError('خطأ في إضافة التقييم: $e'));
@@ -112,11 +169,11 @@ class ReviewsCubit extends Cubit<ReviewsState> {
     try {
       emit(const ReviewsAdding());
 
-      // الحصول على التقييم الحالي
+      // الحصول على التقييم الحالي أولاً
       final currentReviewResult = await repository.getReviewById(reviewId);
 
-      await currentReviewResult.fold(
-        (failure) async => emit(ReviewsError(failure.message)),
+      currentReviewResult.fold(
+        (failure) => emit(ReviewsError(failure.message)),
         (currentReview) async {
           final updatedReview = currentReview.copyWith(
             rating: rating,
@@ -159,14 +216,28 @@ class ReviewsCubit extends Cubit<ReviewsState> {
     }
   }
 
-  // التحقق من إمكانية إضافة تقييم
-  Future<bool> canUserAddReview(String doctorId) async {
-    final result = await repository.hasUserReviewedDoctor(
-      _currentUserId,
-      doctorId,
-    );
+  // الحصول على تقييمات المستخدم
+  Future<void> loadUserReviews() async {
+    try {
+      emit(const ReviewsLoading());
 
-    return result.fold((failure) => false, (hasReviewed) => !hasReviewed);
+      final result = await repository.getUserReviews(_currentUserId);
+
+      result.fold(
+        (failure) => emit(ReviewsError(failure.message)),
+        (reviews) => emit(
+          ReviewsLoaded(
+            reviews: reviews,
+            averageRating: 0.0,
+            totalReviews: reviews.length,
+            ratingDistribution: {},
+            canAddReview: false,
+          ),
+        ),
+      );
+    } catch (e) {
+      emit(ReviewsError('خطأ في تحميل تقييمات المستخدم: $e'));
+    }
   }
 
   @override

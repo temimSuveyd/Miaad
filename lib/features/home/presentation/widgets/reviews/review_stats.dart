@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../../../../core/theme/app_theme.dart';
 
+// ويدجت إحصائيات التقييمات
 class ReviewStats extends StatelessWidget {
   final double averageRating;
   final int totalReviews;
@@ -18,125 +19,123 @@ class ReviewStats extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(AppTheme.spacing20),
       decoration: BoxDecoration(
-        color: AppTheme.backgroundColor,
+        color: AppTheme.cardBackground,
         borderRadius: BorderRadius.circular(AppTheme.radiusMedium),
         border: Border.all(color: AppTheme.dividerColor),
       ),
-      child: Column(
+      child: Row(
         children: [
-          Row(
-            children: [
-              // Sol taraf - Ortalama puan
-              Expanded(
-                flex: 2,
-                child: Column(
-                  children: [
-                    Text(
-                      averageRating.toStringAsFixed(1),
-                      style: AppTheme.heading1.copyWith(
-                        fontSize: 48,
-                        fontWeight: FontWeight.bold,
-                        color: AppTheme.primaryColor,
-                      ),
-                    ),
-                    const SizedBox(height: AppTheme.spacing8),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: List.generate(5, (index) {
-                        return Icon(
-                          index < averageRating.floor()
-                              ? Icons.star
-                              : index < averageRating
-                              ? Icons.star_half
-                              : Icons.star_border,
-                          color: Colors.amber,
-                          size: 24,
-                        );
-                      }),
-                    ),
-                    const SizedBox(height: 4),
-                    Text(
-                      '$totalReviews değerlendirme',
-                      style: AppTheme.caption,
-                    ),
-                  ],
-                ),
-              ),
+          // متوسط التقييم
+          _buildAverageRating(),
+          const SizedBox(width: AppTheme.spacing24),
 
-              const SizedBox(width: AppTheme.spacing24),
-
-              // Sağ taraf - Puan dağılımı
-              Expanded(
-                flex: 3,
-                child: Column(
-                  children: [
-                    for (int i = 5; i >= 1; i--)
-                      Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 2),
-                        child: _buildRatingBar(
-                          i,
-                          ratingDistribution['$i'] ?? 0,
-                        ),
-                      ),
-                  ],
-                ),
-              ),
-            ],
-          ),
+          // توزيع النجوم
+          Expanded(child: _buildRatingDistribution()),
         ],
       ),
     );
   }
 
-  Widget _buildRatingBar(int rating, int count) {
-    final percentage = totalReviews > 0 ? count / totalReviews : 0.0;
-
-    return Row(
+  Widget _buildAverageRating() {
+    return Column(
       children: [
-        // Yıldız sayısı
+        // الرقم
         Text(
-          '$rating',
-          style: AppTheme.caption.copyWith(
-            fontWeight: FontWeight.w500,
-            color: AppTheme.textPrimary,
+          averageRating.toStringAsFixed(1),
+          style: AppTheme.heading1.copyWith(
+            fontSize: 32,
+            fontWeight: FontWeight.bold,
+            color: AppTheme.primaryColor,
           ),
         ),
-        const SizedBox(width: 4),
-        const Icon(Icons.star, size: 16, color: Colors.amber),
-        const SizedBox(width: AppTheme.spacing8),
 
-        // Progress bar
-        Expanded(
-          child: Container(
-            height: 8,
-            decoration: BoxDecoration(
-              color: AppTheme.dividerColor,
-              borderRadius: BorderRadius.circular(4),
-            ),
-            child: FractionallySizedBox(
-              alignment: Alignment.centerLeft,
-              widthFactor: percentage,
-              child: Container(
-                decoration: BoxDecoration(
-                  color: AppTheme.primaryColor,
-                  borderRadius: BorderRadius.circular(4),
-                ),
-              ),
-            ),
-          ),
+        // النجوم
+        Row(
+          mainAxisSize: MainAxisSize.min,
+          children: List.generate(5, (index) {
+            return Icon(
+              index < averageRating.floor()
+                  ? Icons.star
+                  : index < averageRating
+                  ? Icons.star_half
+                  : Icons.star_border,
+              color: Colors.amber,
+              size: 20,
+            );
+          }),
         ),
-        const SizedBox(width: AppTheme.spacing8),
 
-        // Sayı
-        SizedBox(
-          width: 20,
-          child: Text(
-            '$count',
-            style: AppTheme.caption,
-            textAlign: TextAlign.end,
-          ),
+        const SizedBox(height: 4),
+
+        // عدد التقييمات
+        Text(
+          '$totalReviews değerlendirme',
+          style: AppTheme.caption.copyWith(color: AppTheme.textSecondary),
         ),
       ],
+    );
+  }
+
+  Widget _buildRatingDistribution() {
+    final maxCount = ratingDistribution.values.isNotEmpty
+        ? ratingDistribution.values.reduce((a, b) => a > b ? a : b)
+        : 1;
+
+    return Column(
+      children: [5, 4, 3, 2, 1].map((rating) {
+        final count = ratingDistribution[rating.toString()] ?? 0;
+        final percentage = maxCount > 0 ? count / maxCount : 0.0;
+
+        return Padding(
+          padding: const EdgeInsets.symmetric(vertical: 2),
+          child: Row(
+            children: [
+              // رقم النجمة
+              Text(
+                '$rating',
+                style: AppTheme.caption.copyWith(fontWeight: FontWeight.w500),
+              ),
+              const SizedBox(width: 4),
+
+              // النجمة
+              const Icon(Icons.star, color: Colors.amber, size: 14),
+              const SizedBox(width: 8),
+
+              // شريط التقدم
+              Expanded(
+                child: Container(
+                  height: 8,
+                  decoration: BoxDecoration(
+                    color: AppTheme.dividerColor,
+                    borderRadius: BorderRadius.circular(4),
+                  ),
+                  child: FractionallySizedBox(
+                    alignment: Alignment.centerLeft,
+                    widthFactor: percentage,
+                    child: Container(
+                      decoration: BoxDecoration(
+                        color: Colors.amber,
+                        borderRadius: BorderRadius.circular(4),
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+              const SizedBox(width: 8),
+
+              // العدد
+              SizedBox(
+                width: 20,
+                child: Text(
+                  '$count',
+                  style: AppTheme.caption.copyWith(fontWeight: FontWeight.w500),
+                  textAlign: TextAlign.end,
+                ),
+              ),
+            ],
+          ),
+        );
+      }).toList(),
     );
   }
 }

@@ -4,7 +4,7 @@ import '../../../../../core/theme/app_theme.dart';
 
 class AddReviewDialog extends StatefulWidget {
   final String doctorName;
-  final Function(double rating, String comment) onSubmit;
+  final Function(int rating, String comment) onSubmit;
 
   const AddReviewDialog({
     super.key,
@@ -15,7 +15,7 @@ class AddReviewDialog extends StatefulWidget {
   static Future<void> show({
     required BuildContext context,
     required String doctorName,
-    required Function(double rating, String comment) onSubmit,
+    required Function(int rating, String comment) onSubmit,
   }) {
     return showDialog(
       context: context,
@@ -29,7 +29,7 @@ class AddReviewDialog extends StatefulWidget {
 }
 
 class _AddReviewDialogState extends State<AddReviewDialog> {
-  double rating = 0;
+  int rating = 0;
   final TextEditingController commentController = TextEditingController();
 
   @override
@@ -118,7 +118,7 @@ class _AddReviewDialogState extends State<AddReviewDialog> {
                 return GestureDetector(
                   onTap: () {
                     setState(() {
-                      rating = index + 1.0;
+                      rating = index + 1;
                     });
                   },
                   child: Padding(
@@ -242,7 +242,7 @@ class _AddReviewDialogState extends State<AddReviewDialog> {
     );
   }
 
-  String _getRatingText(double rating) {
+  String _getRatingText(int rating) {
     if (rating == 5) return 'ممتاز';
     if (rating == 4) return 'جيد جداً';
     if (rating == 3) return 'جيد';

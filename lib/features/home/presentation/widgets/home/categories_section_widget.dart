@@ -72,7 +72,7 @@ class CategoriesSectionWidget extends StatelessWidget {
             crossAxisCount: 4,
             crossAxisSpacing: AppTheme.spacing4.dp,
             mainAxisSpacing: AppTheme.spacing4.dp,
-            childAspectRatio: 0.75,
+            childAspectRatio: 0.9,
           ),
           itemCount: categories.length,
           itemBuilder: (context, index) {
@@ -98,8 +98,8 @@ class CategoryCard extends StatelessWidget {
         Stack(
           children: [
             Container(
-              width: 70.dp,
-              height: 70.dp,
+              width: 55.dp,
+              height: 55.dp,
               decoration: BoxDecoration(
                 color: category.color,
                 borderRadius: BorderRadius.circular(AppTheme.radiusSmall.dp),
