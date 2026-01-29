@@ -3,7 +3,7 @@ import 'package:iconsax/iconsax.dart';
 import '../../../../../core/theme/app_theme.dart';
 import '../../../../../core/utils/date_formatter.dart';
 import '../../../data/mock/mock_doctor_data.dart';
-import '../../../data/models/review_model.dart';
+import '../../../../reviews/data/model/review_model.dart';
 
 // ويدجت عنصر التقييم
 class ReviewItem extends StatelessWidget {

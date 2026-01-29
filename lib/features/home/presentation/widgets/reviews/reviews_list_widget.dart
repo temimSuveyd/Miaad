@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../../../../core/theme/app_theme.dart';
-import '../../../data/models/review_model.dart';
+import '../../../../reviews/data/model/review_model.dart';
 import 'review_item.dart';
 
 class ReviewsListWidget extends StatelessWidget {

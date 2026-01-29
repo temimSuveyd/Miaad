@@ -1,4 +1,4 @@
-import 'package:doctorbooking/features/home/data/models/doctor_model.dart';
+import 'package:doctorbooking/features/shared/doctors/data/model/doctor_model.dart';
 import 'package:doctorbooking/features/home/data/models/doctor_info_model.dart';
 import 'package:equatable/equatable.dart';
 

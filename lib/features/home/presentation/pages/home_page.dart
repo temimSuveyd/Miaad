@@ -9,7 +9,6 @@ import '../cubit/home_cubit/home_cubit.dart';
 import '../widgets/home/location_header_widget.dart';
 import '../widgets/home/search_bar_widget.dart';
 import '../widgets/home/categories_section_widget.dart';
-import '../widgets/home/nearby_medical_centers_widget.dart';
 import '../widgets/home/popular_doctors_section_widget.dart';
 
 class HomePage extends StatelessWidget {

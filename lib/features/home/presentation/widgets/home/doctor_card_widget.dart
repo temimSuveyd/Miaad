@@ -1,4 +1,4 @@
-import 'package:doctorbooking/core/models/doctor_model.dart';
+import 'package:doctorbooking/features/shared/doctors/data/model/doctor_model.dart';
 import 'package:flutter/material.dart';
 import 'package:uni_size/uni_size.dart';
 import '../../../../../core/theme/app_theme.dart';

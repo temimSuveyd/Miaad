@@ -2,10 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:iconsax/iconsax.dart';
 import '../../../../../core/theme/app_theme.dart';
 import '../../../../../core/utils/date_formatter.dart';
-import '../../../data/models/appointments_model.dart';
+import '../../../../appointments/data/models/appointment.dart';
 
 class RescheduleAppointmentDialog extends StatefulWidget {
-  final AppointmentsModel appointment;
+  final AppointmentModel appointment;
   final Function(DateTime newDate, String newTime) onReschedule;
 
   const RescheduleAppointmentDialog({
@@ -16,7 +16,7 @@ class RescheduleAppointmentDialog extends StatefulWidget {
 
   static void show({
     required BuildContext context,
-    required AppointmentsModel appointment,
+    required AppointmentModel appointment,
     required Function(DateTime newDate, String newTime) onReschedule,
   }) {
     showDialog(

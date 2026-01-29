@@ -1,8 +1,8 @@
 import 'package:equatable/equatable.dart';
-import '../../../data/models/appointments_model.dart';
+import '../../../../appointments/data/models/appointment.dart';
 
 abstract class AppointmentDetailsState extends Equatable {
-  final AppointmentsModel appointment;
+  final AppointmentModel appointment;
 
   const AppointmentDetailsState({required this.appointment});
 

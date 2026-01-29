@@ -1,17 +1,16 @@
 import 'dart:async';
-import 'dart:developer';
-import 'package:doctorbooking/core/routing/presentation/routes/app_routes.dart';
-import 'package:doctorbooking/features/home/data/models/doctor_info_model.dart';
-import 'package:doctorbooking/features/home/data/models/doctor_model.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get/get.dart';
-import '../../../data/models/appointments_model.dart';
-import '../../../data/repositories/appointments_repositories.dart';
+import '../../../../../core/models/models.dart';
+import '../../../../../core/routing/presentation/routes/app_routes.dart';
+import '../../../../appointments/data/repositories/appointment_repository.dart';
+import '../../../data/models/doctor_info_model.dart';
 import 'home_state.dart';
 
-// Cubit للصفحة الرئيسية
+/// Cubit للصفحة الرئيسية
+/// Home Page State Management
 class HomeCubit extends Cubit<HomeState> {
-  final AppointmentsRepository repository;
+  final SharedAppointmentRepository _repository;
 
   // معرف المستخدم المؤقت
   static const String tempUserId = '5a4b4fc1-4c58-4d2c-baac-ef050fce8ce3';
@@ -19,13 +18,15 @@ class HomeCubit extends Cubit<HomeState> {
   // Stream subscription للاستماع للتحديثات
   StreamSubscription? _appointmentsSubscription;
 
-  HomeCubit({required this.repository}) : super(HomeInitial());
+  HomeCubit({required SharedAppointmentRepository repository})
+    : _repository = repository,
+      super(HomeInitial());
 
-  // جلب مواعيد المستخدم (مرة واحدة)
+  /// جلب مواعيد المستخدم (مرة واحدة)
   Future<void> fetchUserAppointments() async {
     emit(HomeLoading());
 
-    final result = await repository.getUserAppointments(tempUserId);
+    final result = await _repository.getUserAppointments(tempUserId);
 
     result.fold((failure) => emit(HomeError(failure.message)), (appointments) {
       // تصفية المواعيد القادمة
@@ -42,14 +43,14 @@ class HomeCubit extends Cubit<HomeState> {
     });
   }
 
-  // الاستماع لمواعيد المستخدم بشكل real-time
+  /// الاستماع لمواعيد المستخدم بشكل real-time
   void subscribeToUserAppointments() {
     emit(HomeLoading());
 
-    // Eski subscription varsa iptal et
+    // إلغاء الاشتراك السابق إن وجد
     _appointmentsSubscription?.cancel();
 
-    _appointmentsSubscription = repository
+    _appointmentsSubscription = _repository
         .getUserAppointmentsStream(tempUserId)
         .listen(
           (result) {
@@ -79,20 +80,42 @@ class HomeCubit extends Cubit<HomeState> {
         );
   }
 
-  // إلغاء الاشتراك
+  /// جلب المواعيد القادمة فقط
+  Future<void> fetchUpcomingAppointments() async {
+    emit(HomeLoading());
+
+    final result = await _repository.getUpcomingAppointments(tempUserId);
+
+    result.fold((failure) => emit(HomeError(failure.message)), (appointments) {
+      emit(
+        HomeUpcomingAppointmentsLoaded(
+          upcomingAppointments: appointments,
+          upcomingCount: appointments.length,
+          hasUpcomingAppointments: appointments.isNotEmpty,
+        ),
+      );
+    });
+  }
+
+  /// إلغاء الاشتراك
   void unsubscribeFromAppointments() {
     _appointmentsSubscription?.cancel();
     _appointmentsSubscription = null;
   }
 
-  // إعادة تحميل المواعيد
+  /// إعادة تحميل المواعيد
   Future<void> refreshAppointments() async {
     await fetchUserAppointments();
   }
 
-  // تصفية المواعيد القادمة
-  List<AppointmentsModel> _filterUpcomingAppointments(
-    List<AppointmentsModel> appointments,
+  /// إعادة المحاولة
+  void retry() {
+    fetchUserAppointments();
+  }
+
+  /// تصفية المواعيد القادمة
+  List<AppointmentModel> _filterUpcomingAppointments(
+    List<AppointmentModel> appointments,
   ) {
     return appointments
         .where(
@@ -103,13 +126,8 @@ class HomeCubit extends Cubit<HomeState> {
         .toList();
   }
 
-  @override
-  Future<void> close() {
-    _appointmentsSubscription?.cancel();
-    return super.close();
-  }
-
-  goToDoctorDetailsPage({
+  /// الانتقال إلى صفحة تفاصيل الطبيب
+  void goToDoctorDetailsPage({
     required DoctorModel doctorModel,
     required DoctorInfoModel doctorInfoModel,
   }) {
@@ -120,5 +138,24 @@ class HomeCubit extends Cubit<HomeState> {
         'doctor_info_model': doctorInfoModel,
       },
     );
+  }
+
+  /// الانتقال إلى صفحة جميع المواعيد
+  void goToMyAppointmentsPage() {
+    Get.toNamed(AppRoutes.appointment);
+  }
+
+  /// الانتقال إلى صفحة حجز موعد
+  void goToBookAppointmentPage(DoctorModel doctorModel) {
+    Get.toNamed(
+      AppRoutes.bookApptintment,
+      arguments: {'doctor_model': doctorModel},
+    );
+  }
+
+  @override
+  Future<void> close() {
+    _appointmentsSubscription?.cancel();
+    return super.close();
   }
 }

@@ -1,34 +1,36 @@
 import 'dart:async';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import '../../data/repositories/search_repository.dart';
-import 'search_state.dart';
+import '../../../shared/doctors/data/repositories/doctors_repository.dart';
+import '../../../shared/doctors/presentation/cubit/doctors_state.dart';
 
-// Cubit للبحث عن الأطباء
-class SearchCubit extends Cubit<SearchState> {
-  final SearchRepository repository;
+/// Search Cubit - يستخدم SharedDoctorsRepository للبحث
+class SearchCubit extends Cubit<DoctorsState> {
+  final SharedDoctorsRepository _repository;
   Timer? _debounceTimer;
 
   // مدة التأخير للبحث
   static const Duration _debounceDuration = Duration(milliseconds: 500);
 
-  SearchCubit({required this.repository}) : super(SearchInitial());
+  SearchCubit({required SharedDoctorsRepository repository})
+    : _repository = repository,
+      super(DoctorsInitial());
 
-  // تحميل جميع الأطباء في البداية
+  /// تحميل جميع الأطباء في البداية
   Future<void> loadAllDoctors() async {
-    emit(SearchLoading());
+    emit(DoctorsLoading());
 
-    final result = await repository.getAllDoctors();
+    final result = await _repository.getAllDoctors();
 
-    result.fold((failure) => emit(SearchError(failure.message)), (doctors) {
+    result.fold((failure) => emit(DoctorsError(failure.message)), (doctors) {
       if (doctors.isEmpty) {
-        emit(SearchEmpty(query: 'جميع الأطباء'));
+        emit(DoctorsSearchEmpty(query: 'جميع الأطباء'));
       } else {
-        emit(SearchLoaded(searchResults: doctors, query: 'جميع الأطباء'));
+        emit(DoctorsLoaded(doctors: doctors, popularDoctors: []));
       }
     });
   }
 
-  // البحث عن الأطباء مع التأخير
+  /// البحث عن الأطباء مع التأخير (Debounced Search)
   void searchDoctors(String query) {
     // إلغاء المؤقت السابق
     _debounceTimer?.cancel();
@@ -45,22 +47,7 @@ class SearchCubit extends Cubit<SearchState> {
     });
   }
 
-  // تنفيذ البحث الفعلي
-  Future<void> _performSearch(String query) async {
-    emit(SearchLoading());
-
-    final result = await repository.searchDoctors(query);
-
-    result.fold((failure) => emit(SearchError(failure.message)), (doctors) {
-      if (doctors.isEmpty) {
-        emit(SearchEmpty(query: query));
-      } else {
-        emit(SearchLoaded(searchResults: doctors, query: query));
-      }
-    });
-  }
-
-  // البحث الفوري بدون تأخير
+  /// البحث الفوري بدون تأخير
   Future<void> searchDoctorsInstant(String query) async {
     _debounceTimer?.cancel();
 
@@ -72,70 +59,70 @@ class SearchCubit extends Cubit<SearchState> {
     await _performSearch(query.trim());
   }
 
-  // البحث حسب التخصص
+  /// تنفيذ البحث الفعلي
+  Future<void> _performSearch(String query) async {
+    emit(DoctorsLoading());
+
+    final result = await _repository.searchDoctors(query);
+
+    result.fold((failure) => emit(DoctorsError(failure.message)), (doctors) {
+      if (doctors.isEmpty) {
+        emit(DoctorsSearchEmpty(query: query));
+      } else {
+        emit(DoctorsSearchLoaded(searchResults: doctors, query: query));
+      }
+    });
+  }
+
+  /// البحث حسب التخصص
   Future<void> searchBySpecialty(String specialty) async {
     _debounceTimer?.cancel();
-    emit(SearchLoading());
+    emit(DoctorsLoading());
 
-    final result = await repository.getDoctorsBySpecialty(specialty);
+    final result = await _repository.getDoctorsBySpecialty(specialty);
 
-    result.fold((failure) => emit(SearchError(failure.message)), (doctors) {
+    result.fold((failure) => emit(DoctorsError(failure.message)), (doctors) {
       if (doctors.isEmpty) {
-        emit(SearchEmpty(query: specialty));
+        emit(DoctorsSearchEmpty(query: specialty));
       } else {
-        emit(SearchLoaded(searchResults: doctors, query: specialty));
+        emit(DoctorsSearchLoaded(searchResults: doctors, query: specialty));
       }
     });
   }
 
-  // البحث حسب الموقع
+  /// البحث حسب الموقع
   Future<void> searchByLocation(String location) async {
     _debounceTimer?.cancel();
-    emit(SearchLoading());
+    emit(DoctorsLoading());
 
-    final result = await repository.searchDoctorsByLocation(location);
+    final result = await _repository.searchDoctorsByLocation(location);
 
-    result.fold((failure) => emit(SearchError(failure.message)), (doctors) {
+    result.fold((failure) => emit(DoctorsError(failure.message)), (doctors) {
       if (doctors.isEmpty) {
-        emit(SearchEmpty(query: location));
+        emit(DoctorsSearchEmpty(query: location));
       } else {
-        emit(SearchLoaded(searchResults: doctors, query: location));
+        emit(DoctorsSearchLoaded(searchResults: doctors, query: location));
       }
     });
   }
 
-  // البحث حسب المستشفى
+  /// البحث حسب المستشفى
   Future<void> searchByHospital(String hospital) async {
     _debounceTimer?.cancel();
-    emit(SearchLoading());
+    emit(DoctorsLoading());
 
-    final result = await repository.searchDoctorsByHospital(hospital);
+    final result = await _repository.searchDoctorsByHospital(hospital);
 
-    result.fold((failure) => emit(SearchError(failure.message)), (doctors) {
+    result.fold((failure) => emit(DoctorsError(failure.message)), (doctors) {
       if (doctors.isEmpty) {
-        emit(SearchEmpty(query: hospital));
+        emit(DoctorsSearchEmpty(query: hospital));
       } else {
-        emit(SearchLoaded(searchResults: doctors, query: hospital));
+        emit(DoctorsSearchLoaded(searchResults: doctors, query: hospital));
       }
     });
   }
 
-  // مسح البحث
-  void clearSearch() {
-    _debounceTimer?.cancel();
-    loadAllDoctors();
-  }
-
-  // إعادة المحاولة
-  void retry(String query) {
-    if (query.trim().isNotEmpty) {
-      searchDoctorsInstant(query);
-    } else {
-      loadAllDoctors();
-    }
-  }
-
-  // البحث بالفلترة المتقدمة
+  /// البحث بالفلترة المتقدمة
   Future<void> searchWithFilters({
     required String query,
     String? specialty,
@@ -143,7 +130,7 @@ class SearchCubit extends Cubit<SearchState> {
     String? hospital,
   }) async {
     _debounceTimer?.cancel();
-    emit(SearchLoading());
+    emit(DoctorsLoading());
 
     // إذا كان هناك فلتر محدد، استخدم البحث المخصص
     if (specialty != null && specialty.isNotEmpty) {
@@ -162,15 +149,36 @@ class SearchCubit extends Cubit<SearchState> {
     }
 
     // إذا لم يكن هناك فلتر محدد، استخدم البحث العام
-    final result = await repository.searchDoctors(query);
+    await _performSearch(query);
+  }
 
-    result.fold((failure) => emit(SearchError(failure.message)), (doctors) {
-      if (doctors.isEmpty) {
-        emit(SearchEmpty(query: query));
-      } else {
-        emit(SearchLoaded(searchResults: doctors, query: query));
-      }
-    });
+  /// مسح البحث والعودة لجميع الأطباء
+  void clearSearch() {
+    _debounceTimer?.cancel();
+    loadAllDoctors();
+  }
+
+  /// إعادة المحاولة
+  void retry(String query) {
+    if (query.trim().isNotEmpty) {
+      searchDoctorsInstant(query);
+    } else {
+      loadAllDoctors();
+    }
+  }
+
+  /// تحديث حالة البحث بدون إجراء بحث جديد
+  void updateSearchQuery(String query) {
+    // يمكن استخدامها لتحديث UI فقط
+    if (state is DoctorsSearchLoaded) {
+      final currentState = state as DoctorsSearchLoaded;
+      emit(
+        DoctorsSearchLoaded(
+          searchResults: currentState.searchResults,
+          query: query,
+        ),
+      );
+    }
   }
 
   @override

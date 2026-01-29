@@ -1,5 +1,5 @@
 import 'package:equatable/equatable.dart';
-import 'review_model.dart';
+import '../../../reviews/data/model/review_model.dart';
 
 // نموذج معلومات الطبيب التفصيلية
 class DoctorInfoModel extends Equatable {

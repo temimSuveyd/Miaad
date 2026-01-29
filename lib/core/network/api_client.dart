@@ -1,5 +1,4 @@
 // import 'package:dio/dio.dart';
-import '../config/app_config.dart';
 
 class ApiClient {
   // late final Dio _dio;

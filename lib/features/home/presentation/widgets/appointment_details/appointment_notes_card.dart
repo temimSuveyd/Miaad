@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import '../../../../../core/theme/app_theme.dart';
-import '../../../data/models/appointments_model.dart';
+import '../../../../appointments/data/models/appointment.dart';
 
 class AppointmentNotesCard extends StatelessWidget {
-  final AppointmentsModel appointment;
+  final AppointmentModel appointment;
 
   const AppointmentNotesCard({super.key, required this.appointment});
 

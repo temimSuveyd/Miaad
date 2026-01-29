@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import '../../../../../core/theme/app_theme.dart';
-import '../../../data/models/appointments_model.dart';
+import '../../../../appointments/data/models/appointment.dart';
 
 class AppointmentStatusBadge extends StatelessWidget {
-  final AppointmentsModel appointment;
+  final AppointmentModel appointment;
 
   const AppointmentStatusBadge({super.key, required this.appointment});
 

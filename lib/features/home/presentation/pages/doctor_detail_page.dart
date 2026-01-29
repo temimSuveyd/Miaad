@@ -1,16 +1,16 @@
+import 'package:doctorbooking/features/shared/doctors/data/model/doctor_model.dart';
 import 'package:doctorbooking/core/widgets/custom_app_bar.dart';
 import 'package:doctorbooking/features/home/data/models/doctor_info_model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../../core/services/service_locator.dart';
 import '../../../../core/theme/app_theme.dart';
-import '../../data/models/doctor_model.dart';
 import '../cubit/doctor_details_cubit/doctor_details_cubit.dart';
 import '../cubit/doctor_details_cubit/doctor_details_state.dart';
-import '../cubit/reviews_cubit/reviews_cubit.dart';
-import '../widgets/appointment/doctor_booking_bottom_bar.dart';
-import '../widgets/appointment/doctor_detail_header.dart';
-import '../widgets/appointment/about_tab_widget.dart';
+import '../../../reviews/presentation/cubit/reviews_cubit.dart';
+import '../../../appointments/presentation/book_appointment/widgets/doctor_booking_bottom_bar.dart';
+import '../../../appointments/presentation/book_appointment/widgets/doctor_detail_header.dart';
+import '../../../appointments/presentation/book_appointment/widgets/about_tab_widget.dart';
 import '../widgets/reviews/reviews_section.dart';
 import '../widgets/reviews/add_review_card.dart';
 

@@ -1,4 +1,4 @@
-import 'package:doctorbooking/features/home/data/models/appointments_model.dart';
+import 'package:doctorbooking/features/appointments/data/models/appointment.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_card_swiper/flutter_card_swiper.dart';
@@ -97,7 +97,7 @@ class _UpcomingScheduleCardWidgetState
     );
   }
 
-  Widget _buildScheduleCard(AppointmentsModel appointment) {
+  Widget _buildScheduleCard(AppointmentModel appointment) {
     // تنسيق التاريخ باستخدام DateFormatter
     final formattedDate = DateFormatter.formatShort(appointment.date);
 

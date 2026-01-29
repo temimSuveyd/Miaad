@@ -1,6 +1,7 @@
+import 'package:doctorbooking/features/shared/doctors/data/model/doctor_model.dart';
 import 'package:doctorbooking/core/routing/presentation/routes/app_routes.dart';
 import 'package:doctorbooking/features/home/data/models/doctor_info_model.dart';
-import 'package:doctorbooking/features/home/data/models/doctor_model.dart';
+
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get/get.dart';
 import 'doctor_details_state.dart';

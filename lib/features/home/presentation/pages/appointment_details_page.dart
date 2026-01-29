@@ -4,7 +4,7 @@ import 'package:get/get.dart';
 import '../../../../core/theme/app_theme.dart';
 import '../../../../core/widgets/custom_app_bar.dart';
 import '../../../../core/services/snackbar_service.dart';
-import '../../data/models/appointments_model.dart';
+import '../../../appointments/data/models/appointment.dart';
 import '../cubit/appointment_details_cubit/appointment_details_cubit.dart';
 import '../cubit/appointment_details_cubit/appointment_details_state.dart';
 import '../widgets/appointment_details/appointment_status_badge.dart';
@@ -14,7 +14,7 @@ import '../widgets/appointment_details/appointment_notes_card.dart';
 import '../widgets/appointment_details/appointment_action_buttons.dart';
 
 class AppointmentDetailsPage extends StatelessWidget {
-  final AppointmentsModel appointment;
+  final AppointmentModel appointment;
 
   const AppointmentDetailsPage({super.key, required this.appointment});
 

@@ -36,7 +36,7 @@ class DoctorCardShimmer extends StatelessWidget {
                     borderRadius: BorderRadius.circular(4),
                   ),
                   SizedBox(height: AppTheme.spacing8.dp),
-                  
+
                   // Specialty Shimmer
                   ShimmerContainer(
                     width: 200.dp,
@@ -44,7 +44,7 @@ class DoctorCardShimmer extends StatelessWidget {
                     borderRadius: BorderRadius.circular(4),
                   ),
                   SizedBox(height: AppTheme.spacing12.dp),
-                  
+
                   // Rating and Price Row
                   Row(
                     children: [
@@ -77,17 +77,17 @@ class DoctorCardShimmer extends StatelessWidget {
 class DoctorCardsShimmerList extends StatelessWidget {
   final int itemCount;
 
-  const DoctorCardsShimmerList({
-    super.key,
-    this.itemCount = 5,
-  });
+  const DoctorCardsShimmerList({super.key, this.itemCount = 2});
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: List.generate(
-        itemCount,
-        (index) => const DoctorCardShimmer(),
+    return Padding(
+      padding: EdgeInsets.symmetric(horizontal: AppTheme.spacing16.dp),
+      child: Column(
+        children: List.generate(
+          4,
+          (index) => const DoctorCardShimmer(),
+        ),
       ),
     );
   }

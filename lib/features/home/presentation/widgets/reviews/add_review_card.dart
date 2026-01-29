@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../../../core/theme/app_theme.dart';
-import '../../cubit/reviews_cubit/reviews_cubit.dart';
-import '../../cubit/reviews_cubit/reviews_state.dart';
-import 'add_review_dialog.dart';
+import '../../../../reviews/presentation/cubit/reviews_cubit.dart';
+import '../../../../reviews/presentation/cubit/reviews_state.dart';
 
 // بطاقة إضافة تقييم مميزة
 class AddReviewCard extends StatelessWidget {

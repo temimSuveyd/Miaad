@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:uni_size/uni_size.dart';
-import '../../../../../core/models/doctor_model.dart';
+import '../../../../../core/models/models.dart';
 import '../../../../../core/theme/app_theme.dart';
 import '../../../../home/presentation/widgets/home/doctor_card_widget.dart';
 

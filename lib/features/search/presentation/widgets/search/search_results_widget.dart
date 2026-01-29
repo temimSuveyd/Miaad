@@ -4,8 +4,8 @@ import 'package:uni_size/uni_size.dart';
 import '../../../../../core/theme/app_theme.dart';
 import '../../../../../core/widgets/error_state_widget.dart';
 import '../../../../home/presentation/widgets/home/doctor_card_shimmer.dart';
+import '../../../../shared/doctors/presentation/cubit/doctors_state.dart';
 import '../../cubit/search_cubit.dart';
-import '../../cubit/search_state.dart';
 import 'search_results_header_widget.dart';
 import 'search_results_list_widget.dart';
 
@@ -16,9 +16,9 @@ class SearchResultsWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<SearchCubit, SearchState>(
+    return BlocBuilder<SearchCubit, DoctorsState>(
       builder: (context, state) {
-        if (state is SearchInitial) {
+        if (state is DoctorsInitial) {
           return _buildEmptyState(
             context,
             'ابدأ البحث عن طبيبك المفضل',
@@ -26,7 +26,7 @@ class SearchResultsWidget extends StatelessWidget {
           );
         }
 
-        if (state is SearchLoading) {
+        if (state is DoctorsLoading) {
           return Column(
             children: [
               // Show search query while loading
@@ -47,12 +47,15 @@ class SearchResultsWidget extends StatelessWidget {
                     ],
                   ),
                 ),
-              const Expanded(child: DoctorCardsShimmerList(itemCount: 5)),
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: const Expanded(child: DoctorCardsShimmerList(itemCount: 5)),
+              ),
             ],
           );
         }
 
-        if (state is SearchError) {
+        if (state is DoctorsError) {
           return ErrorStateWidget(
             title: 'خطأ في البحث',
             message: state.message,
@@ -60,12 +63,14 @@ class SearchResultsWidget extends StatelessWidget {
               final query = searchController.text.trim();
               if (query.isNotEmpty) {
                 context.read<SearchCubit>().retry(query);
+              } else {
+                context.read<SearchCubit>().loadAllDoctors();
               }
             },
           );
         }
 
-        if (state is SearchEmpty) {
+        if (state is DoctorsSearchEmpty) {
           return _buildEmptyState(
             context,
             'لم يتم العثور على نتائج للبحث "${state.query}"',
@@ -73,7 +78,7 @@ class SearchResultsWidget extends StatelessWidget {
           );
         }
 
-        if (state is SearchLoaded) {
+        if (state is DoctorsSearchLoaded) {
           final isShowingAllDoctors = state.query == 'جميع الأطباء';
           final isSearchResult = searchController.text.isNotEmpty;
 
@@ -91,6 +96,26 @@ class SearchResultsWidget extends StatelessWidget {
               Expanded(
                 child: SearchResultsListWidget(doctors: state.searchResults),
               ),
+            ],
+          );
+        }
+
+        if (state is DoctorsLoaded) {
+          // When showing all doctors (initial load)
+          final isShowingAllDoctors = searchController.text.isEmpty;
+
+          return Column(
+            children: [
+              // Search results header
+              SearchResultsHeaderWidget(
+                query: 'جميع الأطباء',
+                resultsCount: state.doctors.length,
+                isShowingAllDoctors: isShowingAllDoctors,
+                isSearchResult: false,
+              ),
+
+              // Results list
+              Expanded(child: SearchResultsListWidget(doctors: state.doctors)),
             ],
           );
         }

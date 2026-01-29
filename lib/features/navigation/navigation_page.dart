@@ -1,6 +1,6 @@
 import 'package:doctorbooking/core/widgets/bottom_navigation_bar.dart';
 import 'package:doctorbooking/features/home/presentation/pages/home_page.dart';
-import 'package:doctorbooking/features/home/presentation/pages/my_appointments_page.dart';
+import 'package:doctorbooking/features/appointments/presentation/my_appointments/page/my_appointments_page.dart';
 import 'package:doctorbooking/features/search/presentation/pages/search_page.dart';
 import 'package:doctorbooking/features/my_doctors/presentation/pages/saved_page.dart';
 import 'package:doctorbooking/features/navigation/navigation_cubit.dart';

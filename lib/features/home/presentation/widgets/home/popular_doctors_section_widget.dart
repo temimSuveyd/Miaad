@@ -1,5 +1,5 @@
-import 'package:doctorbooking/features/home/presentation/cubit/doctors_cubit/doctors_cubit.dart';
-import 'package:doctorbooking/features/home/presentation/cubit/doctors_cubit/doctors_state.dart';
+import 'package:doctorbooking/features/shared/doctors/presentation/cubit/doctors_cubit.dart';
+import 'package:doctorbooking/features/shared/doctors/presentation/cubit/doctors_state.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../../../core/theme/app_theme.dart';
@@ -14,7 +14,7 @@ class PopularDoctorsSectionWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (context) => sl<DoctorsCubit>()..loadDoctors(),
+      create: (context) => sl<SharedDoctorsCubit>()..loadDoctors(),
       child: Column(
         children: [
           Directionality(
@@ -36,7 +36,7 @@ class PopularDoctorsSectionWidget extends StatelessWidget {
             ),
           ),
           const SizedBox(height: AppTheme.spacing16),
-          BlocBuilder<DoctorsCubit, DoctorsState>(
+          BlocBuilder<SharedDoctorsCubit, DoctorsState>(
             builder: (context, state) {
               if (state is DoctorsLoading) {
                 return const DoctorCardsShimmerList(itemCount: 3);
@@ -52,7 +52,7 @@ class PopularDoctorsSectionWidget extends StatelessWidget {
                     message: state.message,
                     icon: Icons.local_hospital_rounded,
                     onRetry: () {
-                      context.read<DoctorsCubit>().loadDoctors();
+                      context.read<SharedDoctorsCubit>().loadDoctors();
                     },
                     retryButtonText: 'إعادة التحميل',
                   ),
@@ -82,7 +82,7 @@ class PopularDoctorsSectionWidget extends StatelessWidget {
                       showFavorite: true,
                       isFavorite: false,
                       onTap: () {
-                        context.read<DoctorsCubit>().goToDoctorDetailsPage(
+                        context.read<SharedDoctorsCubit>().goToDoctorDetailsPage(
                           doctorModel: doctor,
                         );
                       },

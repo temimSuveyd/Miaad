@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import '../../../../../core/theme/app_theme.dart';
 import '../../../../../core/utils/date_formatter.dart';
-import '../../../data/models/appointments_model.dart';
+import '../../../../appointments/data/models/appointment.dart';
 
 class AppointmentDetailsCard extends StatelessWidget {
-  final AppointmentsModel appointment;
+  final AppointmentModel appointment;
 
   const AppointmentDetailsCard({super.key, required this.appointment});
 
