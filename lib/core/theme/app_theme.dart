@@ -16,6 +16,11 @@ class AppTheme {
   static const Color textSecondary = Color(0xFF757575); // Medium gray
   static const Color dividerColor = Color(0xD0E5E5E5);
   static const Color errorColor = Color(0xD0FF0000);
+  
+  // Additional theme properties
+  static const Color cardColor = cardBackground;
+  static const Color textColor = textPrimary;
+  static const Color secondaryTextColor = textSecondary;
 
   // Category Colors
   static const Color categoryPink = Color(0xFFDC9497);
@@ -88,6 +93,23 @@ class AppTheme {
     fontWeight: FontWeight.w400,
     color: textSecondary,
   );
+
+  // Text theme for easy access
+  static TextTheme get textTheme => GoogleFonts.changaTextTheme(
+        const TextTheme(
+          headlineLarge: heading1,
+          headlineMedium: heading2,
+          titleLarge: sectionTitle,
+          titleMedium: TextStyle(
+            fontSize: 16,
+            fontWeight: FontWeight.w600,
+            color: textPrimary,
+          ),
+          bodyLarge: bodyLarge,
+          bodyMedium: bodyMedium,
+          labelSmall: caption,
+        ),
+      );
 
   static ThemeData get lightTheme {
     return ThemeData(

@@ -1,6 +1,7 @@
 import 'package:doctorbooking/core/services/snackbar_service.dart';
 import 'package:doctorbooking/features/appointments/data/models/appointment.dart';
 import 'package:doctorbooking/features/appointments/presentation/my_appointments/widgets/appointment_app_bar.dart';
+import 'package:doctorbooking/features/profile/data/mock/mock_user_data.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../../../core/services/service_locator.dart';
@@ -18,11 +19,11 @@ class MyAppointmentsPage extends StatelessWidget {
     return BlocProvider(
       create: (context) =>
           sl<MyAppointmentsCubit>()
-            ..loadUserAppointmentsStream('current_user_id'),
+            ..loadUserAppointmentsStream(MockUserData.currentUserId),
       child: RefreshIndicator(
         onRefresh: () async {
           context.read<MyAppointmentsCubit>().refreshAppointments(
-            'current_user_id',
+            MockUserData.currentUserId,
           );
         },
         child: DefaultTabController(
@@ -32,7 +33,6 @@ class MyAppointmentsPage extends StatelessWidget {
             appBar: MyAppointmentAppBar(context),
             body: Column(
               children: [
-                const AppointmentsTabBarWidget(),
                 Expanded(
                   child: BlocConsumer<MyAppointmentsCubit, MyAppointmentsState>(
                     listener: (context, state) {

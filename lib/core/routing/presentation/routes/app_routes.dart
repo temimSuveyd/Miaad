@@ -20,7 +20,7 @@ class AppRoutes {
   static const String onboarding = '/onboarding';
 
   // Initial route
-  static const String initial = navigationPage;
+  static const String initial = onboarding;
 
   // Private constructor to prevent instantiation
   AppRoutes._();
