@@ -14,41 +14,22 @@ class SharedDoctorsCubit extends Cubit<DoctorsState> {
   SharedDoctorsCubit({required this.repository}) : super(DoctorsInitial());
 
   // جلب جميع الأطباء والأطباء المشهورين
-  Future<void> loadDoctors() async {
+  Future<void> loadPopularDoctors() async {
     emit(DoctorsLoading());
 
     try {
       // جلب الأطباء المشهورين
       final popularResult = await repository.getPopularDoctors(limit: 5);
-
-      // جلب جميع الأطباء
-      final allResult = await repository.getAllDoctors();
-
-      // التحقق من النتائج
-      if (popularResult.isLeft() || allResult.isLeft()) {
-        final error = popularResult.fold(
-          (failure) => failure.message,
-          (_) => allResult.fold(
-            (failure) => failure.message,
-            (_) => 'خطأ غير متوقع',
-          ),
-        );
-        emit(DoctorsError(error));
-        return;
-      }
-
       // استخراج البيانات
-      final popularDoctors = popularResult.fold(
-        (_) => <DoctorModel>[],
-        (doctors) => doctors,
+    popularResult.fold(
+        (failure) {
+      emit(DoctorsError(failure.message));
+        },
+        (doctors) {
+          emit(DoctorsLoaded(doctors: doctors, popularDoctors: doctors));
+        }
       );
-
-      final allDoctors = allResult.fold(
-        (_) => <DoctorModel>[],
-        (doctors) => doctors,
-      );
-
-      emit(DoctorsLoaded(doctors: allDoctors, popularDoctors: popularDoctors));
+ 
     } catch (e) {
       emit(DoctorsError('خطأ في تحميل الأطباء: $e'));
     }
@@ -57,7 +38,7 @@ class SharedDoctorsCubit extends Cubit<DoctorsState> {
   // البحث عن الأطباء
   Future<void> searchDoctors(String query) async {
     if (query.trim().isEmpty) {
-      loadDoctors();
+      loadPopularDoctors();
       return;
     }
 

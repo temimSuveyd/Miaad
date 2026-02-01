@@ -8,11 +8,12 @@ import '../../../../core/theme/app_theme.dart';
 import '../cubit/doctor_details_cubit/doctor_details_cubit.dart';
 import '../cubit/doctor_details_cubit/doctor_details_state.dart';
 import '../../../reviews/presentation/cubit/reviews_cubit.dart';
-import '../../../appointments/presentation/book_appointment/widgets/doctor_booking_bottom_bar.dart';
-import '../../../appointments/presentation/book_appointment/widgets/doctor_detail_header.dart';
-import '../../../appointments/presentation/book_appointment/widgets/about_tab_widget.dart';
+import '../../../shared/appointments/presentation/book_appointment/widgets/doctor_booking_bottom_bar.dart';
+import '../../../shared/appointments/presentation/book_appointment/widgets/doctor_detail_header.dart';
+import '../../../shared/appointments/presentation/book_appointment/widgets/about_tab_widget.dart';
 import '../widgets/reviews/reviews_section.dart';
 import '../widgets/reviews/add_review_card.dart';
+import '../widgets/doctor_schedule_widget.dart';
 
 // صفحة تفاصيل الطبيب
 class DoctorDetailPage extends StatelessWidget {
@@ -22,7 +23,7 @@ class DoctorDetailPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiBlocProvider(
       providers: [
-        BlocProvider(create: (context) => DoctorDetailCubit()..initData()),
+        BlocProvider(create: (context) => sl<DoctorDetailCubit>()..initData()),
         BlocProvider(create: (context) => sl<ReviewsCubit>()),
       ],
       child: const _DoctorDetailPageContent(),
@@ -66,7 +67,7 @@ class _DoctorDetailPageContent extends StatelessWidget {
           return Scaffold(
             backgroundColor: AppTheme.backgroundColor,
             appBar: CustomAppBar(title: state.doctor.name, showleading: true),
-            body: _buildBody(state.doctor, state.doctorInfo),
+            body: _buildBody(state),
             bottomNavigationBar: DoctorBookingBottomBar(
               canBook: true,
               isLoading: false,
@@ -82,7 +83,7 @@ class _DoctorDetailPageContent extends StatelessWidget {
     );
   }
 
-  Widget _buildBody(DoctorModel doctorModel, DoctorInfoModel doctorInfoModel) {
+  Widget _buildBody(DoctorDetailLoaded state) {
     return CustomScrollView(
       slivers: [
         const SliverToBoxAdapter(child: SizedBox(height: AppTheme.spacing20)),
@@ -91,7 +92,21 @@ class _DoctorDetailPageContent extends StatelessWidget {
         SliverToBoxAdapter(
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: AppTheme.spacing24),
-            child: DoctorDetailHeader(doctorModel: doctorModel),
+            child: DoctorDetailHeader(doctorModel: state.doctor),
+          ),
+        ),
+
+        const SliverToBoxAdapter(child: SizedBox(height: AppTheme.spacing24)),
+
+        // قسم جدول العمل
+        SliverToBoxAdapter(
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: AppTheme.spacing24),
+            child: DoctorScheduleWidget(
+              schedules: state.schedules,
+              isLoading: state.isLoadingSchedules,
+              errorMessage: state.scheduleError,
+            ),
           ),
         ),
 
@@ -107,7 +122,7 @@ class _DoctorDetailPageContent extends StatelessWidget {
                 color: AppTheme.cardBackground,
                 borderRadius: BorderRadius.circular(AppTheme.radiusMedium),
               ),
-              child: AboutTabWidget(doctorInfoModel: doctorInfoModel),
+              child: AboutTabWidget(doctorInfoModel: state.doctorInfo),
             ),
           ),
         ),
@@ -117,8 +132,8 @@ class _DoctorDetailPageContent extends StatelessWidget {
         // بطاقة إضافة التقييم
         SliverToBoxAdapter(
           child: AddReviewCard(
-            doctorId: doctorModel.id,
-            doctorName: doctorModel.name,
+            doctorId: state.doctor.id,
+            doctorName: state.doctor.name,
           ),
         ),
 
@@ -128,7 +143,7 @@ class _DoctorDetailPageContent extends StatelessWidget {
         SliverToBoxAdapter(
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: AppTheme.spacing24),
-            child: ReviewsSection(doctorId: doctorModel.id),
+            child: ReviewsSection(doctorId: state.doctor.id),
           ),
         ),
 

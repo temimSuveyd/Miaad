@@ -83,7 +83,7 @@ class CustomBottomNavigationBar extends StatelessWidget {
     return GestureDetector(
       onTap: () => onTap(index),
       child: AnimatedContainer(
-        alignment: Alignment.topCenter,
+        alignment: Alignment.center,
         duration: const Duration(milliseconds: 200),
         curve: Curves.easeInOut,
         height: 40.dp,
@@ -110,6 +110,7 @@ class CustomBottomNavigationBar extends StatelessWidget {
               child: Row(
                 spacing: 5,
                 mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   Icon(
                     isActive ? selectedIcon : icon,

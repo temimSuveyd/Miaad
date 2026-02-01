@@ -51,7 +51,7 @@ class SharedDoctorsDatasourceImpl implements SharedDoctorsDatasource {
       final response = await client
           .from(viewTable)
           .select()
-          .order('avg_review_rating', ascending: false)
+          // .order('avg_review_rating', ascending: false)
           .limit(limit);
 
       return (response as List)

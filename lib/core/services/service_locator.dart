@@ -2,13 +2,20 @@ import 'package:get_it/get_it.dart';
 import '../../features/shared/doctors/data/datasources/doctors_datasource.dart';
 import '../../features/shared/doctors/data/repositories/doctors_repository.dart';
 import '../../features/shared/doctors/presentation/cubit/doctors_cubit.dart';
-import '../../features/appointments/data/datasources/appointment_datasource.dart';
-import '../../features/appointments/data/repositories/appointment_repository.dart';
-import '../../features/appointments/presentation/my_appointments/cubit/my_appointments_cubit.dart';
-import '../../features/appointments/presentation/appointment_details/cubit/appointment_details_cubit.dart';
-import '../../features/appointments/presentation/book_appointment/cubit/book_appointment_cubit.dart';
+import '../../features/shared/appointments/data/datasources/appointment_datasource.dart';
+import '../../features/shared/appointments/data/repositories/appointment_repository.dart';
+import '../../features/shared/appointments/presentation/my_appointments/cubit/my_appointments_cubit.dart';
+import '../../features/shared/appointments/presentation/appointment_details/cubit/appointment_details_cubit.dart';
+import '../../features/shared/appointments/presentation/book_appointment/cubit/book_appointment_cubit.dart';
 import '../../features/search/presentation/cubit/search_cubit.dart';
 import '../../features/home/presentation/cubit/home_cubit/home_cubit.dart';
+import '../../features/home/presentation/cubit/doctor_details_cubit/doctor_details_cubit.dart';
+import '../../features/reviews/presentation/cubit/reviews_cubit.dart';
+import '../../features/reviews/data/repositories/reviews_repository.dart';
+import '../../features/reviews/data/datasources/reviews_datasource.dart';
+import '../../features/shared/specialities/data/datasources/specialities_datasource.dart';
+import '../../features/shared/specialities/data/repositories/specialities_repository.dart';
+import '../../features/shared/specialities/presentation/cubit/specialities_cubit.dart';
 
 final sl = GetIt.instance;
 
@@ -80,9 +87,46 @@ Future<void> initServiceLocator() async {
     () => HomeCubit(repository: sl<SharedAppointmentRepository>()),
   );
 
+  // Doctor Details Cubit
+  sl.registerFactory(
+    () => DoctorDetailCubit(repository: sl<SharedAppointmentRepository>()),
+  );
+
+  // =====================================================
+  // التخصصات (Shared Specialities)
+  // =====================================================
+
+  sl.registerFactory(
+    () => SharedSpecialitiesCubit(repository: sl<SharedSpecialitiesRepository>()),
+  );
+
+  sl.registerLazySingleton<SharedSpecialitiesRepository>(
+    () => SharedSpecialitiesRepository(datasource: sl()),
+  );
+
+  sl.registerLazySingleton<SharedSpecialitiesDatasource>(
+    () => SharedSpecialitiesDatasourceImpl(),
+  );
+
   // =====================================================
   // التقييمات (Reviews)
   // =====================================================
 
-  // Cubit
+  // Reviews Cubit
+  sl.registerFactory(
+    () => ReviewsCubit(repository: sl<ReviewsRepository>()),
+  );
+
+  // Reviews Repository
+  sl.registerLazySingleton<ReviewsRepository>(
+    () => ReviewsRepository(
+      datasource: sl(),
+      appointmentsRepository: sl<SharedAppointmentRepository>(),
+    ),
+  );
+
+  // Reviews Datasource
+  sl.registerLazySingleton<ReviewsDatasource>(
+    () => ReviewsDatasourceImpl(),
+  );
 }

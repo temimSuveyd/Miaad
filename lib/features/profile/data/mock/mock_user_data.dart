@@ -1,7 +1,7 @@
 import '../models/user_model.dart';
 
 class MockUserData {
-  static const String currentUserId = 'user_001';
+  static const String currentUserId = '5a4b4fc1-4c58-4d2c-baac-ef050fce8ce3';
 
   static final UserModel currentUser = UserModel(
     id: currentUserId,

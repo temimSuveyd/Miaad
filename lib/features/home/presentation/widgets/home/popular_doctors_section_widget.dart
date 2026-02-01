@@ -14,7 +14,7 @@ class PopularDoctorsSectionWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (context) => sl<SharedDoctorsCubit>()..loadDoctors(),
+      create: (context) => sl<SharedDoctorsCubit>()..loadPopularDoctors(),
       child: Column(
         children: [
           Directionality(
@@ -52,7 +52,7 @@ class PopularDoctorsSectionWidget extends StatelessWidget {
                     message: state.message,
                     icon: Icons.local_hospital_rounded,
                     onRetry: () {
-                      context.read<SharedDoctorsCubit>().loadDoctors();
+                      context.read<SharedDoctorsCubit>().loadPopularDoctors();
                     },
                     retryButtonText: 'إعادة التحميل',
                   ),

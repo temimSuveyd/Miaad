@@ -1,5 +1,5 @@
 import 'package:doctorbooking/core/routing/presentation/routes/app_routes.dart';
-import 'package:doctorbooking/features/appointments/presentation/book_appointment/pages/book_appointment_page.dart';
+import 'package:doctorbooking/features/shared/appointments/presentation/book_appointment/pages/book_appointment_page.dart';
 import 'package:doctorbooking/features/navigation/navigation_page.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -41,7 +41,7 @@ class RouteConfigPage {
       // Appointment with bottom to top transition
       GetPage(
         name: AppRoutes.bookApptintment,
-        page: () => BookAppointmentPage(doctorId: '',doctorName:'' ,hospitalName: '',),
+        page: () => BookAppointmentPage(),
         transition: Transition.downToUp,
         transitionDuration: const Duration(milliseconds: 300),
         curve: Curves.easeInOut,

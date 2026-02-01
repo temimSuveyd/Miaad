@@ -3,7 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get/get.dart';
 import '../../../../../core/models/models.dart';
 import '../../../../../core/routing/presentation/routes/app_routes.dart';
-import '../../../../appointments/data/repositories/appointment_repository.dart';
+import '../../../../shared/appointments/data/repositories/appointment_repository.dart';
 import '../../../data/models/doctor_info_model.dart';
 import 'home_state.dart';
 

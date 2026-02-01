@@ -9,9 +9,8 @@ abstract class OnboardingLocalDataSource {
 class OnboardingLocalDataSourceImpl implements OnboardingLocalDataSource {
   @override
   Future<List<OnboardingModel>> getOnboardingScreens() async {
-    // Simulate network delay
     await Future.delayed(const Duration(milliseconds: 500));
-    
+  
     return [
       OnboardingModel(
         id: 1,

@@ -1,4 +1,4 @@
-import 'package:doctorbooking/features/appointments/data/models/appointment.dart';
+import 'package:doctorbooking/features/shared/appointments/data/models/appointment.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_card_swiper/flutter_card_swiper.dart';

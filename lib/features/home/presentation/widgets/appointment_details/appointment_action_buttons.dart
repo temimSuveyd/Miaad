@@ -1,9 +1,9 @@
+import 'package:doctorbooking/features/shared/appointments/data/models/appointment_details_model.dart';
+import 'package:doctorbooking/features/shared/appointments/presentation/appointment_details/cubit/appointment_details_cubit.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../../../core/theme/app_theme.dart';
-import '../../../../appointments/data/models/appointment.dart';
-import '../../cubit/appointment_details_cubit/appointment_details_cubit.dart';
-import '../../cubit/appointment_details_cubit/appointment_details_state.dart';
+import '../../../../shared/appointments/data/models/appointment.dart';
 import '../dialogs/cancel_appointment_dialog.dart';
 import '../dialogs/reschedule_appointment_dialog.dart';
 
@@ -20,9 +20,7 @@ class AppointmentActionButtons extends StatelessWidget {
 
     return BlocBuilder<AppointmentDetailsCubit, AppointmentDetailsState>(
       builder: (context, state) {
-        final isLoading =
-            state is AppointmentDetailsCancelling ||
-            state is AppointmentDetailsRescheduling;
+        final isLoading = state.isActionLoading;
 
         return Column(
           children: [
@@ -34,7 +32,7 @@ class AppointmentActionButtons extends StatelessWidget {
                 onPressed: isLoading
                     ? null
                     : () => _showRescheduleDialog(context),
-                icon: state is AppointmentDetailsRescheduling
+                icon: state.isActionLoading && state.selectedAction == AppointmentAction.reschedule
                     ? const SizedBox(
                         width: 20,
                         height: 20,
@@ -47,7 +45,7 @@ class AppointmentActionButtons extends StatelessWidget {
                       )
                     : const Icon(Icons.update_outlined),
                 label: Text(
-                  state is AppointmentDetailsRescheduling
+                  state.isActionLoading && state.selectedAction == AppointmentAction.reschedule
                       ? 'جاري إعادة الجدولة...'
                       : 'إعادة جدولة الموعد',
                   style: const TextStyle(
@@ -72,7 +70,7 @@ class AppointmentActionButtons extends StatelessWidget {
               height: 50,
               child: OutlinedButton.icon(
                 onPressed: isLoading ? null : () => _showCancelDialog(context),
-                icon: state is AppointmentDetailsCancelling
+                icon: state.isActionLoading && state.selectedAction == AppointmentAction.cancel
                     ? const SizedBox(
                         width: 20,
                         height: 20,
@@ -85,7 +83,7 @@ class AppointmentActionButtons extends StatelessWidget {
                       )
                     : const Icon(Icons.cancel_outlined),
                 label: Text(
-                  state is AppointmentDetailsCancelling
+                  state.isActionLoading && state.selectedAction == AppointmentAction.cancel
                       ? 'جاري الإلغاء...'
                       : 'إلغاء الموعد',
                   style: const TextStyle(
@@ -112,22 +110,29 @@ class AppointmentActionButtons extends StatelessWidget {
   }
 
   void _showCancelDialog(BuildContext context) {
+    final cubit = context.read<AppointmentDetailsCubit>();
     CancelAppointmentDialog.show(
       context: context,
       onConfirm: () {
-        context.read<AppointmentDetailsCubit>().cancelAppointment();
+        cubit.cancelAppointment(
+          appointment.id!,
+          'patient', // TODO: Get actual user ID
+        );
       },
     );
   }
 
   void _showRescheduleDialog(BuildContext context) {
+    final cubit = context.read<AppointmentDetailsCubit>();
     RescheduleAppointmentDialog.show(
       context: context,
       appointment: appointment,
       onReschedule: (newDate, newTime) {
-        context.read<AppointmentDetailsCubit>().rescheduleAppointment(
+        cubit.rescheduleAppointment(
+          appointment.id!,
           newDate,
           newTime,
+          'patient', // TODO: Get actual user ID
         );
         Navigator.pop(context);
       },

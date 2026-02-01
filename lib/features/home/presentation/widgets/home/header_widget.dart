@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../../../../core/theme/app_theme.dart';
-import '../../../../appointments/presentation/my_appointments/page/my_appointments_page.dart';
+import '../../../../shared/appointments/presentation/my_appointments/page/my_appointments_page.dart';
 
 class HeaderWidget extends StatelessWidget {
   const HeaderWidget({super.key});

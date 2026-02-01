@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import '../../../../../core/theme/app_theme.dart';
 import '../../../../../core/utils/date_formatter.dart';
-import '../../../../appointments/data/models/appointment.dart';
+import '../../../../shared/appointments/data/models/appointment.dart';
+import '../../../../shared/appointments/data/models/slot_model.dart';
 
 class AppointmentDetailsCard extends StatelessWidget {
   final AppointmentModel appointment;
@@ -51,6 +52,31 @@ class AppointmentDetailsCard extends StatelessWidget {
             label: 'رقم الموعد',
             value: appointment.id!,
           ),
+          // Show slot information if available
+          if (appointment.hasSlot) ...[
+            const SizedBox(height: AppTheme.spacing16),
+            _DetailRow(
+              icon: Icons.access_time,
+              label: 'نوع الحجز',
+              value: appointment.appointmentType,
+            ),
+            if (appointment.slotId != null) ...[
+              const SizedBox(height: AppTheme.spacing16),
+              _DetailRow(
+                icon: Icons.access_time,
+                label: 'رقم السلوت',
+                value: appointment.slotId!,
+              ),
+            ],
+            if (appointment.slotDuration != null) ...[
+              const SizedBox(height: AppTheme.spacing16),
+              _DetailRow(
+                icon: Icons.hourglass_bottom_outlined,
+                label: 'مدة السلوت',
+                value: '${appointment.slotDuration} دقيقة',
+              ),
+            ],
+          ],
         ],
       ),
     );

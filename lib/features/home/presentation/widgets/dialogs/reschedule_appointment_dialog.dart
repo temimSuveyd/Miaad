@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:iconsax/iconsax.dart';
 import '../../../../../core/theme/app_theme.dart';
 import '../../../../../core/utils/date_formatter.dart';
-import '../../../../appointments/data/models/appointment.dart';
+import '../../../../shared/appointments/data/models/appointment.dart';
 
 class RescheduleAppointmentDialog extends StatefulWidget {
   final AppointmentModel appointment;

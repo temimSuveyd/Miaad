@@ -8,6 +8,15 @@ class SupabaseHelper {
 
   // معالجة أخطاء Supabase
   static Exception handleError(Object error) {
+    if (error is Exception &&
+        (error is DatabaseException ||
+            error is NetworkException ||
+            error is AuthException ||
+            error is CacheException ||
+            error is ServerException)) {
+      return error;
+    }
+
     if (error is PostgrestException) {
       return DatabaseException('خطأ في قاعدة البيانات: ${error.message}');
     } else if (error is AuthException) {

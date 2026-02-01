@@ -181,7 +181,6 @@ class _OnboardingScreenItemState extends State<_OnboardingScreenItem> with Singl
                     widget.screen.imagePath,
                     fit: BoxFit.cover,
                     errorBuilder: (context, error, stackTrace) {
-                      log(error.toString());
                       return Icon(
                         Icons.image_not_supported,
                         size: 100,

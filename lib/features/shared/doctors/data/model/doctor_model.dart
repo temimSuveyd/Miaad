@@ -60,8 +60,8 @@ class DoctorModel extends Equatable {
   /// Convert from JSON to DoctorModel
   factory DoctorModel.fromJson(Map<String, dynamic> json) {
     return DoctorModel(
-      id: json['doctor_id'] as String? ?? json['id'] as String,
-      name: json['doctor_name'] as String? ?? json['name'] as String,
+      id: json['id'] as String? ?? json['doctor_id'] as String,
+      name: json['name'] as String? ?? json['doctor_name'] as String,
       specialty:
           json['speciality_name'] as String? ?? json['specialty'] as String,
       hospital: json['hospital'] as String,
@@ -69,16 +69,19 @@ class DoctorModel extends Equatable {
       location: json['location'] as String,
       workingHours: json['working_hours'] as Map<String, dynamic>? ?? {},
       rating:
+          (json['rating'] as num?)?.toDouble() ??
           double.tryParse(
             json['avg_review_rating']?.toString() ??
-                json['rating']?.toString() ??
+                json['average_rating']?.toString() ??
                 '0',
           ) ??
           0.0,
       reviewsCount:
-          json['total_reviews'] as int? ?? json['reviewsCount'] as int? ?? 0,
+          json['reviews_count'] as int? ??
+          json['total_reviews'] as int? ??
+          0,
       imageUrl:
-          json['image_url'] as String? ?? json['imageUrl'] as String? ?? '',
+          json['doctor_image'] as String? ?? json['image_url'] as String? ?? '',
       phone: json['phone'] as String?,
       email: json['email'] as String?,
       isAvailable:

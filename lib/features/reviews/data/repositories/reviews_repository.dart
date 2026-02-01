@@ -1,6 +1,6 @@
 import 'package:dartz/dartz.dart';
-import 'package:doctorbooking/features/appointments/data/models/appointment.dart';
-import 'package:doctorbooking/features/appointments/data/repositories/appointment_repository.dart';
+import 'package:doctorbooking/features/shared/appointments/data/models/appointment.dart';
+import 'package:doctorbooking/features/shared/appointments/data/repositories/appointment_repository.dart';
 import '../../../../core/error/exceptions.dart';
 import '../../../../core/error/failures.dart';
 import '../datasources/reviews_datasource.dart';
