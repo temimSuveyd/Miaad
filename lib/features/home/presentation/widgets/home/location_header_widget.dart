@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:iconsax/iconsax.dart';
 import 'package:uni_size/uni_size.dart';
 import '../../../../../core/theme/app_theme.dart';
+import '../../../../../core/widgets/bottom_sheets/city_selector_bottom_sheet.dart';
 
 class LocationHeaderWidget extends StatelessWidget {
   const LocationHeaderWidget({super.key});
@@ -11,37 +12,48 @@ class LocationHeaderWidget extends StatelessWidget {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              'الموقع',
-              style: AppTheme.caption.copyWith(color: AppTheme.textSecondary),
-            ),
-            SizedBox(height: 4.dp),
-            Row(
-              children: [
-                Icon(
-                  Iconsax.location5,
-                  size: 24.dp,
-                  color: AppTheme.textPrimary,
-                ),
-                SizedBox(width: 4.dp),
-                Text(
-                  'الرياض، السعودية',
-                  style: AppTheme.bodyLarge.copyWith(
-                    fontWeight: FontWeight.w600,
+        GestureDetector(
+          onTap: () async {
+            final city = await CitySelectorBottomSheet.show(
+              context: context,
+              selectedCity: 'الرياض',
+            );
+            if (city != null) {
+              // TODO: Update selected city and refresh UI
+            }
+          },
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                'الموقع',
+                style: AppTheme.caption.copyWith(color: AppTheme.textSecondary),
+              ),
+              SizedBox(height: 4.dp),
+              Row(
+                children: [
+                  Icon(
+                    Iconsax.location5,
+                    size: 24.dp,
+                    color: AppTheme.textPrimary,
                   ),
-                ),
-                SizedBox(width: 4.dp),
-                Icon(
-                  Icons.keyboard_arrow_down,
-                  size: 20.dp,
-                  color: AppTheme.textPrimary,
-                ),
-              ],
-            ),
-          ],
+                  SizedBox(width: 4.dp),
+                  Text(
+                    'الرياض، السعودية',
+                    style: AppTheme.bodyLarge.copyWith(
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                  SizedBox(width: 4.dp),
+                  Icon(
+                    Icons.keyboard_arrow_down,
+                    size: 20.dp,
+                    color: AppTheme.textPrimary,
+                  ),
+                ],
+              ),
+            ],
+          ),
         ),
         Stack(
           children: [

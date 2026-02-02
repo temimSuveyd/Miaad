@@ -9,7 +9,7 @@ AppBar MyAppointmentAppBar(BuildContext context) {
     elevation: 0,
 
     title: const Text(
-      'My Appointment',
+      'مواعيدي',
       style: TextStyle(
         fontSize: 20,
         fontWeight: FontWeight.w600,

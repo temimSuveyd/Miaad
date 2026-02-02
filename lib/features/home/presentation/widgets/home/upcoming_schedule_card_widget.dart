@@ -53,14 +53,14 @@ class _UpcomingScheduleCardWidgetState
           // إذا كان هناك موعد واحد فقط، عرضه بدون CardSwiper
           if (upcomingAppointments.length == 1) {
             return SizedBox(
-              height: 160,
+              height: 180.dp,
               child: _buildScheduleCard(upcomingAppointments[0]),
             );
           }
 
           // إذا كان هناك أكثر من موعد، استخدم CardSwiper
           return SizedBox(
-            height: 180.dp,
+            height: 220.dp,
             child: CardSwiper(
               padding: EdgeInsetsGeometry.symmetric(vertical: 20),
               controller: controller,

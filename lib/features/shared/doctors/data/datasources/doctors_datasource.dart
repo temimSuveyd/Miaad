@@ -38,7 +38,8 @@ class SharedDoctorsDatasourceImpl implements SharedDoctorsDatasource {
       final response = await client
           .from(viewTable)
           .select()
-          .order('avg_review_rating', ascending: false);
+          // .order('avg_review_rating', ascending: false)
+          ;
       return (response as List)
           .map((json) => DoctorModel.fromJson(json))
           .toList();
@@ -82,7 +83,9 @@ class SharedDoctorsDatasourceImpl implements SharedDoctorsDatasource {
           .or(
             'doctor_name.ilike.%$query%,speciality_name.ilike.%$query%,hospital.ilike.%$query%,location.ilike.%$query%',
           )
-          .order('avg_review_rating', ascending: false);
+          /// TODO : bu sorunu çöz
+          // .order('avg_review_rating', ascending: false)
+          ;
 
       return (response as List)
           .map((json) => DoctorModel.fromJson(json))
@@ -97,7 +100,8 @@ class SharedDoctorsDatasourceImpl implements SharedDoctorsDatasource {
           .from(viewTable)
           .select()
           .eq('speciality_name', specialty)
-          .order('avg_review_rating', ascending: false);
+          // .order('avg_review_rating', ascending: false)
+          ;
 
       return (response as List)
           .map((json) => DoctorModel.fromJson(json))
@@ -112,7 +116,8 @@ class SharedDoctorsDatasourceImpl implements SharedDoctorsDatasource {
           .from(viewTable)
           .select()
           .ilike('location', '%$location%')
-          .order('avg_review_rating', ascending: false);
+          // .order('avg_review_rating', ascending: false)
+          ;
 
       return (response as List)
           .map((json) => DoctorModel.fromJson(json))
@@ -127,7 +132,8 @@ class SharedDoctorsDatasourceImpl implements SharedDoctorsDatasource {
           .from(viewTable)
           .select()
           .ilike('hospital', '%$hospital%')
-          .order('avg_review_rating', ascending: false);
+          // .order('avg_review_rating', ascending: false)
+          ;
 
       return (response as List)
           .map((json) => DoctorModel.fromJson(json))

@@ -46,6 +46,12 @@ dependencies:
   uni_size: ^1.1.7
   google_fonts: ^6.2.1
   intl: 0.20.2
+  flutter_native_splash: ^2.4.7
+
+
+
+
+
 
 dev_dependencies:
   flutter_test:
@@ -58,10 +64,12 @@ dev_dependencies:
   # rules and activating additional ones.
   flutter_lints: ^5.0.0
 
-# For information on the generic Dart part of this file, see the
-# following page: https://dart.dev/tools/pub/pubspec
+  
+flutter_native_splash:
+  color: "#FFFFFF"
+  image: assets/app/logo.png
 
-# The following section is specific to Flutter packages.
+
 flutter:
 
   # The following line ensures that the Material Icons font is

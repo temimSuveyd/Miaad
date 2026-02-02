@@ -9,7 +9,6 @@ import '../../../../../../core/theme/app_theme.dart';
 import '../cubit/my_appointments_cubit.dart';
 import '../widgets/appointment_card_widget.dart';
 import '../widgets/my_appointments_shimmer_widget.dart';
-import '../widgets/appointments_tab_bar_widget.dart';
 
 class MyAppointmentsPage extends StatelessWidget {
   const MyAppointmentsPage({super.key});
@@ -27,11 +26,12 @@ class MyAppointmentsPage extends StatelessWidget {
           );
         },
         child: DefaultTabController(
-          length: 4,
+          length: 3,
           child: Scaffold(
             backgroundColor: AppTheme.backgroundColor,
             appBar: MyAppointmentAppBar(context),
             body: Column(
+              
               children: [
                 Expanded(
                   child: BlocConsumer<MyAppointmentsCubit, MyAppointmentsState>(
@@ -107,11 +107,11 @@ class MyAppointmentsPage extends StatelessWidget {
                       // عرض البيانات
                       return TabBarView(
                         children: [
-                          _buildAppointmentsList(
-                            context,
-                            state.filteredAppointments,
-                            AppointmentFilter.all,
-                          ),
+                          // _buildAppointmentsList(
+                          //   context,
+                          //   state.filteredAppointments,
+                          //   AppointmentFilter.all,
+                          // ),
                           _buildAppointmentsList(
                             context,
                             state.appointments
@@ -202,7 +202,7 @@ class MyAppointmentsPage extends StatelessWidget {
             onCancel: (appointmentId) {
               context.read<MyAppointmentsCubit>().cancelAppointment(
                 appointmentId,
-                'current_user_id',
+                MockUserData.currentUserId,
               );
             },
             onReschedule: (appointmentId, newDate, newTime) {
@@ -210,7 +210,7 @@ class MyAppointmentsPage extends StatelessWidget {
                 appointmentId,
                 newDate,
                 newTime,
-                'current_user_id',
+                MockUserData.currentUserId,
               );
             },
           ),

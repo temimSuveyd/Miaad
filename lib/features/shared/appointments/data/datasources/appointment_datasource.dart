@@ -266,7 +266,7 @@ class SharedAppointmentsDatasourceImpl implements SharedAppointmentDatasource {
           .eq('id', id);
 
       // تحرير السلوت المرتبط بالموعد
-      await freeSlot(id, newStatus: SlotStatus.cancelled);
+      await freeSlot(id, newStatus: SlotStatus.available);
 
       // جلب البيانات المحدثة من الـ VIEW
       final response = await client
@@ -378,24 +378,8 @@ class SharedAppointmentsDatasourceImpl implements SharedAppointmentDatasource {
         params: {'p_doctor_id': doctorId, 'p_days_ahead': daysAhead},
       );
 
-      log('📊 Database response for get_available_slots: $response');
-
-      if (response is List) {
-        log('📋 Response is a list with ${response.length} items');
-        if (response.isNotEmpty) {
-          log('🔍 First item details: ${response.first}');
-          log('🔍 First item keys: ${(response.first as Map).keys.toList()}');
-        }
-      } else {
-        log('⚠️ Response is not a list: $response (${response.runtimeType})');
-      }
-
       return (response as List).map((json) {
-        log('🔄 Converting slot: $json');
         final slot = SlotModel.fromJson(json);
-        log(
-          '✅ Converted slot - ID: ${slot.id}, Date: ${slot.slotDate}, Time: ${slot.slotTime}',
-        );
         return slot;
       }).toList();
     });

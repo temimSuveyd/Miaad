@@ -25,12 +25,12 @@ class AppointmentsTabBarWidget extends StatelessWidget {
               context.read<MyAppointmentsCubit>().applyFilter(filter);
             },
             tabs: [
-              Tab(
-                child: _buildTabWithCount(
-                  'الكل',
-                  counts[AppointmentFilter.all] ?? 0,
-                ),
-              ),
+              // Tab(
+              //   child: _buildTabWithCount(
+              //     'الكل',
+              //     counts[AppointmentFilter.all] ?? 0,
+              //   ),
+              // ),
               Tab(
                 child: _buildTabWithCount(
                   'القادمة',
@@ -61,24 +61,25 @@ class AppointmentsTabBarWidget extends StatelessWidget {
       mainAxisSize: MainAxisSize.min,
       children: [
         Text(title),
-        if (count > 0) ...[
-          const SizedBox(width: 4),
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-            decoration: BoxDecoration(
-              color: AppTheme.primaryColor,
-              borderRadius: BorderRadius.circular(10),
-            ),
-            child: Text(
-              count.toString(),
-              style: const TextStyle(
-                color: Colors.white,
-                fontSize: 12,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-          ),
-        ],
+        // if (count > 0) ...[
+        //   const SizedBox(width: 4),
+        //   Container(
+        //     padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+        //     decoration: BoxDecoration(
+        //       color: AppTheme.primaryColor,
+        //       borderRadius: BorderRadius.circular(10),
+        //     ),
+        //     child: Text(
+        //       count.toString(),
+          
+        //       style: const TextStyle(
+        //         color: Colors.white,
+        //         fontSize: 12,
+        //         fontWeight: FontWeight.bold,
+        //       ),
+        //     ),
+        //   ),
+        // ],
       ],
     );
   }
