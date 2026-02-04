@@ -1,132 +1,25 @@
+import 'package:doctorbooking/core/theme/app_theme.dart';
 import 'package:flutter/material.dart';
-import 'package:awesome_snackbar_content/awesome_snackbar_content.dart';
-import 'package:get/get.dart';
-import '../theme/app_theme.dart';
-
-enum MessageType { success, failure, warning, help }
+import 'package:alert_info/alert_info.dart';
 
 class SnackbarService {
-  static void showMessage({
-    required BuildContext context,
-    required String title,
-    required String message,
-    MessageType messageType = MessageType.success,
-    bool useMaterialBanner = false,
-  }) {
-    final contentType = _getContentType(messageType);
-
-    if (useMaterialBanner) {
-      _showMaterialBanner(
-        context: context,
-        title: title,
-        message: message,
-        contentType: contentType,
-      );
-    } else {
-      _showSnackBar(
-        context: context,
-        title: title,
-        message: message,
-        contentType: contentType,
-      );
-    }
-  }
-
-  static void _showMaterialBanner({
-    required BuildContext context,
-    required String title,
-    required String message,
-    required ContentType contentType,
-  }) {
-    final materialBanner = MaterialBanner(
-      elevation: 0,
-      backgroundColor: Colors.transparent,
-      forceActionsBelow: true,
-      content: AwesomeSnackbarContent(
-        title: title,
-        message: message,
-        contentType: contentType,
-        inMaterialBanner: true,
-        color: _getColorForType(contentType),
-      ),
-      actions: const [SizedBox.shrink()],
-    );
-
-    ScaffoldMessenger.of(context)
-      ..hideCurrentMaterialBanner()
-      ..showMaterialBanner(materialBanner);
-
-    // Auto hide after 2 seconds
-    Future.delayed(const Duration(seconds: 2), () {
-      ScaffoldMessenger.of(context).hideCurrentMaterialBanner();
-    });
-  }
-
-  static void _showSnackBar({
-    required BuildContext context,
-    required String title,
-    required String message,
-    required ContentType contentType,
-  }) {
-    final snackBar = SnackBar(
-      elevation: 0,
-      behavior: SnackBarBehavior.floating,
-      backgroundColor: Colors.transparent,
-      duration: const Duration(seconds: 2),
-      margin: const EdgeInsets.only(bottom: 20, left: 16, right: 16),
-      content: AwesomeSnackbarContent(
-        title: title,
-        message: message,
-        contentType: contentType,
-        color: _getColorForType(contentType),
-      ),
-    );
-
-    ScaffoldMessenger.of(context)
-      ..hideCurrentSnackBar()
-      ..showSnackBar(snackBar);
-  }
-
-  static ContentType _getContentType(MessageType messageType) {
-    switch (messageType) {
-      case MessageType.success:
-        return ContentType.success;
-      case MessageType.failure:
-        return ContentType.failure;
-      case MessageType.warning:
-        return ContentType.warning;
-      case MessageType.help:
-        return ContentType.help;
-    }
-  }
-
-  static Color _getColorForType(ContentType contentType) {
-    switch (contentType) {
-      case ContentType.success:
-        return AppTheme.primaryColor;
-      case ContentType.failure:
-        return AppTheme.errorColor;
-      case ContentType.warning:
-        return const Color(0xFFFF9800);
-      case ContentType.help:
-        return AppTheme.accentColor;
-      default:
-        return AppTheme.primaryColor;
-    }
-  }
-
-  // Convenience methods for common message types
   static void showSuccess({
+    required BuildContext context,
     required String title,
     required String message,
-    bool useMaterialBanner = false,
+    int duration = 3,
   }) {
-    showMessage(
-      context: Get.context!,
-      title: title,
-      message: message,
-      messageType: MessageType.success,
-      useMaterialBanner: useMaterialBanner,
+    AlertInfo.show(
+      text: message,
+      // action: message,
+      context: context,
+      backgroundColor: AppTheme.primaryColor,
+      textColor: Colors.white,
+      icon: Icons.check_circle,
+      duration: duration,
+      typeInfo: TypeInfo.success,
+      padding: 30,
+      position: MessagePosition.bottom,
     );
   }
 
@@ -134,14 +27,19 @@ class SnackbarService {
     required BuildContext context,
     required String title,
     required String message,
-    bool useMaterialBanner = false,
+    int duration = 3,
   }) {
-    showMessage(
+    AlertInfo.show(
+      text: message,
+      // action: message,
       context: context,
-      title: title,
-      message: message,
-      messageType: MessageType.failure,
-      useMaterialBanner: useMaterialBanner,
+      backgroundColor: AppTheme.primaryColor,
+      textColor: Colors.white,
+      icon: Icons.check_circle,
+      duration: duration,
+      typeInfo: TypeInfo.error,
+      padding: 30,
+      position: MessagePosition.bottom,
     );
   }
 
@@ -149,29 +47,58 @@ class SnackbarService {
     required BuildContext context,
     required String title,
     required String message,
-    bool useMaterialBanner = false,
+    Duration duration = const Duration(seconds: 3),
   }) {
-    showMessage(
+    AlertInfo.show(
+      text: message,
+      // action: message,
       context: context,
-      title: title,
-      message: message,
-      messageType: MessageType.warning,
-      useMaterialBanner: useMaterialBanner,
+      backgroundColor: AppTheme.primaryColor,
+      textColor: Colors.white,
+      icon: Icons.warning,
+      duration: duration.inSeconds,
+      typeInfo: TypeInfo.warning,
+      padding: 30,
+      position: MessagePosition.bottom,
     );
   }
 
-  static void showHelp({
+  static void showInfo({
     required BuildContext context,
     required String title,
     required String message,
-    bool useMaterialBanner = false,
+    Duration duration = const Duration(seconds: 3),
   }) {
-    showMessage(
+    AlertInfo.show(
+      text: message,
+      // action: message,
       context: context,
-      title: title,
-      message: message,
-      messageType: MessageType.help,
-      useMaterialBanner: useMaterialBanner,
+      backgroundColor: AppTheme.primaryColor,
+      textColor: Colors.white,
+      icon: Icons.info,
+      duration: duration.inSeconds,
+      typeInfo: TypeInfo.info,
+      padding: 30,
+      position: MessagePosition.bottom,
+    );
+  }
+
+  // Generic method for custom alerts
+  static void showCustom({
+    required BuildContext context,
+    required String title,
+    required IconData icon,
+    required int duration,
+  }) {
+    AlertInfo.show(
+      text: title,
+      context: context,
+      backgroundColor: AppTheme.primaryColor,
+      textColor: AppTheme.backgroundColor,
+      icon: icon,
+      duration: duration,
+      padding: 30,
+      position: MessagePosition.bottom,
     );
   }
 }

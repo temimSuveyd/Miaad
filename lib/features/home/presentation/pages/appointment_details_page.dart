@@ -26,7 +26,7 @@ class AppointmentDetailsPage extends StatelessWidget {
     return BlocConsumer<AppointmentDetailsCubit, AppointmentDetailsState>(
       listener: (context, state) {
         if (state.hasSuccessMessage && state.successMessage != null) {
-          SnackbarService.showSuccess(title: 'نجح', message: state.successMessage!);
+          SnackbarService.showSuccess(context: context, title: 'نجح', message: state.successMessage!);
           if (state.successMessage!.contains('إلغاء') || 
               state.successMessage!.contains('جدولة')) {
             Get.back();

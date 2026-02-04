@@ -27,6 +27,7 @@ class BookAppointmentPage extends StatelessWidget {
           listener: (context, state) {
             if (state.isBookingComplete) {
               SnackbarService.showSuccess(
+                context: context,
                 title: 'نجح',
                 message: state.successMessage ?? 'تم حجز الموعد بنجاح',
               );

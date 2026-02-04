@@ -196,11 +196,13 @@ class _OTPVerificationFormState extends State<_OTPVerificationForm> {
               );
             } else if (state is AuthOTPSent) {
               SnackbarService.showSuccess(
+                context: context,
                 title: 'نجح',
                 message: 'تم إرسال رمز التحقق مجدداً',
               );
             } else if (state is AuthPasswordResetSuccess) {
               SnackbarService.showSuccess(
+                context: context,
                 title: 'نجح',
                 message: 'تم تحديث كلمة المرور بنجاح',
               );

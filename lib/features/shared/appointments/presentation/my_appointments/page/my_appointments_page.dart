@@ -39,6 +39,7 @@ class MyAppointmentsPage extends StatelessWidget {
                       // عرض رسالة عند نجاح العملية
                       if (state.hasSuccessMessage) {
                         SnackbarService.showSuccess(
+                          context: context,
                           title: 'نجح',
                           message: state.successMessage!,
                         );

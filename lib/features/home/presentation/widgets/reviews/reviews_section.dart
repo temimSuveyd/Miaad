@@ -22,6 +22,7 @@ class ReviewsSection extends StatelessWidget {
       listener: (context, state) {
         if (state is ReviewAdded) {
           SnackbarService.showSuccess(
+            context: context,
             title: 'نجح',
             message: 'تم إضافة التقييم بنجاح',
           );
