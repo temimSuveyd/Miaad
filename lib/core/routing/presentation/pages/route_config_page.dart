@@ -6,6 +6,10 @@ import 'package:get/get.dart';
 import '../../../../features/home/presentation/pages/home_page.dart';
 import '../../../../features/home/presentation/pages/doctor_detail_page.dart';
 import '../../../../features/onboarding/presentation/pages/onboarding_page.dart';
+import '../../../../features/auth/presentation/pages/login_page.dart';
+import '../../../../features/auth/presentation/pages/register_page.dart';
+import '../../../../features/auth/presentation/pages/otp_verification_page.dart';
+import '../../../../features/auth/presentation/pages/forgot_password_page.dart';
 
 /// Route configuration for the application
 class RouteConfigPage {
@@ -66,21 +70,28 @@ class RouteConfigPage {
       // Auth routes
       GetPage(
         name: AppRoutes.login,
-        page: () => _buildPlaceholderPage('Login'),
+        page: () => const LoginPage(),
         transition: Transition.cupertino,
         transitionDuration: const Duration(milliseconds: 400),
       ),
 
       GetPage(
         name: AppRoutes.register,
-        page: () => _buildPlaceholderPage('Register'),
+        page: () => const RegisterPage(),
         transition: Transition.rightToLeft,
         transitionDuration: const Duration(milliseconds: 300),
       ),
 
       GetPage(
+        name: AppRoutes.otp,
+        page: () => const OTPVerificationPage(),
+        transition: Transition.upToDown,
+        transitionDuration: const Duration(milliseconds: 300),
+      ),
+
+      GetPage(
         name: AppRoutes.forgotPassword,
-        page: () => _buildPlaceholderPage('Forgot Password'),
+        page: () => const ForgotPasswordPage(),
         transition: Transition.zoom,
         transitionDuration: const Duration(milliseconds: 300),
       ),

@@ -16,6 +16,11 @@ import '../../features/reviews/data/datasources/reviews_datasource.dart';
 import '../../features/shared/specialities/data/datasources/specialities_datasource.dart';
 import '../../features/shared/specialities/data/repositories/specialities_repository.dart';
 import '../../features/shared/specialities/presentation/cubit/specialities_cubit.dart';
+import '../../features/auth/data/datasources/auth_data_source.dart';
+import '../../features/auth/data/repositories/auth_repository.dart';
+import '../../features/auth/data/repositories/auth_repository_impl.dart';
+import '../../features/auth/presentation/bloc/auth_cubit.dart';
+import '../../core/config/supabase_config.dart';
 
 final sl = GetIt.instance;
 
@@ -128,5 +133,24 @@ Future<void> initServiceLocator() async {
   // Reviews Datasource
   sl.registerLazySingleton<ReviewsDatasource>(
     () => ReviewsDatasourceImpl(),
+  );
+
+  // =====================================================
+  // المصادقة (Authentication)
+  // =====================================================
+
+  // Auth Cubit
+  sl.registerFactory(
+    () => AuthCubit(sl<AuthRepository>()),
+  );
+
+  // Auth Repository
+  sl.registerLazySingleton<AuthRepository>(
+    () => AuthRepositoryImpl(sl()),
+  );
+
+  // Auth Datasource
+  sl.registerLazySingleton<AuthDataSource>(
+    () => AuthDataSourceImpl(SupabaseConfig.client),
   );
 }

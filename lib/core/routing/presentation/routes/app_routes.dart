@@ -4,6 +4,7 @@ class AppRoutes {
   // Auth routes
   static const String login = '/login';
   static const String register = '/register';
+  static const String otp = '/otp';
   static const String forgotPassword = '/forgot-password';
 
   // Main routes
@@ -20,7 +21,7 @@ class AppRoutes {
   static const String onboarding = '/onboarding';
 
   // Initial route
-  static const String initial = navigationPage;
+  static const String initial = login;
 
   // Private constructor to prevent instantiation
   AppRoutes._();
