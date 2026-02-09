@@ -2,7 +2,6 @@ import 'package:doctorbooking/core/services/service_locator.dart';
 import 'package:doctorbooking/core/services/snackbar_service.dart';
 import 'package:doctorbooking/core/theme/app_theme.dart';
 import 'package:doctorbooking/core/widgets/custom_app_bar.dart';
-import 'package:doctorbooking/features/profile/data/mock/mock_user_data.dart';
 import 'package:doctorbooking/features/shared/appointments/presentation/book_appointment/cubit/book_appointment_cubit.dart';
 import 'package:doctorbooking/features/shared/appointments/presentation/book_appointment/widgets/doctor_booking_bottom_bar.dart';
 import 'package:doctorbooking/features/shared/appointments/presentation/book_appointment/widgets/weekly_schedule.dart';
@@ -13,14 +12,12 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 class BookAppointmentPage extends StatelessWidget {
   const BookAppointmentPage({
     super.key,
-
   });
 
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (context) => sl<BookAppointmentCubit>()
-        ..startBooking(),
+      create: (context) => sl<BookAppointmentCubit>()..startBooking(),
       child: Scaffold(
         appBar: CustomAppBar(title: 'حجز موعد', showleading: true),
         body: BlocConsumer<BookAppointmentCubit, BookAppointmentState>(
@@ -115,7 +112,7 @@ class BookAppointmentPage extends StatelessWidget {
 
                 return DoctorBookingBottomBar(
                   title: title,
-                  onBookPressed: () => cubit.confirmBooking(MockUserData.currentUserId),
+                  onBookPressed: () => cubit.confirmBooking(),
                   canBook: canBook,
                   isLoading: state.isLoading,
                   color: color,

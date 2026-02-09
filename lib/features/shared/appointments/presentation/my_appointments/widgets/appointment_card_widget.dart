@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../../../../../../core/theme/app_theme.dart';
 import '../../../../../../core/utils/date_formatter.dart';
+import '../../../../../../core/routing/presentation/routes/app_routes.dart';
 import '../../../data/models/my_appointment_model.dart';
 
 // ويدجت بطاقة الموعد
@@ -257,12 +258,12 @@ class AppointmentCardWidget extends StatelessWidget {
 
   // عرض حوار إعادة جدولة الموعد
   void _showRescheduleDialog(BuildContext context) {
-    // يمكن تنفيذ هذا لاحقاً
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text('ميزة إعادة الجدولة قيد التطوير'),
-        duration: Duration(seconds: 2),
-      ),
+    // Navigate to reschedule appointment page with appointment data
+    Get.toNamed(
+      AppRoutes.rescheduleAppointment,
+      arguments: {
+        'appointment': appointment.appointment,
+      },
     );
   }
 
@@ -300,11 +301,12 @@ class AppointmentCardWidget extends StatelessWidget {
               title: const Text('عرض التفاصيل'),
               onTap: () {
                 Navigator.pop(context);
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(
-                    content: Text('ميزة عرض التفاصيل قيد التطوير'),
-                    duration: Duration(seconds: 2),
-                  ),
+                // Navigate to appointment details page
+                Get.toNamed(
+                  AppRoutes.appointmentDetails,
+                  arguments: {
+                    'appointment': appointment.appointment,
+                  },
                 );
               },
             ),

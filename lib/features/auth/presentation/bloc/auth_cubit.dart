@@ -2,6 +2,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:doctorbooking/features/auth/data/models/user_model.dart';
 import 'package:doctorbooking/features/auth/data/repositories/auth_repository.dart';
 import 'package:doctorbooking/features/auth/presentation/bloc/auth_state.dart';
+import 'package:doctorbooking/core/services/secure_storage_service.dart';
 
 class AuthCubit extends Cubit<AuthState> {
   final AuthRepository _authRepository;
@@ -17,22 +18,25 @@ class AuthCubit extends Cubit<AuthState> {
   // Check authentication status
   Future<void> _checkAuthStatus() async {
     emit(AuthLoading());
-    final result = await _authRepository.getCurrentUser();
     
-    result.fold(
-      (failure) => emit(AuthError(failure.message)),
-      (user) {
-        if (user != null) {
-          // _currentUser = user;
-          // emit(AuthAuthenticated(user));
-          /// TODO
-          emit(AuthUnauthenticated());
-
-        } else {
-          emit(AuthUnauthenticated());
-        }
-      },
-    );
+    // Check if user is logged in via secure storage
+    final isLoggedIn = await SecureStorageService.isUserLoggedIn();
+    
+    if (isLoggedIn) {
+      // Get user data from secure storage
+      final userData = await SecureStorageService.getUserData();
+      
+      if (userData != null) {
+        _currentUser = userData;
+        emit(AuthAuthenticated(userData));
+      } else {
+        // Data corrupted, clear and show unauthenticated
+        await SecureStorageService.clearUserData();
+        emit(AuthUnauthenticated());
+      }
+    } else {
+      emit(AuthUnauthenticated());
+    }
   }
 
   // Sign in withemail and password
@@ -48,8 +52,10 @@ class AuthCubit extends Cubit<AuthState> {
     
     result.fold(
       (failure) => emit(AuthError(failure.message)),
-      (user) {
+      (user) async {
         _currentUser = user;
+        // Save user data to secure storage
+        await SecureStorageService.saveUserData(user);
         emit(AuthAuthenticated(user));
       },
     );
@@ -81,9 +87,49 @@ class AuthCubit extends Cubit<AuthState> {
     
     result.fold(
       (failure) => emit(AuthError(failure.message)),
-      (user) {
+      (user) async {
         _currentUser = user;
+        // Save user data to secure storage
+        await SecureStorageService.saveUserData(user);
         emit(AuthAuthenticated(user));
+      },
+    );
+  }
+
+  // Verify OTP for registration and create user account
+  Future<void> verifyOTPForRegistration({
+    required String email,
+    required String otp,
+    required String name,
+    required String city,
+    required String password,
+  }) async {
+    emit(AuthLoading());
+    
+    // First verify OTP to establish session
+    final otpResult = await _authRepository.verifyOTPForSession(
+      email: email,
+      otp: otp,
+    );
+    
+    otpResult.fold(
+      (failure) => emit(AuthError(failure.message)),
+      (_) async {
+        // If OTP verification successful, create user account
+        final result = await _authRepository.createUserAfterOTP(
+          name: name,
+          email: email,
+          city: city,
+          password: password,
+        );
+        
+        result.fold(
+          (failure) => emit(AuthError(failure.message)),
+          (user) {
+            _currentUser = user;
+            emit(AuthAuthenticated(user));
+          },
+        );
       },
     );
   }
@@ -105,8 +151,10 @@ class AuthCubit extends Cubit<AuthState> {
     
     result.fold(
       (failure) => emit(AuthError(failure.message)),
-      (user) {
+      (user) async {
         _currentUser = user;
+        // Save user data to secure storage
+        await SecureStorageService.saveUserData(user);
         emit(AuthAuthenticated(user));
       },
     );
@@ -122,6 +170,25 @@ class AuthCubit extends Cubit<AuthState> {
     final result = await _authRepository.resetPassword(
      email:email,
       otp: otp,
+      newPassword: newPassword,
+    );
+    
+    result.fold(
+      (failure) => emit(AuthError(failure.message)),
+      (_) {
+        emit(AuthPasswordResetSuccess());
+      },
+    );
+  }
+
+  // Create new password without OTP (for verified sessions)
+  Future<void> createNewPassword({
+    required String email,
+    required String newPassword,
+  }) async {
+    emit(AuthLoading());
+    final result = await _authRepository.createNewPassword(
+      email: email,
       newPassword: newPassword,
     );
     
@@ -150,8 +217,10 @@ class AuthCubit extends Cubit<AuthState> {
     
     result.fold(
       (failure) => emit(AuthError(failure.message)),
-      (user) {
+      (user) async {
         _currentUser = user;
+        // Save user data to secure storage
+        await SecureStorageService.saveUserData(user);
         emit(AuthAuthenticated(user));
       },
     );
@@ -164,8 +233,10 @@ class AuthCubit extends Cubit<AuthState> {
     
     result.fold(
       (failure) => emit(AuthError(failure.message)),
-      (_) {
+      (_) async {
         _currentUser = null;
+        // Clear user data from secure storage
+        await SecureStorageService.clearUserData();
         emit(AuthUnauthenticated());
       },
     );

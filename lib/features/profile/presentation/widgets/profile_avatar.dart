@@ -1,74 +1,102 @@
 import 'package:flutter/material.dart';
 import 'package:iconsax/iconsax.dart';
 import '../../../../core/theme/app_theme.dart';
-import '../../data/mock/mock_user_data.dart';
+import '../../../../core/services/user_service.dart';
+import '../../../auth/data/models/user_model.dart';
 
 class ProfileAvatar extends StatelessWidget {
   const ProfileAvatar({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final user = MockUserData.currentUser;
+    return FutureBuilder<UserModel>(
+      future: UserService.getCurrentUser(),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const Center(
+            child: CircularProgressIndicator(),
+          );
+        }
 
-    return Stack(
-      children: [
-        // Main Avatar
-        Container(
-          width: 130,
-          height: 130,
-          decoration: BoxDecoration(
-            shape: BoxShape.circle,
-            color: Colors.grey[300],
-            image: user.profileImage != null
-                ? DecorationImage(
-                    image: NetworkImage(user.profileImage!),
-                    fit: BoxFit.cover,
-                  )
-                : null,
-          ),
-          child: user.profileImage == null
-              ? Center(
-                  child: Text(
-                    user.initials,
-                    style: const TextStyle(
-                      fontSize: 36,
-                      fontWeight: FontWeight.w600,
-                      color: AppTheme.textSecondary,
-                    ),
-                  ),
-                )
-              : null,
-        ),
+        if (snapshot.hasError) {
+          return const Center(
+            child: Icon(Iconsax.user, size: 60, color: Colors.grey),
+          );
+        }
 
-        // Edit Button
-        Positioned(
-          bottom: 0,
-          right: 0,
-          child: GestureDetector(
-            onTap: () {
-              // Handle edit avatar
-              _showEditAvatarOptions(context);
-            },
-            child: Container(
-              width: 36,
-              height: 36,
+        final user = snapshot.data!;
+
+        return Stack(
+          children: [
+            // Main Avatar
+            Container(
+              width: 130,
+              height: 130,
               decoration: BoxDecoration(
-                color: AppTheme.primaryColor,
                 shape: BoxShape.circle,
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withValues(alpha: 0.1),
-                    blurRadius: 8,
-                    offset: const Offset(0, 2),
-                  ),
-                ],
+                color: Colors.grey[300],
+                image: user.imageUrl != null
+                    ? DecorationImage(
+                        image: NetworkImage(user.imageUrl!),
+                        fit: BoxFit.cover,
+                      )
+                    : null,
               ),
-              child: const Icon(Iconsax.edit, color: Colors.white, size: 18),
+              child: user.imageUrl == null
+                  ? Center(
+                      child: Text(
+                        _getInitials(user.name),
+                        style: const TextStyle(
+                          fontSize: 36,
+                          fontWeight: FontWeight.w600,
+                          color: AppTheme.textSecondary,
+                        ),
+                      ),
+                    )
+                  : null,
             ),
-          ),
-        ),
-      ],
+
+            // Edit Button
+            Positioned(
+              bottom: 0,
+              right: 0,
+              child: GestureDetector(
+                onTap: () {
+                  // Handle edit avatar
+                  _showEditAvatarOptions(context);
+                },
+                child: Container(
+                  width: 36,
+                  height: 36,
+                  decoration: BoxDecoration(
+                    color: AppTheme.primaryColor,
+                    shape: BoxShape.circle,
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withValues(alpha: 0.1),
+                        blurRadius: 8,
+                        offset: const Offset(0, 2),
+                      ),
+                    ],
+                  ),
+                  child: const Icon(Iconsax.edit, color: Colors.white, size: 18),
+                ),
+              ),
+            ),
+          ],
+        );
+      }
     );
+  }
+
+  String _getInitials(String name) {
+    final parts = name.trim().split(' ');
+    if (parts.length >= 2) {
+      return parts[0][0] + parts[1][0];
+    } else if (parts.isNotEmpty) {
+      return parts[0][0];
+    }
+    return 'U';
   }
 
   void _showEditAvatarOptions(BuildContext context) {

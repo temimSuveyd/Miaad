@@ -1,38 +1,78 @@
 import 'package:flutter/material.dart';
 import '../../../../core/theme/app_theme.dart';
-import '../../data/mock/mock_user_data.dart';
+import '../../../../core/services/user_service.dart';
+import '../../../auth/data/models/user_model.dart';
 
 class ProfileInfo extends StatelessWidget {
   const ProfileInfo({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final user = MockUserData.currentUser;
+    return FutureBuilder<UserModel>(
+      future: UserService.getCurrentUser(),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const Column(
+            children: [
+              SizedBox(
+                width: 20,
+                height: 20,
+                child: CircularProgressIndicator(),
+              ),
+              SizedBox(height: 8),
+              Text(
+                'Loading...',
+                style: TextStyle(
+                  fontSize: 16,
+                  color: AppTheme.textSecondary,
+                ),
+              ),
+            ],
+          );
+        }
 
-    return Column(
-      children: [
-        // User Name
-        Text(
-          user.name,
-          style: const TextStyle(
-            fontSize: 20,
-            fontWeight: FontWeight.w600,
-            color: AppTheme.textPrimary,
-          ),
-        ),
+        if (snapshot.hasError) {
+          return const Column(
+            children: [
+              Text(
+                'Error loading profile',
+                style: TextStyle(
+                  fontSize: 16,
+                  color: AppTheme.errorColor,
+                ),
+              ),
+            ],
+          );
+        }
 
-        const SizedBox(height: AppTheme.spacing8),
+        final user = snapshot.data!;
 
-        // Phone Number
-        Text(
-          user.phone,
-          style: const TextStyle(
-            fontSize: 16,
-            color: AppTheme.textSecondary,
-            fontWeight: FontWeight.w400,
-          ),
-        ),
-      ],
+        return Column(
+          children: [
+            // User Name
+            Text(
+              user.name,
+              style: const TextStyle(
+                fontSize: 20,
+                fontWeight: FontWeight.w600,
+                color: AppTheme.textPrimary,
+              ),
+            ),
+
+            const SizedBox(height: AppTheme.spacing8),
+
+            // Phone Number
+            Text(
+              user.phone.isNotEmpty ? user.phone : 'No phone number',
+              style: const TextStyle(
+                fontSize: 16,
+                color: AppTheme.textSecondary,
+                fontWeight: FontWeight.w400,
+              ),
+            ),
+          ],
+        );
+      },
     );
   }
 }

@@ -42,6 +42,24 @@ class AuthRepositoryImpl implements AuthRepository {
   }
 
   @override
+  Future<Either<Failure, void>> verifyOTPForSession({
+    required String email,
+    required String otp,
+  }) async {
+    try {
+      await _authDataSource.verifyOTPForSession(
+        email: email,
+        otp: otp,
+      );
+      return const Right(null);
+    } on Failure catch (failure) {
+      return Left(failure);
+    } catch (e) {
+      return Left(UnknownFailure('خطأ غير معروف: ${e.toString()}'));
+    }
+  }
+
+  @override
   Future<Either<Failure, UserModel>> verifyOTPAndSignIn({
     required String email,
     required String otp,
@@ -93,6 +111,24 @@ class AuthRepositoryImpl implements AuthRepository {
       await _authDataSource.resetPassword(
         email: email ,
         otp: otp,
+        newPassword: newPassword,
+      );
+      return const Right(null);
+    } on Failure catch (failure) {
+      return Left(failure);
+    } catch (e) {
+      return Left(UnknownFailure('خطأ غير معروف: ${e.toString()}'));
+    }
+  }
+
+  @override
+  Future<Either<Failure, void>> createNewPassword({
+    required String email,
+    required String newPassword,
+  }) async {
+    try {
+      await _authDataSource.createNewPassword(
+        email: email,
         newPassword: newPassword,
       );
       return const Right(null);

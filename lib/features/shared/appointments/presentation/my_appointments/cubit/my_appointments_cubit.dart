@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:equatable/equatable.dart';
+import '../../../../../../core/services/user_service.dart';
 import '../../../data/repositories/appointment_repository.dart';
 import '../../../data/models/my_appointment_model.dart';
 import '../../../data/models/appointment.dart';
@@ -12,15 +13,47 @@ part 'my_appointments_state.dart';
 class MyAppointmentsCubit extends Cubit<MyAppointmentsState> {
   final SharedAppointmentRepository repository;
   StreamSubscription<dynamic>? _appointmentsSubscription;
+  String? _currentUserId;
 
   MyAppointmentsCubit({required this.repository})
-    : super(const MyAppointmentsState());
+    : super(const MyAppointmentsState()) {
+    _loadUserId();
+  }
+
+  /// تحميل معرف المستخدم الحالي
+  Future<void> _loadUserId() async {
+    try {
+      _currentUserId = await UserService.getCurrentUserId();
+      // بعد تحميل معرف المستخدم، ابدأ تحميل المواعيد
+      if (_currentUserId != null) {
+        loadUserAppointmentsStream();
+      } else {
+        emit(state.copyWith(
+          isLoading: false,
+          errorMessage: 'User not logged in',
+        ));
+      }
+    } catch (e) {
+      emit(state.copyWith(
+        isLoading: false,
+        errorMessage: 'Failed to load user ID',
+      ));
+    }
+  }
 
   /// تحميل مواعيد المستخدم
-  Future<void> loadUserAppointments(String userId) async {
+  Future<void> loadUserAppointments() async {
+    if (_currentUserId == null) {
+      emit(state.copyWith(
+        isLoading: false,
+        errorMessage: 'User not logged in',
+      ));
+      return;
+    }
+
     emit(state.copyWith(isLoading: true, errorMessage: null));
 
-    final result = await repository.getUserAppointments(userId);
+    final result = await repository.getUserAppointments(_currentUserId!);
 
     result.fold(
       (failure) =>
@@ -47,12 +80,20 @@ class MyAppointmentsCubit extends Cubit<MyAppointmentsState> {
   }
 
   /// تحميل مواعيد المستخدم مع real-time updates
-  void loadUserAppointmentsStream(String userId) {
+  void loadUserAppointmentsStream() {
+    if (_currentUserId == null) {
+      emit(state.copyWith(
+        isLoading: false,
+        errorMessage: 'User not logged in',
+      ));
+      return;
+    }
+
     emit(state.copyWith(isLoading: true, errorMessage: null));
 
     _appointmentsSubscription?.cancel();
     _appointmentsSubscription = repository
-        .getUserAppointmentsStream(userId)
+        .getUserAppointmentsStream(_currentUserId!)
         .listen(
           (result) {
             result.fold(
@@ -104,10 +145,18 @@ class MyAppointmentsCubit extends Cubit<MyAppointmentsState> {
   }
 
   /// إلغاء موعد
-  Future<void> cancelAppointment(String appointmentId, String userId) async {
+  Future<void> cancelAppointment(String appointmentId) async {
+    if (_currentUserId == null) {
+      emit(state.copyWith(
+        isLoading: false,
+        errorMessage: 'User not logged in',
+      ));
+      return;
+    }
+
     emit(state.copyWith(isLoading: true, errorMessage: null));
 
-    final result = await repository.cancelAppointment(appointmentId, userId);
+    final result = await repository.cancelAppointment(appointmentId, _currentUserId!);
 
     result.fold(
       (failure) =>
@@ -141,15 +190,22 @@ class MyAppointmentsCubit extends Cubit<MyAppointmentsState> {
     String appointmentId,
     DateTime newDate,
     String newTime,
-    String userId,
   ) async {
+    if (_currentUserId == null) {
+      emit(state.copyWith(
+        isLoading: false,
+        errorMessage: 'User not logged in',
+      ));
+      return;
+    }
+
     emit(state.copyWith(isLoading: true, errorMessage: null));
 
     final result = await repository.rescheduleAppointment(
       appointmentId,
       newDate,
       newTime,
-      userId,
+      _currentUserId!,
     );
 
     result.fold(
@@ -180,8 +236,8 @@ class MyAppointmentsCubit extends Cubit<MyAppointmentsState> {
   }
 
   /// تحديث المواعيد
-  Future<void> refreshAppointments(String userId) async {
-    await loadUserAppointments(userId);
+  Future<void> refreshAppointments() async {
+    await _loadUserId();
   }
 
   /// مسح رسائل النجاح والخطأ

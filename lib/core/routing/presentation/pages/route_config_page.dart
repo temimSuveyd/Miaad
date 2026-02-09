@@ -1,5 +1,7 @@
 import 'package:doctorbooking/core/routing/presentation/routes/app_routes.dart';
+import 'package:doctorbooking/features/home/presentation/pages/appointment_details_page.dart';
 import 'package:doctorbooking/features/shared/appointments/presentation/book_appointment/pages/book_appointment_page.dart';
+import 'package:doctorbooking/features/shared/appointments/presentation/reschedule_appointment/pages/reschedule_appointment_page.dart';
 import 'package:doctorbooking/features/navigation/navigation_page.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -10,6 +12,8 @@ import '../../../../features/auth/presentation/pages/login_page.dart';
 import '../../../../features/auth/presentation/pages/register_page.dart';
 import '../../../../features/auth/presentation/pages/otp_verification_page.dart';
 import '../../../../features/auth/presentation/pages/forgot_password_page.dart';
+import '../../../../features/auth/presentation/pages/create_new_password_page.dart';
+import '../middlewares/auth_middleware.dart';
 
 /// Route configuration for the application
 class RouteConfigPage {
@@ -24,55 +28,81 @@ class RouteConfigPage {
         transitionDuration: const Duration(milliseconds: 300),
         curve: Curves.easeInOut,
       ),
-      // Home route with fade transition
+      // Home route with fade transition - protected
       GetPage(
         name: AppRoutes.home,
         page: () => const HomePage(),
         transition: Transition.fadeIn,
         transitionDuration: const Duration(milliseconds: 300),
         curve: Curves.easeInOut,
+        middlewares: [AuthMiddleware()],
       ),
 
-      // Doctor detail with slide transition
+      // Doctor detail with slide transition - protected
       GetPage(
         name: AppRoutes.doctorDetail,
         page: () => const DoctorDetailPage(),
         transition: Transition.rightToLeft,
         transitionDuration: const Duration(milliseconds: 300),
         curve: Curves.easeInOut,
+        middlewares: [AuthMiddleware()],
       ),
 
-      // Appointment with bottom to top transition
+      // Appointment with bottom to top transition - protected
       GetPage(
         name: AppRoutes.bookApptintment,
         page: () => BookAppointmentPage(),
         transition: Transition.downToUp,
         transitionDuration: const Duration(milliseconds: 300),
         curve: Curves.easeInOut,
+        middlewares: [AuthMiddleware()],
       ),
 
-      // My Doctors with cupertino transition
+      // Appointment details with fade transition - protected
+      GetPage(
+        name: AppRoutes.appointmentDetails,
+        page: () => const AppointmentDetailsPage(),
+        transition: Transition.fadeIn,
+        transitionDuration: const Duration(milliseconds: 300),
+        curve: Curves.easeInOut,
+        middlewares: [AuthMiddleware()],
+      ),
+
+      // Reschedule appointment with slide transition - protected
+      GetPage(
+        name: AppRoutes.rescheduleAppointment,
+        page: () => const RescheduleAppointmentPage(),
+        transition: Transition.rightToLeft,
+        transitionDuration: const Duration(milliseconds: 300),
+        curve: Curves.easeInOut,
+        middlewares: [AuthMiddleware()],
+      ),
+
+      // My Doctors with cupertino transition - protected
       GetPage(
         name: AppRoutes.myDoctors,
         page: () => _buildPlaceholderPage('My Doctors'),
         transition: Transition.cupertino,
         transitionDuration: const Duration(milliseconds: 300),
+        middlewares: [AuthMiddleware()],
       ),
 
-      // Profile with fade transition
+      // Profile with fade transition - protected
       GetPage(
         name: AppRoutes.profile,
         page: () => _buildPlaceholderPage('Profile'),
         transition: Transition.fadeIn,
         transitionDuration: const Duration(milliseconds: 300),
+        middlewares: [AuthMiddleware()],
       ),
 
-      // Auth routes
+      // Auth routes with GuestMiddleware (prevents authenticated users from accessing auth pages)
       GetPage(
         name: AppRoutes.login,
         page: () => const LoginPage(),
         transition: Transition.cupertino,
         transitionDuration: const Duration(milliseconds: 400),
+        middlewares: [GuestMiddleware()],
       ),
 
       GetPage(
@@ -80,6 +110,7 @@ class RouteConfigPage {
         page: () => const RegisterPage(),
         transition: Transition.rightToLeft,
         transitionDuration: const Duration(milliseconds: 300),
+        middlewares: [GuestMiddleware()],
       ),
 
       GetPage(
@@ -96,14 +127,14 @@ class RouteConfigPage {
         transitionDuration: const Duration(milliseconds: 300),
       ),
 
-      // Onboarding routes
       GetPage(
-        name: AppRoutes.splash,
-        page: () => _buildPlaceholderPage('Splash'),
-        transition: Transition.fadeIn,
-        transitionDuration: const Duration(milliseconds: 500),
+        name: AppRoutes.createNewPassword,
+        page: () => const CreateNewPasswordPage(),
+        transition: Transition.rightToLeft,
+        transitionDuration: const Duration(milliseconds: 300),
       ),
 
+      // Onboarding routes
       GetPage(
         name: AppRoutes.onboarding,
         page: () => const OnboardingPage(),

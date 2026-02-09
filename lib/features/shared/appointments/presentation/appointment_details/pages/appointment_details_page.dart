@@ -1,23 +1,26 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:get/get.dart';
 import '../../../../../../core/services/service_locator.dart';
 import '../../../../../../core/theme/app_theme.dart';
-import '../../../../../../core/widgets/custom_app_bar.dart';
 import '../../../data/models/appointment_details_model.dart';
 import '../cubit/appointment_details_cubit.dart';
 
 class AppointmentDetailsPage extends StatelessWidget {
-  final String appointmentId;
-
-  const AppointmentDetailsPage({super.key, required this.appointmentId});
+  const AppointmentDetailsPage({super.key});
 
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (context) =>
-          sl<AppointmentDetailsCubit>()..loadAppointmentDetails(appointmentId),
+      create: (context) => sl<AppointmentDetailsCubit>(),
       child: Scaffold(
-        appBar: CustomAppBar(title: 'تفاصيل الموعد', showleading: true),
+        appBar: AppBar(
+          title: const Text('تفاصيل الموعد'),
+          leading: IconButton(
+            icon: const Icon(Icons.arrow_back),
+            onPressed: () => Get.back(),
+          ),
+        ),
         body: BlocConsumer<AppointmentDetailsCubit, AppointmentDetailsState>(
           listener: (context, state) {
             if (state.hasSuccessMessage) {
@@ -68,7 +71,7 @@ class AppointmentDetailsPage extends StatelessWidget {
                       onPressed: () {
                         context
                             .read<AppointmentDetailsCubit>()
-                            .refreshAppointmentDetails(appointmentId);
+                            .refreshAppointmentDetails(state.appointment!.id!);
                       },
                       style: ElevatedButton.styleFrom(
                         backgroundColor: AppTheme.primaryColor,
@@ -207,8 +210,7 @@ class AppointmentDetailsPage extends StatelessWidget {
                                       .read<AppointmentDetailsCubit>()
                                       .executeAction(
                                         action,
-                                        appointmentId,
-                                        'current_user_id',
+                                       state.appointment!.id!
                                       );
                                 },
                               ),

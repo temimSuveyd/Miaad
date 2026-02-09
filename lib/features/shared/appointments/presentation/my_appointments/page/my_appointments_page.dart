@@ -1,10 +1,9 @@
 import 'package:doctorbooking/core/services/snackbar_service.dart';
 import 'package:doctorbooking/features/shared/appointments/data/models/appointment.dart';
 import 'package:doctorbooking/features/shared/appointments/presentation/my_appointments/widgets/appointment_app_bar.dart';
-import 'package:doctorbooking/features/profile/data/mock/mock_user_data.dart';
+import 'package:doctorbooking/core/services/service_locator.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import '../../../../../../core/services/service_locator.dart';
 import '../../../../../../core/theme/app_theme.dart';
 import '../cubit/my_appointments_cubit.dart';
 import '../widgets/appointment_card_widget.dart';
@@ -16,14 +15,10 @@ class MyAppointmentsPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (context) =>
-          sl<MyAppointmentsCubit>()
-            ..loadUserAppointmentsStream(MockUserData.currentUserId),
+      create: (context) => sl<MyAppointmentsCubit>(),
       child: RefreshIndicator(
         onRefresh: () async {
-          context.read<MyAppointmentsCubit>().refreshAppointments(
-            MockUserData.currentUserId,
-          );
+          context.read<MyAppointmentsCubit>().refreshAppointments();
         },
         child: DefaultTabController(
           length: 3,
@@ -31,7 +26,6 @@ class MyAppointmentsPage extends StatelessWidget {
             backgroundColor: AppTheme.backgroundColor,
             appBar: MyAppointmentAppBar(context),
             body: Column(
-              
               children: [
                 Expanded(
                   child: BlocConsumer<MyAppointmentsCubit, MyAppointmentsState>(
@@ -93,7 +87,7 @@ class MyAppointmentsPage extends StatelessWidget {
                                 onPressed: () {
                                   context
                                       .read<MyAppointmentsCubit>()
-                                      .refreshAppointments('current_user_id');
+                                      .refreshAppointments();
                                 },
                                 style: ElevatedButton.styleFrom(
                                   backgroundColor: AppTheme.primaryColor,
@@ -203,7 +197,6 @@ class MyAppointmentsPage extends StatelessWidget {
             onCancel: (appointmentId) {
               context.read<MyAppointmentsCubit>().cancelAppointment(
                 appointmentId,
-                MockUserData.currentUserId,
               );
             },
             onReschedule: (appointmentId, newDate, newTime) {
@@ -211,7 +204,6 @@ class MyAppointmentsPage extends StatelessWidget {
                 appointmentId,
                 newDate,
                 newTime,
-                MockUserData.currentUserId,
               );
             },
           ),

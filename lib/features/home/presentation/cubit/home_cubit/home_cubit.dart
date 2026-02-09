@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get/get.dart';
 import '../../../../../core/models/models.dart';
 import '../../../../../core/routing/presentation/routes/app_routes.dart';
+import '../../../../../core/services/user_service.dart';
 import '../../../../shared/appointments/data/repositories/appointment_repository.dart';
 import '../../../data/models/doctor_info_model.dart';
 import 'home_state.dart';
@@ -13,20 +14,43 @@ class HomeCubit extends Cubit<HomeState> {
   final SharedAppointmentRepository _repository;
 
   // معرف المستخدم المؤقت
-  static const String tempUserId = '5a4b4fc1-4c58-4d2c-baac-ef050fce8ce3';
+  // static const String tempUserId = '5a4b4fc1-4c58-4d2c-baac-ef050fce8ce3';
+  String? _currentUserId;
 
   // Stream subscription للاستماع للتحديثات
   StreamSubscription? _appointmentsSubscription;
 
   HomeCubit({required SharedAppointmentRepository repository})
     : _repository = repository,
-      super(HomeInitial());
+      super(HomeInitial()) {
+    _loadUserId();
+  }
+
+  /// تحميل معرف المستخدم الحالي
+  Future<void> _loadUserId() async {
+    try {
+      _currentUserId = await UserService.getCurrentUserId();
+      // بعد تحميل معرف المستخدم، ابدأ تحميل المواعيد
+      if (_currentUserId != null) {
+        subscribeToUserAppointments();
+      } else {
+        emit(HomeError('User not logged in'));
+      }
+    } catch (e) {
+      emit(HomeError('Failed to load user ID'));
+    }
+  }
 
   /// جلب مواعيد المستخدم (مرة واحدة)
   Future<void> fetchUserAppointments() async {
+    if (_currentUserId == null) {
+      emit(HomeError('User not logged in'));
+      return;
+    }
+    
     emit(HomeLoading());
 
-    final result = await _repository.getUserAppointments(tempUserId);
+    final result = await _repository.getUserAppointments(_currentUserId!);
 
     result.fold((failure) => emit(HomeError(failure.message)), (appointments) {
       // تصفية المواعيد القادمة
@@ -44,14 +68,23 @@ class HomeCubit extends Cubit<HomeState> {
   }
 
   /// الاستماع لمواعيد المستخدم بشكل real-time
-  void subscribeToUserAppointments() {
+  Future<void> subscribeToUserAppointments() async {
+    if (_currentUserId == null) {
+      await _loadUserId();
+    }
+    
+    if (_currentUserId == null) {
+      emit(HomeError('User not logged in'));
+      return;
+    }
+    
     emit(HomeLoading());
 
     // إلغاء الاشتراك السابق إن وجد
     _appointmentsSubscription?.cancel();
 
     _appointmentsSubscription = _repository
-        .getUserAppointmentsStream(tempUserId)
+        .getUserAppointmentsStream(_currentUserId!)
         .listen(
           (result) {
             result.fold(
@@ -82,9 +115,18 @@ class HomeCubit extends Cubit<HomeState> {
 
   /// جلب المواعيد القادمة فقط
   Future<void> fetchUpcomingAppointments() async {
+    if (_currentUserId == null) {
+      await _loadUserId();
+    }
+    
+    if (_currentUserId == null) {
+      emit(HomeError('User not logged in'));
+      return;
+    }
+    
     emit(HomeLoading());
 
-    final result = await _repository.getUpcomingAppointments(tempUserId);
+    final result = await _repository.getUpcomingAppointments(_currentUserId!);
 
     result.fold((failure) => emit(HomeError(failure.message)), (appointments) {
       emit(
@@ -97,20 +139,14 @@ class HomeCubit extends Cubit<HomeState> {
     });
   }
 
-  /// إلغاء الاشتراك
-  void unsubscribeFromAppointments() {
-    _appointmentsSubscription?.cancel();
-    _appointmentsSubscription = null;
-  }
-
   /// إعادة تحميل المواعيد
   Future<void> refreshAppointments() async {
-    await fetchUserAppointments();
+    await _loadUserId();
   }
 
   /// إعادة المحاولة
-  void retry() {
-    fetchUserAppointments();
+  Future<void> retry() async {
+    await _loadUserId();
   }
 
   /// تصفية المواعيد القادمة

@@ -12,6 +12,11 @@ abstract class AuthRepository {
     required String email,
   });
 
+  Future<Either<Failure, void>> verifyOTPForSession({
+    required String email,
+    required String otp,
+  });
+
   Future<Either<Failure, UserModel>> verifyOTPAndSignIn({
     required String email,
     required String otp,
@@ -28,6 +33,11 @@ abstract class AuthRepository {
   Future<Either<Failure, void>> resetPassword({
     required String email,
     required String otp,
+    required String newPassword,
+  });
+
+  Future<Either<Failure, void>> createNewPassword({
+    required String email,
     required String newPassword,
   });
 

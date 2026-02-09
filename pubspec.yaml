@@ -48,6 +48,8 @@ dependencies:
   intl: 0.20.2
   flutter_native_splash: ^2.4.7
   alert_info: ^0.0.8
+  flutter_otp_text_field: ^1.5.1+1
+  flutter_secure_storage: ^9.2.2
 
 
 
@@ -67,7 +69,7 @@ dev_dependencies:
 
   
 flutter_native_splash:
-  color: "#FFFFFF"
+  color: "#1C2A3A"
   image: assets/app/logo.png
 
 

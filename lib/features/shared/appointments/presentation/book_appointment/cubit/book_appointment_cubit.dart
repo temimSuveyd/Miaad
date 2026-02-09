@@ -1,6 +1,6 @@
 import 'dart:developer';
 import 'package:doctorbooking/core/models/models.dart';
-import 'package:doctorbooking/features/profile/data/mock/mock_user_data.dart';
+import 'package:doctorbooking/core/services/user_service.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:get/get.dart';
@@ -15,9 +15,19 @@ part 'book_appointment_state.dart';
 /// Book Appointment Cubit - Manages appointment booking
 class BookAppointmentCubit extends Cubit<BookAppointmentState> {
   final SharedAppointmentRepository repository;
+  String? _currentUserId;
 
   BookAppointmentCubit({required this.repository})
     : super(const BookAppointmentState());
+
+  /// تحميل معرف المستخدم الحالي
+  Future<void> _loadUserId() async {
+    try {
+      _currentUserId = await UserService.getCurrentUserId();
+    } catch (e) {
+      _currentUserId = null;
+    }
+  }
 
   /// بدء عملية حجز موعد جديد
   void startBooking() {
@@ -277,8 +287,23 @@ class BookAppointmentCubit extends Cubit<BookAppointmentState> {
   }
 
   /// تأكيد الحجز (باستخدام نظام السلوتس)
-  Future<void> confirmBooking(String userId) async {
+  Future<void> confirmBooking() async {
     
+    // تحميل معرف المستخدم إذا لم يكن محملاً
+    if (_currentUserId == null) {
+      await _loadUserId();
+    }
+    
+    if (_currentUserId == null) {
+      emit(
+        state.copyWith(
+          bookingModel: state.bookingModel?.setError(
+            'User not logged in',
+          ),
+        ),
+      );
+      return;
+    }
     if (state.bookingModel == null ||
         state.bookingModel!.selectedDate == null ||
         state.bookingModel!.selectedTime == null ||
@@ -299,7 +324,7 @@ class BookAppointmentCubit extends Cubit<BookAppointmentState> {
     
     // إنشاء الموعد مع معلومات السلوت
     final appointment = AppointmentModel(
-      userId: userId,
+      userId: _currentUserId!,
       doctorId: state.bookingModel!.doctorId!,
       date: state.bookingModel!.selectedDate!,
       time: state.bookingModel!.selectedTime!,

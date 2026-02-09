@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get/get.dart';
 import 'package:iconsax/iconsax.dart';
+import 'package:flutter_otp_text_field/flutter_otp_text_field.dart';
 import 'package:doctorbooking/core/routing/presentation/routes/app_routes.dart';
 import 'package:doctorbooking/core/theme/app_theme.dart';
 import 'package:doctorbooking/core/services/service_locator.dart';
@@ -9,6 +10,7 @@ import 'package:doctorbooking/core/services/snackbar_service.dart';
 import 'package:doctorbooking/features/shared/widgets/custom_button.dart';
 import 'package:doctorbooking/features/auth/presentation/bloc/auth_cubit.dart';
 import 'package:doctorbooking/features/auth/presentation/bloc/auth_state.dart';
+import 'package:uni_size/uni_size.dart';
 
 class OTPVerificationPage extends StatelessWidget {
   const OTPVerificationPage({super.key});
@@ -30,14 +32,7 @@ class _OTPVerificationForm extends StatefulWidget {
 }
 
 class _OTPVerificationFormState extends State<_OTPVerificationForm> {
-  final List<TextEditingController> _otpControllers = List.generate(
-    6,
-    (index) => TextEditingController(),
-  );
-  final List<FocusNode> _focusNodes = List.generate(
-    6,
-    (index) => FocusNode(),
-  );
+  String _otp = '';
   
   String _email = '';
   String _password = '';
@@ -63,31 +58,12 @@ class _OTPVerificationFormState extends State<_OTPVerificationForm> {
 
   @override
   void dispose() {
-    for (var controller in _otpControllers) {
-      controller.dispose();
-    }
-    for (var focusNode in _focusNodes) {
-      focusNode.dispose();
-    }
     super.dispose();
   }
 
-  void _onOTPChanged(int index, String value) {
-    if (value.length == 1 && index < 5) {
-      _focusNodes[index + 1].requestFocus();
-    } else if (value.isEmpty && index > 0) {
-      _focusNodes[index - 1].requestFocus();
-    }
-  }
-
-  String _getOTP() {
-    return _otpControllers.map((controller) => controller.text).join();
-  }
 
   Future<void> _verifyOTP() async {
-    final otp = _getOTP();
-    
-    if (otp.length != 6) {
+    if (_otp.length != 6) {
       SnackbarService.showError(
         context: context,
         title: 'خطأ',
@@ -99,78 +75,31 @@ class _OTPVerificationFormState extends State<_OTPVerificationForm> {
     final authCubit = context.read<AuthCubit>();
     
     if (_isRegistration) {
-      // This is registration - create account after OTP verification
-      await authCubit.createUserAfterOTP(
-        name: _name,
+      // This is registration - first verify OTP to establish session, then create account
+      await authCubit.verifyOTPForRegistration(
         email: _email,
+        otp: _otp,
+        name: _name,
         city: _city,
         password: _password,
       );
     } else if (_isPasswordReset) {
-      // This is password reset - show new password dialog
-      _showNewPasswordDialog(otp);
+      // This is password reset - navigate to create new password page
+      Get.toNamed(
+        AppRoutes.createNewPassword,
+        arguments: {
+          'email': _email,
+          'otp': _otp,
+        },
+      );
     } else {
       // This is login - verify OTP and sign in
       await authCubit.verifyOTPAndSignIn(
         email: _email,
-        otp: otp,
+        otp: _otp,
         password: _password,
       );
     }
-  }
-
-  void _showNewPasswordDialog(String otp) {
-    final newPasswordController = TextEditingController();
-    
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('كلمة المرور الجديدة'),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            const Text('أدخل كلمة المرور الجديدة'),
-            const SizedBox(height: 16),
-            TextField(
-              controller: newPasswordController,
-              obscureText: true,
-              decoration: const InputDecoration(
-                labelText: 'كلمة المرور الجديدة',
-                border: OutlineInputBorder(),
-              ),
-            ),
-          ],
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Get.back(),
-            child: const Text('إلغاء'),
-          ),
-          TextButton(
-            onPressed: () async {
-              final newPassword = newPasswordController.text;
-              if (newPassword.length < 6) {
-                SnackbarService.showError(
-                  context: context,
-                  title: 'خطأ',
-                  message: 'كلمة المرور يجب أن تكون 6 أحرف على الأقل',
-                );
-                return;
-              }
-              
-              Get.back();
-              final authCubit = context.read<AuthCubit>();
-              await authCubit.resetPassword(
-                email: _email,
-                otp: otp,
-                newPassword: newPassword,
-              );
-            },
-            child: const Text('تحديث'),
-          ),
-        ],
-      ),
-    );
   }
 
   Future<void> _resendOTP() async {
@@ -272,48 +201,36 @@ class _OTPVerificationFormState extends State<_OTPVerificationForm> {
                     
                     const SizedBox(height: 50),
                     
-                    // OTP Input Fields
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                      children: List.generate(
-                        6,
-                        (index) => SizedBox(
-                          width: 50,
-                          height: 60,
-                          child: TextFormField(
-                            controller: _otpControllers[index],
-                            focusNode: _focusNodes[index],
-                            keyboardType: TextInputType.number,
-                            textAlign: TextAlign.center,
-                            maxLength: 1,
-                            onChanged: (value) => _onOTPChanged(index, value),
-                            decoration: InputDecoration(
-                              counterText: '',
-                              border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(12),
-                                borderSide: BorderSide(
-                                  color: AppTheme.textSecondary.withOpacity(0.3),
-                                ),
-                              ),
-                              enabledBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(12),
-                                borderSide: BorderSide(
-                                  color: AppTheme.textSecondary.withOpacity(0.3),
-                                ),
-                              ),
-                              focusedBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(12),
-                                borderSide: BorderSide(
-                                  color: AppTheme.primaryColor,
-                                  width: 2,
-                                ),
-                              ),
-                            ),
-                            style: const TextStyle(
-                              fontSize: 24,
-                              fontWeight: FontWeight.bold,
-                            ),
+                    // OTP Input Field
+                    Center(
+                      child: Directionality(
+                        textDirection: TextDirection.ltr,
+                        child: OtpTextField(
+                          
+                          numberOfFields: 6,
+                          // borderColor: AppTheme.textSecondary.withValues(alpha: 0.3),
+                          fillColor: AppTheme.dividerColor,
+                          filled: true,
+                          focusedBorderColor: AppTheme.primaryColor,
+                          showFieldAsBox: true,
+                          // borderWidth: 2.0,
+                          borderRadius: BorderRadius.circular(12),
+                          fieldHeight: 60.dp,
+                          textStyle: const TextStyle(
+                            fontSize: 24,
+                            fontWeight: FontWeight.bold,
                           ),
+                          contentPadding: EdgeInsets.all(0),
+                          onCodeChanged: (String code) {
+                            if (code.length == 6) {
+                              _otp = code;
+                              _verifyOTP();
+                            }
+                          },
+                          onSubmit: (String verificationCode) {
+                            _otp = verificationCode;
+                            _verifyOTP();
+                          }, // end onSubmit
                         ),
                       ),
                     ),

@@ -1,5 +1,7 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:equatable/equatable.dart';
+import 'package:get/get.dart';
+import '../../../../../../core/services/user_service.dart';
 import '../../../data/repositories/appointment_repository.dart';
 import '../../../data/models/appointment_details_model.dart';
 import '../../../data/models/appointment.dart';
@@ -11,9 +13,34 @@ part 'appointment_details_state.dart';
 /// Appointment Details Cubit - Manages appointment details
 class AppointmentDetailsCubit extends Cubit<AppointmentDetailsState> {
   final SharedAppointmentRepository repository;
+  String? _currentUserId;
 
   AppointmentDetailsCubit({required this.repository})
     : super(const AppointmentDetailsState());
+
+  /// تحميل معرف المستخدم الحالي
+  Future<void> _loadUserId() async {
+    try {
+      _currentUserId = await UserService.getCurrentUserId();
+    } catch (e) {
+      _currentUserId = null;
+    }
+  }
+
+  /// تحميل الموعد من arguments
+  Future<void> loadAppointmentFromArguments() async {
+    final arguments = Get.arguments as Map<String, dynamic>?;
+    final appointment = arguments?['appointment'] as AppointmentModel?;
+    
+    if (appointment != null) {
+      await loadAppointmentDetails(appointment.id!);
+    } else {
+      emit(state.copyWith(
+        isLoading: false,
+        errorMessage: 'لم يتم العثور على معلومات الموعد',
+      ));
+    }
+  }
 
   /// تحميل تفاصيل الموعد
   Future<void> loadAppointmentDetails(String appointmentId) async {
@@ -182,11 +209,20 @@ class AppointmentDetailsCubit extends Cubit<AppointmentDetailsState> {
   Future<void> executeAction(
     AppointmentAction action,
     String appointmentId,
-    String userId,
   ) async {
+    // تحميل معرف المستخدم إذا لم يكن محملاً
+    if (_currentUserId == null) {
+      await _loadUserId();
+    }
+    
+    if (_currentUserId == null) {
+      emit(state.copyWith(errorMessage: 'User not logged in'));
+      return;
+    }
+    
     switch (action) {
       case AppointmentAction.cancel:
-        await cancelAppointment(appointmentId, userId);
+        await cancelAppointment(appointmentId, _currentUserId!);
         break;
       case AppointmentAction.reschedule:
         // سيتم التعامل معه في الواجهة

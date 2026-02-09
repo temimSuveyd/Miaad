@@ -4,6 +4,7 @@ import 'package:get/get.dart';
 import 'package:uni_size/uni_size.dart';
 import 'core/config/supabase_config.dart';
 import 'core/services/service_locator.dart';
+import 'core/services/app_service.dart';
 import 'core/routing/presentation/pages/route_config_page.dart';
 import 'core/routing/presentation/routes/app_routes.dart';
 import 'core/theme/app_theme.dart';
@@ -13,8 +14,11 @@ void main() async {
   await SupabaseConfig.initialize();
 
   await initServiceLocator();
+  
+  // Initialize AppService for authentication handling
+  await Get.putAsync(() async => AppService());
+  
   SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky);
-
 
   runApp(const MyApp());
 }

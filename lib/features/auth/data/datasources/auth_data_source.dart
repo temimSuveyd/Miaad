@@ -12,6 +12,11 @@ abstract class AuthDataSource {
 
   Future<void> sendOTP({required String email});
 
+  Future<void> verifyOTPForSession({
+    required String email,
+    required String otp,
+  });
+
   Future<UserModel> verifyOTPAndSignIn({
     required String email,
     required String otp,
@@ -28,6 +33,11 @@ abstract class AuthDataSource {
   Future<void> resetPassword({
     required String email,
     required String otp,
+    required String newPassword,
+  });
+
+  Future<void> createNewPassword({
+    required String email,
     required String newPassword,
   });
 
@@ -97,18 +107,71 @@ class AuthDataSourceImpl implements AuthDataSource {
   @override
   Future<void> sendOTP({required String email}) async {
     try {
+      log('Attempting to send OTP to email: $email');
+      
+      // First check if user already exists in the users table
+      try {
+        final existingUser = await _supabaseClient
+            .from('users')
+            .select('email')
+            .eq('email', email)
+            .maybeSingle();
+        
+        if (existingUser != null) {
+          throw const UserAlreadyExistsFailure();
+        }
+      } catch (e) {
+        // If there's an error checking the user, continue with OTP flow
+        // This handles database connection issues gracefully
+      }
+
       // Send OTP using Supabase Auth with email
       await _supabaseClient.auth.signInWithOtp(email: email);
     } on AuthException catch (e) {
-      log(e.message);
       if (e.message.contains('Too many requests')) {
         throw const RateLimitFailure(
           'محاولات إرسال كثيرة، يرجى المحاولة لاحقاً',
         );
       } else if (e.message.contains('Invalid email')) {
         throw ValidationFailure('email', 'البريد الإلكتروني غير صالح');
+      } else if (e.message.contains('User already registered')) {
+        throw const UserAlreadyExistsFailure();
       } else {
         throw OTPFailure('فشل إرسال رمز التحقق: ${e.message}');
+      }
+    } on UserAlreadyExistsFailure {
+      // Re-throw the user already exists error
+      rethrow;
+    } catch (e) {
+      log('Unknown error during OTP: $e');
+      throw UnknownFailure('خطأ غير معروف: ${e.toString()}');
+    }
+  }
+
+  @override
+  Future<void> verifyOTPForSession({
+    required String email,
+    required String otp,
+  }) async {
+    try {
+      // Verify OTP to establish session without signing in
+      final response = await _supabaseClient.auth.verifyOTP(
+        email: email,
+        token: otp,
+        type: OtpType.email,
+      );
+
+      if (response.user == null) {
+        throw const InvalidCredentialsFailure('فشل التحقق من الرمز');
+      }
+    } on AuthException catch (e) {
+      log(e.message);
+      if (e.message.contains('OTP has expired')) {
+        throw const OTPExpiredFailure();
+      } else if (e.message.contains('Invalid OTP')) {
+        throw const OTPFailure('رمز التحقق غير صحيح');
+      } else {
+        throw OTPFailure('خطأ في التحقق من الرمز: ${e.message}');
       }
     } catch (e) {
       throw UnknownFailure('خطأ غير معروف: ${e.toString()}');
@@ -184,19 +247,27 @@ class AuthDataSourceImpl implements AuthDataSource {
         );
       }
 
-      // Create user with email and password in Supabase Auth
-      final response = await _supabaseClient.auth.signUp(
-        email: email,
-        password: password,
-      );
-
-      if (response.user == null) {
-        throw const AuthFailure('فشل إنشاء المستخدم');
+      // Get the current user session from OTP verification
+      final currentUser = _supabaseClient.auth.currentUser;
+      
+      if (currentUser == null) {
+        throw const AuthFailure('جلسة المستخدم غير موجودة، يرجى التحقق من الرمز أولاً');
       }
+
+      // Update the user's metadata with additional info
+      await _supabaseClient.auth.updateUser(
+        UserAttributes(
+          password: password,
+          data: {
+            'full_name': name,
+            'city': city,
+          },
+        ),
+      );
 
       // Create user record in the users table
       final userData = {
-        'id': response.user!.id,
+        'id': currentUser.id,
         'full_name': name,
         'email': email,
         'city': city,
@@ -208,8 +279,6 @@ class AuthDataSourceImpl implements AuthDataSource {
       try {
         await _supabaseClient.from('users').insert(userData);
       } catch (e) {
-        // If user creation in database fails, delete the auth user
-        await _supabaseClient.auth.admin.deleteUser(response.user!.id);
         throw const UserAlreadyExistsFailure('المستخدم موجود بالفعل');
       }
 
@@ -218,7 +287,7 @@ class AuthDataSourceImpl implements AuthDataSource {
         final createdUser = await _supabaseClient
             .from('users')
             .select()
-            .eq('id', response.user!.id)
+            .eq('id', currentUser.id)
             .single();
 
         return UserModel.fromJson(createdUser);
@@ -290,7 +359,6 @@ class AuthDataSourceImpl implements AuthDataSource {
       );
 
     } on AuthException catch (e) {
-      log(e.message);
       if (e.message.contains('OTP has expired')) {
         throw const OTPExpiredFailure();
       } else if (e.message.contains('Invalid OTP')) {
@@ -299,6 +367,48 @@ class AuthDataSourceImpl implements AuthDataSource {
         throw const RateLimitFailure('محاولات كثيرة، يرجى المحاولة لاحقاً');
       } else {
         throw AuthFailure('خطأ في إعادة تعيين كلمة المرور: ${e.message}');
+      }
+    } catch (e) {
+      throw UnknownFailure('خطأ غير معروف: ${e.toString()}');
+    }
+  }
+
+  @override
+  Future<void> createNewPassword({
+    required String email,
+    required String newPassword,
+  }) async {
+    try {
+      // Validate input
+      if (email.trim().isEmpty) {
+        throw const ValidationFailure('email', 'البريد الإلكتروني مطلوب');
+      }
+      if (newPassword.length < 6) {
+        throw const ValidationFailure(
+          'password',
+          'كلمة المرور يجب أن تكون 6 أحرف على الأقل',
+        );
+      }
+
+      // Check if there's a current authenticated session
+      final currentUser = _supabaseClient.auth.currentUser;
+      if (currentUser == null) {
+        throw const InvalidCredentialsFailure('لا توجد جلسة نشطة');
+      }
+
+      // Update the user's password
+      await _supabaseClient.auth.updateUser(
+        UserAttributes(
+          password: newPassword,
+        ),
+      );
+
+    } on AuthException catch (e) {
+      log(e.message);
+      if (e.message.contains('Too many requests')) {
+        throw const RateLimitFailure('محاولات كثيرة، يرجى المحاولة لاحقاً');
+      } else {
+        throw AuthFailure('خطأ في إنشاء كلمة المرور: ${e.message}');
       }
     } catch (e) {
       throw UnknownFailure('خطأ غير معروف: ${e.toString()}');

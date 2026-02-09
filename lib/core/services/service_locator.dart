@@ -21,6 +21,7 @@ import '../../features/auth/data/repositories/auth_repository.dart';
 import '../../features/auth/data/repositories/auth_repository_impl.dart';
 import '../../features/auth/presentation/bloc/auth_cubit.dart';
 import '../../core/config/supabase_config.dart';
+import '../../core/services/secure_storage_service.dart';
 
 final sl = GetIt.instance;
 
