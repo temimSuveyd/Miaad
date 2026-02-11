@@ -3,6 +3,7 @@ import 'package:iconsax/iconsax.dart';
 import '../../../../core/theme/app_theme.dart';
 import 'profile_menu_item.dart';
 import '../pages/terms_of_service_page.dart';
+import '../pages/settings_page.dart';
 
 class ProfileMenuList extends StatelessWidget {
   const ProfileMenuList({super.key});
@@ -41,7 +42,12 @@ class ProfileMenuList extends StatelessWidget {
             icon: Iconsax.setting,
             title: 'الإعدادات',
             onTap: () {
-              // Navigate to settings
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => const SettingsPage(),
+                ),
+              );
             },
           ),
 

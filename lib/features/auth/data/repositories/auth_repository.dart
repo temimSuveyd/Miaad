@@ -28,6 +28,8 @@ abstract class AuthRepository {
     required String email,
     required String city,
     required String password,
+    String? phone,
+    String? dateOfBirth,
   });
 
   Future<Either<Failure, void>> resetPassword({
@@ -46,6 +48,8 @@ abstract class AuthRepository {
     required String email,
     required String city,
     required String password,
+    String? phone,
+    String? dateOfBirth,
   });
 
   Future<Either<Failure, void>> signOut();

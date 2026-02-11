@@ -51,7 +51,7 @@ class UserModel extends Equatable {
           ? DateTime.parse(json['date_of_birth'] as String)
           : null,
       gender: json['gender'] as String?,
-      address: json['address'] as String?,
+      address: json['city'] as String?,
       createdAt: DateTime.parse(json['created_at'] as String),
       updatedAt: DateTime.parse(json['updated_at'] as String),
     );
@@ -67,7 +67,7 @@ class UserModel extends Equatable {
       'profile_image': profileImage,
       'date_of_birth': dateOfBirth?.toIso8601String(),
       'gender': gender,
-      'address': address,
+      'city': address,
       'created_at': createdAt.toIso8601String(),
       'updated_at': updatedAt.toIso8601String(),
     };

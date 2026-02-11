@@ -38,6 +38,7 @@ class _OTPVerificationFormState extends State<_OTPVerificationForm> {
   String _password = '';
   String _name = '';
   String _city = '';
+  String _phone = '';
   bool _isRegistration = false;
   bool _isPasswordReset = false;
 
@@ -47,10 +48,11 @@ class _OTPVerificationFormState extends State<_OTPVerificationForm> {
     // Get arguments from previous page
     final arguments = Get.arguments as Map<String, dynamic>?;
     if (arguments != null) {
-      _email = arguments['phone'] ?? '';
+      _email = arguments['email'] ?? '';
       _password = arguments['password'] ?? '';
       _name = arguments['name'] ?? '';
       _city = arguments['city'] ?? '';
+      _phone = arguments['phone'] ?? '';
       _isRegistration = arguments['isRegistration'] ?? false;
       _isPasswordReset = arguments['isPasswordReset'] ?? false;
     }
@@ -82,6 +84,7 @@ class _OTPVerificationFormState extends State<_OTPVerificationForm> {
         name: _name,
         city: _city,
         password: _password,
+        phone: _phone,
       );
     } else if (_isPasswordReset) {
       // This is password reset - navigate to create new password page

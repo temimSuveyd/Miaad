@@ -85,6 +85,8 @@ class AuthRepositoryImpl implements AuthRepository {
     required String email ,
     required String city,
     required String password,
+    String? phone,
+    String? dateOfBirth,
   }) async {
     try {
       final user = await _authDataSource.createUserAfterOTP(
@@ -92,6 +94,8 @@ class AuthRepositoryImpl implements AuthRepository {
         email: email ,
         city: city,
         password: password,
+        phone: phone,
+        dateOfBirth: dateOfBirth,
       );
       return Right(user);
     } on Failure catch (failure) {
@@ -145,6 +149,8 @@ class AuthRepositoryImpl implements AuthRepository {
     required String email ,
     required String city,
     required String password,
+    String? phone,
+    String? dateOfBirth,
   }) async {
     try {
       final user = await _authDataSource.createUser(
@@ -152,6 +158,8 @@ class AuthRepositoryImpl implements AuthRepository {
         email: email ,
         city: city,
         password: password,
+        phone: phone,
+        dateOfBirth: dateOfBirth,
       );
       return Right(user);
     } on Failure catch (failure) {

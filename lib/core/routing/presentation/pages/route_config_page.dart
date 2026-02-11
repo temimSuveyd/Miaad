@@ -1,5 +1,6 @@
 import 'package:doctorbooking/core/routing/presentation/routes/app_routes.dart';
 import 'package:doctorbooking/features/home/presentation/pages/appointment_details_page.dart';
+import 'package:doctorbooking/features/profile/presentation/pages/edit_account_page.dart';
 import 'package:doctorbooking/features/shared/appointments/presentation/book_appointment/pages/book_appointment_page.dart';
 import 'package:doctorbooking/features/shared/appointments/presentation/reschedule_appointment/pages/reschedule_appointment_page.dart';
 import 'package:doctorbooking/features/navigation/navigation_page.dart';
@@ -96,7 +97,15 @@ class RouteConfigPage {
         middlewares: [AuthMiddleware()],
       ),
 
-      // Auth routes with GuestMiddleware (prevents authenticated users from accessing auth pages)
+      GetPage(
+        name: AppRoutes.editAccountPage,
+        page: () => EditAccountPage(),
+        transition: Transition.fadeIn,
+        transitionDuration: const Duration(milliseconds: 300),
+        middlewares: [AuthMiddleware()],
+      ),
+      // Auth routes with GuestMiddlew
+      //are (prevents authenticated users from accessing auth pages)
       GetPage(
         name: AppRoutes.login,
         page: () => const LoginPage(),

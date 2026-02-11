@@ -17,7 +17,8 @@ class AppRoutes {
   static const String rescheduleAppointment = '/reschedule-appointment';
 
   static const String myDoctors = '/my-doctors';
-  static const String profile = '/profile';
+  static const String profile = '/profile';  
+  static const String editAccountPage = '/edit-account-page';
 
   // Onboarding
   static const String splash = '/splash';

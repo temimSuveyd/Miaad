@@ -20,8 +20,13 @@ import '../../features/auth/data/datasources/auth_data_source.dart';
 import '../../features/auth/data/repositories/auth_repository.dart';
 import '../../features/auth/data/repositories/auth_repository_impl.dart';
 import '../../features/auth/presentation/bloc/auth_cubit.dart';
+import '../../features/profile/presentation/cubit/settings_cubit.dart';
+import '../../features/profile/presentation/cubit/profile_cubit.dart';
+import '../../features/profile/data/repositories/settings_repository.dart';
+import '../../features/profile/data/datasources/settings_datasource.dart';
 import '../../core/config/supabase_config.dart';
 import '../../core/services/secure_storage_service.dart';
+import '../../core/services/notification_service.dart';
 
 final sl = GetIt.instance;
 
@@ -153,5 +158,34 @@ Future<void> initServiceLocator() async {
   // Auth Datasource
   sl.registerLazySingleton<AuthDataSource>(
     () => AuthDataSourceImpl(SupabaseConfig.client),
+  );
+
+  // =====================================================
+  // الإعدادات (Settings)
+  // =====================================================
+
+  // Settings Cubit
+  sl.registerFactory(
+    () => SettingsCubit(),
+  );
+
+  // Settings Datasource
+  sl.registerLazySingleton<SettingsDataSource>(
+    () => SettingsDataSourceImpl(),
+  );
+
+  // Settings Repository
+  sl.registerLazySingleton<SettingsRepository>(
+    () => SettingsRepositoryImpl(dataSource: sl()),
+  );
+
+  // Profile Cubit
+  sl.registerFactory(
+    () => ProfileCubit(repository: sl<SettingsRepository>()),
+  );
+
+  // Notification Service
+  sl.registerLazySingleton<NotificationService>(
+    () => NotificationService(),
   );
 }

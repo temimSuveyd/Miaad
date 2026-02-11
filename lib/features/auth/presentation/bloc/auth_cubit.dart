@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:doctorbooking/features/auth/data/models/user_model.dart';
 import 'package:doctorbooking/features/auth/data/repositories/auth_repository.dart';
@@ -39,12 +41,16 @@ class AuthCubit extends Cubit<AuthState> {
     }
   }
 
-  // Sign in withemail and password
+  // Sign in with email and password
   Future<void> signInWithPhoneAndPassword({
     required String email,
     required String password,
   }) async {
     emit(AuthLoading());
+    
+    // Clear all local storage before sign in
+    await SecureStorageService.clearAll();
+    
     final result = await _authRepository.signInWithEmailAndPassword(
       email:email,
       password: password,
@@ -54,6 +60,7 @@ class AuthCubit extends Cubit<AuthState> {
       (failure) => emit(AuthError(failure.message)),
       (user) async {
         _currentUser = user;
+        log(user.toString());
         // Save user data to secure storage
         await SecureStorageService.saveUserData(user);
         emit(AuthAuthenticated(user));
@@ -79,6 +86,10 @@ class AuthCubit extends Cubit<AuthState> {
     String? password,
   }) async {
     emit(AuthLoading());
+    
+    // Clear all local storage before sign in
+    await SecureStorageService.clearAll();
+    
     final result = await _authRepository.verifyOTPAndSignIn(
       email:email,
       otp: otp,
@@ -103,6 +114,8 @@ class AuthCubit extends Cubit<AuthState> {
     required String name,
     required String city,
     required String password,
+    String? phone,
+    String? dateOfBirth,
   }) async {
     emit(AuthLoading());
     
@@ -121,12 +134,16 @@ class AuthCubit extends Cubit<AuthState> {
           email: email,
           city: city,
           password: password,
+          phone: phone,
+          dateOfBirth: dateOfBirth,
         );
         
         result.fold(
           (failure) => emit(AuthError(failure.message)),
-          (user) {
+          (user) async {
             _currentUser = user;
+            // Save user data to secure storage
+            await SecureStorageService.saveUserData(user);
             emit(AuthAuthenticated(user));
           },
         );
@@ -140,13 +157,21 @@ class AuthCubit extends Cubit<AuthState> {
     required String email,
     required String city,
     required String password,
+    String? phone,
+    String? dateOfBirth,
   }) async {
     emit(AuthLoading());
+    
+    // Clear all local storage before creating account
+    await SecureStorageService.clearAll();
+    
     final result = await _authRepository.createUserAfterOTP(
       name: name,
      email:email,
       city: city,
       password: password,
+      phone: phone,
+      dateOfBirth: dateOfBirth,
     );
     
     result.fold(
@@ -206,13 +231,21 @@ class AuthCubit extends Cubit<AuthState> {
     required String email,
     required String city,
     required String password,
+    String? phone,
+    String? dateOfBirth,
   }) async {
     emit(AuthLoading());
+    
+    // Clear all local storage before creating account
+    await SecureStorageService.clearAll();
+    
     final result = await _authRepository.createUser(
       name: name,
      email:email,
       city: city,
       password: password,
+      phone: phone,
+      dateOfBirth: dateOfBirth,
     );
     
     result.fold(

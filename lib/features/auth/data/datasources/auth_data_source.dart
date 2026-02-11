@@ -28,6 +28,8 @@ abstract class AuthDataSource {
     required String email,
     required String city,
     required String password,
+    String? phone,
+    String? dateOfBirth,
   });
 
   Future<void> resetPassword({
@@ -46,6 +48,8 @@ abstract class AuthDataSource {
     required String email,
     required String city,
     required String password,
+    String? phone,
+    String? dateOfBirth,
   });
 
   Future<void> signOut();
@@ -108,7 +112,7 @@ class AuthDataSourceImpl implements AuthDataSource {
   Future<void> sendOTP({required String email}) async {
     try {
       log('Attempting to send OTP to email: $email');
-      
+
       // First check if user already exists in the users table
       try {
         final existingUser = await _supabaseClient
@@ -116,7 +120,7 @@ class AuthDataSourceImpl implements AuthDataSource {
             .select('email')
             .eq('email', email)
             .maybeSingle();
-        
+
         if (existingUser != null) {
           throw const UserAlreadyExistsFailure();
         }
@@ -228,6 +232,8 @@ class AuthDataSourceImpl implements AuthDataSource {
     required String email,
     required String city,
     required String password,
+    String? phone,
+    String? dateOfBirth,
   }) async {
     try {
       // Validate input
@@ -249,18 +255,22 @@ class AuthDataSourceImpl implements AuthDataSource {
 
       // Get the current user session from OTP verification
       final currentUser = _supabaseClient.auth.currentUser;
-      
-      if (currentUser == null) {
-        throw const AuthFailure('جلسة المستخدم غير موجودة، يرجى التحقق من الرمز أولاً');
-      }
 
+      if (currentUser == null) {
+        throw const AuthFailure(
+          'جلسة المستخدم غير موجودة، يرجى التحقق من الرمز أولاً',
+        );
+      }
       // Update the user's metadata with additional info
       await _supabaseClient.auth.updateUser(
         UserAttributes(
           password: password,
+          email: email,
           data: {
             'full_name': name,
             'city': city,
+            'phone': phone ?? '',
+            'birthday': dateOfBirth,
           },
         ),
       );
@@ -271,9 +281,10 @@ class AuthDataSourceImpl implements AuthDataSource {
         'full_name': name,
         'email': email,
         'city': city,
+        'phone': phone ?? '',
+        'birthday': dateOfBirth,
         'created_at': DateTime.now().toIso8601String(),
         'role': 'patient',
-        'phone': '',
       };
 
       try {
@@ -314,9 +325,85 @@ class AuthDataSourceImpl implements AuthDataSource {
     required String email,
     required String city,
     required String password,
+    String? phone,
+    String? dateOfBirth,
   }) async {
-    // This method is deprecated - use createUserAfterOTP instead
-    throw const AuthFailure('هذه الطريقة لم تعد مدعومة. يرجى استخدام التحقق من OTP أولاً');
+    try {
+      // Validate input
+      if (name.trim().isEmpty) {
+        throw const ValidationFailure('name', 'الاسم مطلوب');
+      }
+      if (email.trim().isEmpty) {
+        throw const ValidationFailure('email', 'البريد الإلكتروني مطلوب');
+      }
+      if (city.trim().isEmpty) {
+        throw const ValidationFailure('city', 'المدينة مطلوبة');
+      }
+      if (password.length < 6) {
+        throw const ValidationFailure(
+          'password',
+          'كلمة المرور يجب أن تكون 6 أحرف على الأقل',
+        );
+      }
+
+      // Sign up with email and password
+      final response = await _supabaseClient.auth.signUp(
+        email: email,
+        password: password,
+        data: {
+          'full_name': name,
+          'city': city,
+          'phone': phone ?? '',
+          'birthday': dateOfBirth,
+        },
+      );
+
+      if (response.user == null) {
+        throw const AuthFailure('فشل إنشاء الحساب');
+      }
+
+      // Create user record in users table
+      final userData = {
+        'id': response.user!.id,
+        'full_name': name,
+        'email': email,
+        'city': city,
+        'phone': phone ?? '',
+        'birthday': dateOfBirth,
+        'created_at': DateTime.now().toIso8601String(),
+        'role': 'patient',
+      };
+
+      try {
+        await _supabaseClient.from('users').insert(userData);
+      } catch (e) {
+        throw const UserAlreadyExistsFailure('المستخدم موجود بالفعل');
+      }
+
+      // Get the created user data
+      try {
+        final createdUser = await _supabaseClient
+            .from('users')
+            .select()
+            .eq('id', response.user!.id)
+            .single();
+
+        return UserModel.fromJson(createdUser);
+      } catch (e) {
+        throw const UserNotFoundFailure('فشل الحصول على بيانات المستخدم');
+      }
+    } on AuthException catch (e) {
+      if (e.message.contains('User already registered')) {
+        throw const UserAlreadyExistsFailure('المستخدم موجود بالفعل');
+      } else if (e.message.contains('Invalid email')) {
+        throw ValidationFailure('email', 'البريد الإلكتروني غير صالح');
+      } else {
+        log(e.message);
+        throw AuthFailure('خطأ في المصادقة: ${e.message}');
+      }
+    } catch (e) {
+      throw UnknownFailure('خطأ غير معروف: ${e.toString()}');
+    }
   }
 
   @override
@@ -353,11 +440,8 @@ class AuthDataSourceImpl implements AuthDataSource {
 
       // Update the user's password
       await _supabaseClient.auth.updateUser(
-        UserAttributes(
-          password: newPassword,
-        ),
+        UserAttributes(password: newPassword),
       );
-
     } on AuthException catch (e) {
       if (e.message.contains('OTP has expired')) {
         throw const OTPExpiredFailure();
@@ -398,11 +482,8 @@ class AuthDataSourceImpl implements AuthDataSource {
 
       // Update the user's password
       await _supabaseClient.auth.updateUser(
-        UserAttributes(
-          password: newPassword,
-        ),
+        UserAttributes(password: newPassword),
       );
-
     } on AuthException catch (e) {
       log(e.message);
       if (e.message.contains('Too many requests')) {

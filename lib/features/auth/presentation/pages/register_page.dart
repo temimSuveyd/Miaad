@@ -1,12 +1,17 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get/get.dart';
 import 'package:iconsax/iconsax.dart';
+import 'package:bottom_picker/bottom_picker.dart';
+import 'package:bottom_picker/resources/arrays.dart';
 import 'package:doctorbooking/core/routing/presentation/routes/app_routes.dart';
 import 'package:doctorbooking/core/theme/app_theme.dart';
 import 'package:doctorbooking/core/services/service_locator.dart';
 import 'package:doctorbooking/core/services/snackbar_service.dart';
 import 'package:doctorbooking/core/widgets/bottom_sheets/city_selector_bottom_sheet.dart';
+import 'package:doctorbooking/core/widgets/custom_phone_field.dart';
+import 'package:doctorbooking/core/data/syrian_cities.dart';
 import 'package:doctorbooking/features/shared/widgets/custom_button.dart';
 import 'package:doctorbooking/features/shared/widgets/custom_text_field.dart';
 import 'package:doctorbooking/features/auth/presentation/widgets/email_input_widget.dart';
@@ -36,7 +41,9 @@ class _RegisterFormState extends State<_RegisterForm> {
   final _formKey = GlobalKey<FormState>();
   final _nameController = TextEditingController();
   final _emailController = TextEditingController();
+  final _phoneController = TextEditingController();
   final _cityController = TextEditingController();
+  final _dateOfBirthController = TextEditingController();
   final _passwordController = TextEditingController();
   final _confirmPasswordController = TextEditingController();
   
@@ -47,7 +54,9 @@ class _RegisterFormState extends State<_RegisterForm> {
   void dispose() {
     _nameController.dispose();
     _emailController.dispose();
+    _phoneController.dispose();
     _cityController.dispose();
+    _dateOfBirthController.dispose();
     _passwordController.dispose();
     _confirmPasswordController.dispose();
     super.dispose();
@@ -65,13 +74,15 @@ class _RegisterFormState extends State<_RegisterForm> {
   }
 
   void _showCitySelector() async {
-    final selectedCity = await CitySelectorBottomSheet.show(
+    final SyrianCity? selectedCity = await CitySelectorBottomSheet.show(
       context: context,
       selectedCity: _cityController.text.isNotEmpty ? _cityController.text : null,
     );
 
     if (selectedCity != null) {
-      _cityController.text = selectedCity.nameAr;
+      setState(() {
+        _cityController.text = selectedCity.nameAr;
+      });
     }
   }
 
@@ -95,10 +106,12 @@ class _RegisterFormState extends State<_RegisterForm> {
               Get.toNamed(
                 AppRoutes.otp,
                 arguments: {
-                  'phone': _emailController.text.trim(),
+                  'email': _emailController.text.trim(),
                   'password': _passwordController.text,
                   'name': _nameController.text.trim(),
+                  'phone': _phoneController.text.trim(),
                   'city': _cityController.text.trim(),
+                  'dateOfBirth': _dateOfBirthController.text.trim(),
                   'isRegistration': true, // Flag to indicate this is registration
                 },
               );
@@ -176,6 +189,27 @@ class _RegisterFormState extends State<_RegisterForm> {
                       const SizedBox(height: 20),
                       
                       // Phone Field
+                      CustomPhoneField(
+                        controller: _phoneController,
+                        validator: (value) {
+                          if (value == null || value.trim().isEmpty) {
+                            return 'الرجاء إدخال رقم الهاتف';
+                          }
+                          
+                          // Remove the prefix for validation
+                          String phoneNumber = value.replaceAll('963', '');
+                          
+                          if (phoneNumber.length != 9) {
+                            return 'رقم الهاتف يجب أن يكون 9 أرقام بعد الرمز';
+                          }
+                          
+                          return null;
+                        },
+                      ),
+                      
+                      const SizedBox(height: 20),
+                      
+                      // Email Field
                       EmailInputWidget(
                         controller: _emailController,
                         validator: (value) {
@@ -188,6 +222,86 @@ class _RegisterFormState extends State<_RegisterForm> {
                           }
                           return null;
                         },
+                      ),
+                      
+                      const SizedBox(height: 20),
+                      
+                      // Date of Birth Field
+                      GestureDetector(
+                        onTap: () async {
+                          BottomPicker.date(
+                            headerBuilder: (context) {
+                              return Padding(
+                                padding: const EdgeInsets.symmetric(
+                                  vertical: 20,
+                                ),
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    IconButton(
+                                      onPressed: () => Get.back(),
+                                      icon: Icon(Iconsax.close_circle),
+                                    ),
+                                    Spacer(),
+                                    Text(
+                                      'حدد تاريخ ميلادك',
+                                      style: TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 15,
+                                        color: AppTheme.textPrimary,
+                                      ),
+                                    ),
+                                    Spacer(),
+                                  ],
+                                ),
+                              );
+                            },
+                            dateOrder: DatePickerDateOrder.dmy,
+                            initialDateTime: DateTime.now(),
+                            maxDateTime: DateTime(2030),
+                            minDateTime: DateTime(1980),
+                            onSubmit: (index) {
+                              if (index != null) {
+                                _dateOfBirthController.text = index
+                                    .toIso8601String()
+                                    .split('T')[0];
+                              }
+                            },
+                            bottomPickerTheme: BottomPickerTheme.orange,
+                            buttonContent: Center(
+                              child: Text(
+                                'اختر هذا التاريخ',
+                                style: TextStyle(color: AppTheme.backgroundColor),
+                              ),
+                            ),
+                            buttonStyle: BoxDecoration(
+                              color: AppTheme.primaryColor,
+                              borderRadius: BorderRadius.circular(AppTheme.radiusXLarge),
+                            ),
+                            buttonWidth: Get.width - 50,
+                            buttonPadding: 12,
+                            backgroundColor: AppTheme.backgroundColor,
+                            pickerTextStyle: TextStyle(
+                              fontSize: 18,
+                              color: AppTheme.textPrimary,
+                            ),
+                          ).show(context);
+                        },
+                        child: AbsorbPointer(
+                          child: CustomTextField(
+                            controller: _dateOfBirthController,
+                            label: 'تاريخ الميلاد',
+                            hintText: 'أدخل تاريخ الميلاد',
+                            prefixIcon: Iconsax.calendar,
+                            validator: (value) {
+                              if (value != null && value.trim().isNotEmpty) {
+                                // Basic date validation - you can enhance this as needed
+                                return null;
+                              }
+                              return null;
+                            },
+                          ),
+                        ),
                       ),
                       
                       const SizedBox(height: 20),

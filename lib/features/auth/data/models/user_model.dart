@@ -7,7 +7,6 @@ class UserModel extends Equatable {
   final String? email;
   final String phone;
   final String? imageUrl;
-  final String? address;
   final String city;
   final DateTime? dateOfBirth;
   final String? gender;
@@ -18,7 +17,6 @@ class UserModel extends Equatable {
     this.email,
     required this.phone,
     this.imageUrl,
-    this.address,
     required this.city,
     this.dateOfBirth,
     this.gender,
@@ -31,7 +29,7 @@ class UserModel extends Equatable {
     email,
     phone,
     imageUrl,
-    address,
+    city,
     dateOfBirth,
     gender,
   ];
@@ -44,12 +42,11 @@ class UserModel extends Equatable {
       email: json['email'] as String?,
       phone: json['phone'] as String? ?? '',
       imageUrl: json['image_url'] as String? ?? json['imageUrl'] as String?,
-      address: json['address'] as String?,
       city: json['city'] as String? ?? '',
       dateOfBirth: json['date_of_birth'] != null
           ? DateTime.parse(json['date_of_birth'] as String)
-          : json['dateOfBirth'] != null
-              ? DateTime.parse(json['dateOfBirth'] as String)
+          : json['birthday'] != null
+              ? DateTime.parse(json['birthday'] as String)
               : null,
       gender: json['gender'] as String?,
     );
@@ -60,15 +57,11 @@ class UserModel extends Equatable {
     return {
       'id': id,
       'full_name': name,
-      'name': name,
       'email': email,
       'phone': phone,
-      'image_url': imageUrl,
-      'imageUrl': imageUrl,
-      'address': address,
+      // 'image_url': imageUrl,
       'city': city,
-      'date_of_birth': dateOfBirth?.toIso8601String(),
-      'dateOfBirth': dateOfBirth?.toIso8601String(),
+      'birthday': dateOfBirth?.toIso8601String(),
       'gender': gender,
     };
   }
@@ -80,7 +73,6 @@ class UserModel extends Equatable {
     String? email,
     String? phone,
     String? imageUrl,
-    String? address,
     String? city,
     DateTime? dateOfBirth,
     String? gender,
@@ -91,11 +83,9 @@ class UserModel extends Equatable {
       email: email ?? this.email,
       phone: phone ?? this.phone,
       imageUrl: imageUrl ?? this.imageUrl,
-      address: address ?? this.address,
       city: city ?? this.city,
       dateOfBirth: dateOfBirth ?? this.dateOfBirth,
       gender: gender ?? this.gender,
     );
   }
-
 }
